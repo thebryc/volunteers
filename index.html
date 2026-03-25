@@ -2373,6 +2373,8 @@ function gsRequestToken(clientId) {
       include_granted_scopes: 'true',
     });
     const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
+    console.log('[BRYC] OAuth URL:', authUrl);
+    console.log('[BRYC] redirect_uri:', redirectUri);
     const popup = window.open(authUrl, 'gsauth', 'width=500,height=600,left=200,top=100');
     if (!popup) { reject(new Error('Popup blocked. Please allow popups for this site.')); return; }
 
