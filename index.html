@@ -2363,8 +2363,8 @@ async function handleSheetsSync() {
 // ── OAuth popup flow ──
 function gsRequestToken(clientId) {
   return new Promise((resolve, reject) => {
-    const redirectUri = window.location.origin + window.location.pathname;
-    const scope = 'https://www.googleapis.com/auth/spreadsheets.readonly';
+    const redirectUri = window.location.origin;
+    const scope = 'https://www.googleapis.com/auth/spreadsheets';
     const params = new URLSearchParams({
       client_id: clientId,
       redirect_uri: redirectUri,
