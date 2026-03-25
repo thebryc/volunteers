@@ -1515,9 +1515,12 @@ function saveProspect() {
     notes: document.getElementById('ap-notes').value.trim(),
     customMsg: document.getElementById('ap-message').value.trim()
   });
+  const newProspect = DB.prospects[DB.prospects.length - 1];
   saveDB(); closeModal('add-prospect-modal');
   ['ap-fname','ap-lname','ap-email','ap-phone','ap-notes','ap-message'].forEach(id => document.getElementById(id).value = '');
   renderProspects(); renderDashboard();
+  // Write back to Google Sheet
+  gsWriteProspectToSheet(newProspect, 'add').catch(() => {});
 }
 
 function openEditProspect(idx) {
@@ -1556,14 +1559,20 @@ function updateProspect() {
     notes: document.getElementById('ep-notes').value.trim(),
     customMsg: document.getElementById('ep-message').value.trim()
   };
+  const updatedProspect = DB.prospects[idx];
   saveDB(); closeModal('edit-prospect-modal'); renderProspects(); renderDashboard();
+  // Write back to Google Sheet
+  gsWriteProspectToSheet(updatedProspect, 'update').catch(() => {});
 }
 
 function deleteProspect() {
   const idx = parseInt(document.getElementById('ep-idx').value);
   if (!confirm(`Delete ${DB.prospects[idx].name}?`)) return;
+  const deletedProspect = DB.prospects[idx];
   DB.prospects.splice(idx, 1);
   saveDB(); closeModal('edit-prospect-modal'); renderProspects(); renderDashboard();
+  // Clear row in Google Sheet
+  gsWriteProspectToSheet(deletedProspect, 'delete').catch(() => {});
 }
 
 // ══ IMPORT PROSPECT CSV ══════════════════════════
@@ -2477,7 +2486,7 @@ async function handleSheetsSync() {
 
     const { added, updated } = gsImportRows(data, cfg);
     renderProspects(); renderDashboard();
-    const msg = `✅ Sync complete — ${added} added, ${updated} updated`;
+    const msg = `✅ Sync complete — ${added} prospects loaded from sheet (${DB.prospects.length} total)`;
     gsSetStatus(msg, 'green');
     alert(msg);
 
@@ -2540,6 +2549,106 @@ async function gsFetchSheet(token, cfg) {
   return rows.slice(headerRowIdx); // first row = headers
 }
 
+// ── Write prospect back to Google Sheet ──
+async function gsWriteProspectToSheet(prospect, action = 'add') {
+  const cfg = getSheetConfig();
+  if (!cfg.clientId || !cfg.sheetId || !cfg.columnMap || Object.keys(cfg.columnMap).length === 0) return;
+
+  let token = gsGetToken();
+  if (!token) {
+    try { token = await gsRequestToken(cfg.clientId); gsSetToken(token); }
+    catch(e) { console.warn('Sheet write-back: auth failed', e); return; }
+  }
+
+  try {
+    // First get current sheet to find headers and existing row
+    const data = await gsFetchSheet(token, cfg);
+    if (!data || data.length === 0) return;
+
+    const headers = data[0];
+    const colMap = cfg.columnMap;
+
+    // Build a row array from the prospect matching column order
+    function prospectToRow(p) {
+      return headers.map(h => {
+        const field = Object.entries(colMap).find(([k, v]) => v === h);
+        if (!field) return '';
+        const key = field[0];
+        if (key === 'good') return p[key] === 'yes' ? 'Yes' : p[key] === 'no' ? 'No' : '';
+        return p[key] || '';
+      });
+    }
+
+    const sheetName = cfg.sheetName || 'Sheet1';
+    const headerRowNum = cfg.headerRow || 1;
+
+    if (action === 'add') {
+      // Append a new row
+      const row = prospectToRow(prospect);
+      const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${encodeURIComponent(sheetName)}!A1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+      await fetch(appendUrl, {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ values: [row] })
+      });
+
+    } else if (action === 'update' || action === 'delete') {
+      // Find the row by email or name
+      const emailColIdx = headers.indexOf(colMap['email']);
+      const nameColIdx  = headers.indexOf(colMap['name'] || colMap['fname']);
+      const dataRows = data.slice(1);
+      let rowIndex = -1;
+
+      dataRows.forEach((row, i) => {
+        if (emailColIdx >= 0 && prospect.email && row[emailColIdx]?.toLowerCase() === prospect.email.toLowerCase()) rowIndex = i;
+        else if (nameColIdx >= 0 && prospect.name && row[nameColIdx]?.toLowerCase() === prospect.name.toLowerCase()) rowIndex = i;
+      });
+
+      if (rowIndex === -1) {
+        // Row not found in sheet — append as new if updating
+        if (action === 'update') {
+          const row = prospectToRow(prospect);
+          const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${encodeURIComponent(sheetName)}!A1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+          await fetch(appendUrl, {
+            method: 'POST',
+            headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ values: [row] })
+          });
+        }
+        return;
+      }
+
+      const sheetRow = rowIndex + headerRowNum + 1; // +1 for header, +1 for 1-based index
+      const range = `${sheetName}!A${sheetRow}:${columnLetter(headers.length)}${sheetRow}`;
+
+      if (action === 'update') {
+        const row = prospectToRow(prospect);
+        const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`;
+        await fetch(updateUrl, {
+          method: 'PUT',
+          headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ values: [row] })
+        });
+      } else if (action === 'delete') {
+        // Clear the row contents
+        const clearUrl = `https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${encodeURIComponent(range)}:clear`;
+        await fetch(clearUrl, {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }
+        });
+      }
+    }
+  } catch(e) {
+    console.warn('Sheet write-back failed:', e);
+  }
+}
+
+function columnLetter(n) {
+  let s = '';
+  while (n > 0) { s = String.fromCharCode(65 + (n - 1) % 26) + s; n = Math.floor((n - 1) / 26); }
+  return s;
+}
+
 // ── Show column mapping UI ──
 function gsShowColumnMapper(headerRow, cfg) {
   const mapDiv = document.getElementById('gs-column-map');
@@ -2588,15 +2697,12 @@ function gsImportRows(rows, cfg) {
     }
   });
 
-  let added = 0, updated = 0;
-  const existingEmails = new Map();
-  DB.prospects.forEach((p, i) => { if (p.email) existingEmails.set(p.email.toLowerCase(), i); });
-
+  // Build full list from sheet rows
+  const sheetProspects = [];
   dataRows.forEach(row => {
     if (!row || row.every(c => !c)) return;
     const get = key => (colIdx[key] !== undefined ? (row[colIdx[key]] || '') : '');
 
-    // Build prospect
     let fname = get('fname');
     let lname = get('lname');
     let name  = get('name') || [fname, lname].filter(Boolean).join(' ');
@@ -2607,7 +2713,7 @@ function gsImportRows(rows, cfg) {
     const goodRaw = get('good').toLowerCase();
     const good = ['yes','y','true','1','✓','x'].includes(goodRaw) ? 'yes' : goodRaw ? 'no' : '';
 
-    const prospect = {
+    sheetProspects.push({
       name, fname, lname,
       email:     get('email'),
       phone:     get('phone'),
@@ -2620,22 +2726,28 @@ function gsImportRows(rows, cfg) {
       notes:     get('notes'),
       customMsg: get('customMsg'),
       dateAdded: get('dateAdded') || new Date().toLocaleDateString(),
-    };
-
-    const emailKey = prospect.email?.toLowerCase();
-    if (emailKey && existingEmails.has(emailKey)) {
-      const idx = existingEmails.get(emailKey);
-      DB.prospects[idx] = { ...DB.prospects[idx], ...prospect };
-      updated++;
-    } else {
-      DB.prospects.push(prospect);
-      if (emailKey) existingEmails.set(emailKey, DB.prospects.length - 1);
-      added++;
-    }
+    });
   });
 
+  // Merge: sheet is source of truth, preserve any app-only prospects not in sheet
+  const sheetEmails = new Set(sheetProspects.map(p => p.email?.toLowerCase()).filter(Boolean));
+  const sheetNames  = new Set(sheetProspects.map(p => p.name?.toLowerCase()).filter(Boolean));
+
+  // Keep app-only prospects (added in app, not yet in sheet, no email match)
+  const appOnly = DB.prospects.filter(p => {
+    const emailMatch = p.email && sheetEmails.has(p.email.toLowerCase());
+    const nameMatch  = p.name  && sheetNames.has(p.name.toLowerCase());
+    return !emailMatch && !nameMatch;
+  });
+
+  // Count changes
+  const oldCount = DB.prospects.length;
+  DB.prospects = [...sheetProspects, ...appOnly];
+  const added   = Math.max(0, DB.prospects.length - oldCount);
+  const updated = sheetProspects.length - added;
+
   saveDB();
-  return { added, updated };
+  return { added: sheetProspects.length, updated: 0, total: DB.prospects.length };
 }
 
 // Pre-fill settings when navigating to that page
