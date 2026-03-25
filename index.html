@@ -286,6 +286,7 @@ select option{background:#4a1530;color:white;}
   .stats-grid{grid-template-columns:1fr 1fr;}
 }
 </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -2494,44 +2495,30 @@ async function handleSheetsSync() {
 }
 
 // ── OAuth popup flow ──
+// ── Google Identity Services token client ──
+let _gisClient = null;
+
 function gsRequestToken(clientId) {
   return new Promise((resolve, reject) => {
-    const redirectUri = window.location.origin;
-    const scope = 'https://www.googleapis.com/auth/spreadsheets';
-    const params = new URLSearchParams({
+    if (!window.google || !window.google.accounts) {
+      reject(new Error('Google Identity Services not loaded. Please refresh and try again.'));
+      return;
+    }
+    _gisClient = window.google.accounts.oauth2.initTokenClient({
       client_id: clientId,
-      redirect_uri: redirectUri,
-      response_type: 'token',
-      scope,
-      include_granted_scopes: 'true',
-    });
-    const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
-    console.log('[BRYC] OAuth URL:', authUrl);
-    console.log('[BRYC] redirect_uri:', redirectUri);
-    const popup = window.open(authUrl, 'gsauth', 'width=500,height=600,left=200,top=100');
-    if (!popup) { reject(new Error('Popup blocked. Please allow popups for this site.')); return; }
-
-    const interval = setInterval(() => {
-      try {
-        if (popup.closed) { clearInterval(interval); reject(new Error('Auth popup was closed.')); return; }
-        const url = popup.location.href;
-        if (url.includes('access_token')) {
-          clearInterval(interval);
-          popup.close();
-          const hash = new URLSearchParams(url.split('#')[1] || url.split('?')[1] || '');
-          const token = hash.get('access_token');
-          if (token) resolve(token);
-          else reject(new Error('No access token in response.'));
+      scope: 'https://www.googleapis.com/auth/spreadsheets',
+      callback: (response) => {
+        if (response.error) {
+          reject(new Error(response.error_description || response.error));
+        } else {
+          resolve(response.access_token);
         }
-        if (url.includes('error=')) {
-          clearInterval(interval);
-          popup.close();
-          reject(new Error('Google auth denied or failed.'));
-        }
-      } catch(e) {
-        // Cross-origin while redirecting — keep waiting
+      },
+      error_callback: (err) => {
+        reject(new Error(err.message || 'Google sign-in failed.'));
       }
-    }, 500);
+    });
+    _gisClient.requestAccessToken({ prompt: 'consent' });
   });
 }
 
