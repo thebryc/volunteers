@@ -477,7 +477,16 @@ select option{background:#4a1530;color:white;}
     <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th>Name</th><th>Category</th><th>Status</th><th>VIP Comms</th><th>Team Ref.</th><th>Good?</th><th>Email</th><th>Phone</th><th>Date Added</th><th></th>
+          <th onclick="sortProspects('name')" style="cursor:pointer;user-select:none">Name <span id="sort-name"></span></th>
+          <th onclick="sortProspects('category')" style="cursor:pointer;user-select:none">Category <span id="sort-category"></span></th>
+          <th onclick="sortProspects('status')" style="cursor:pointer;user-select:none">Status <span id="sort-status"></span></th>
+          <th>VIP Comms</th>
+          <th>Team Ref.</th>
+          <th onclick="sortProspects('good')" style="cursor:pointer;user-select:none">Good? <span id="sort-good"></span></th>
+          <th onclick="sortProspects('email')" style="cursor:pointer;user-select:none">Email <span id="sort-email"></span></th>
+          <th>Phone</th>
+          <th onclick="sortProspects('dateAdded')" style="cursor:pointer;user-select:none">Date Added <span id="sort-dateAdded"></span></th>
+          <th></th>
         </tr></thead>
         <tbody id="prospects-tbody"><tr><td colspan="10"><div class="empty"><div class="ei">🎯</div><p>No prospects yet. Import your list or add manually.</p></div></td></tr></tbody>
       </table>
@@ -1446,6 +1455,28 @@ function renderDashboard() {
 }
 
 // ══ PROSPECTS ════════════════════════════════════
+// Sort state
+let _sortCol = 'dateAdded', _sortDir = -1;
+
+function sortProspects(col) {
+  if (_sortCol === col) { _sortDir *= -1; }
+  else { _sortCol = col; _sortDir = 1; }
+  // Update sort indicators
+  ['name','category','status','good','email','dateAdded'].forEach(c => {
+    const el = document.getElementById('sort-' + c);
+    if (el) el.textContent = c === _sortCol ? (_sortDir === 1 ? ' ▲' : ' ▼') : '';
+  });
+  renderProspects();
+}
+
+function inlineUpdateProspect(realIdx, field, value) {
+  DB.prospects[realIdx][field] = value;
+  const updated = DB.prospects[realIdx];
+  saveDB();
+  renderProspects();
+  gsWriteProspectToSheet(updated, 'update').catch(() => {});
+}
+
 function renderProspects() {
   const q = document.getElementById('prospect-search')?.value.toLowerCase() || '';
   const fCat = document.getElementById('f-category')?.value || '';
@@ -1460,29 +1491,58 @@ function renderProspects() {
     return true;
   });
 
+  // Sort
+  list.sort((a, b) => {
+    let av = (a[_sortCol] || '').toString().toLowerCase();
+    let bv = (b[_sortCol] || '').toString().toLowerCase();
+    if (av < bv) return -1 * _sortDir;
+    if (av > bv) return  1 * _sortDir;
+    return 0;
+  });
+
   document.getElementById('prospect-count-badge').textContent = list.length;
   document.getElementById('prospect-total-label').textContent = DB.prospects.length;
   document.getElementById('sb-prospect-cnt').textContent = DB.prospects.length;
+
+  const statuses   = ['', ...DB.statuses];
+  const categories = ['', ...DB.categories];
 
   const tb = document.getElementById('prospects-tbody');
   if (!list.length) {
     tb.innerHTML = `<tr><td colspan="10"><div class="empty"><div class="ei">🎯</div><p>No prospects match your filters.</p></div></td></tr>`;
     return;
   }
-  tb.innerHTML = list.map((p, i) => {
+
+  tb.innerHTML = list.map((p) => {
     const realIdx = DB.prospects.indexOf(p);
+    const statusOpts = statuses.map(s => `<option value="${s}" ${p.status===s?'selected':''}>${s||'— status —'}</option>`).join('');
+    const catOpts    = categories.map(c => `<option value="${c}" ${p.category===c?'selected':''}>${c||'— category —'}</option>`).join('');
+    const goodOpts   = `<option value="" ${!p.good?'selected':''}>—</option><option value="yes" ${p.good==='yes'?'selected':''}>⭐ Yes</option><option value="no" ${p.good==='no'?'selected':''}>No</option>`;
+
     return `<tr>
       <td><strong>${p.name}</strong></td>
-      <td>${catBadge(p.category)}</td>
-      <td>${statusBadge(p.status)}</td>
+      <td>
+        <select onchange="inlineUpdateProspect(${realIdx},'category',this.value)" style="font-size:11px;padding:3px 6px;background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:6px;max-width:130px">
+          ${catOpts}
+        </select>
+      </td>
+      <td>
+        <select onchange="inlineUpdateProspect(${realIdx},'status',this.value)" style="font-size:11px;padding:3px 6px;background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:6px;max-width:160px">
+          ${statusOpts}
+        </select>
+      </td>
       <td>${p.comms ? `<span class="badge b-blue">${p.comms}</span>` : '—'}</td>
       <td>${p.teamRef ? `<span class="badge b-teal">${p.teamRef}</span>` : '—'}</td>
-      <td class="${p.good==='yes'?'good-prospect-yes':'good-prospect-no'}">${p.good==='yes'?'⭐ Yes':'—'}</td>
+      <td>
+        <select onchange="inlineUpdateProspect(${realIdx},'good',this.value)" style="font-size:11px;padding:3px 6px;background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:6px">
+          ${goodOpts}
+        </select>
+      </td>
       <td style="font-size:12px">${p.email||'—'}</td>
       <td style="font-size:12px">${p.phone||'—'}</td>
       <td style="font-size:11px;color:var(--muted)">${p.dateAdded||'—'}</td>
-      <td style="display:flex;gap:5px;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-xs" onclick="openEditProspect(${realIdx})">Edit</button>
+      <td style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
+        <button class="btn btn-gold btn-xs" onclick="openEditProspect(${realIdx})">✏ Edit</button>
         ${p.email ? `<a href="mailto:${p.email}?subject=BRYC Volunteer Opportunity PY27&body=Hi ${p.name.split(' ')[0]},%0D%0A%0D%0A${encodeURIComponent(p.customMsg||'We\'d love to connect with you about volunteering with BRYC this program year!')}" class="btn btn-ghost btn-xs" style="text-decoration:none">✉</a>` : ''}
       </td>
     </tr>`;
