@@ -237,7 +237,8 @@ select.g-empty{background:var(--card);color:var(--ink);}
 .info-box p{font-size:13px;color:var(--muted);line-height:1.6;}
 
 /* ══ DIET / ROLE SUMMARY GRID ═══════════════════ */
-.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:18px;}.summary-card{background:rgba(0,0,0,.18);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:18px;}
+.summary-card{background:rgba(0,0,0,.18);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
 .summary-card-name{font-size:12px;color:var(--muted);margin-bottom:5px;}
 .summary-card-num{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1;color:#ed125f;}
 .summary-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:7px;}
@@ -1439,30 +1440,38 @@ function renderDashboard() {
   document.getElementById('d-responses').textContent = DB.formResponses.interest.length + DB.formResponses.applications.length;
   document.getElementById('sb-prospect-cnt').textContent = p.length;
 
-  // Recent 5
-  const recent = [...p].reverse().slice(0, 5);
-  const tb = document.getElementById('dash-recent-tbody');
-  tb.innerHTML = recent.length ? recent.map(r => `
-    <tr>
-      <td><strong>${r.name}</strong></td>
-      <td>${catBadge(r.category)}</td>
-      <td>${statusBadge(r.status)}</td>
-      <td>${r.good === 'yes' ? '⭐' : '—'}</td>
-      <td>${r.dateAdded || '—'}</td>
-    </tr>`).join('') : `<tr><td colspan="5"><div class="empty"><div class="ei">🎯</div><p>No prospects yet.</p></div></td></tr>`;
-
   // Status breakdown
   const statusCounts = {};
   p.forEach(x => { if(x.status) statusCounts[x.status] = (statusCounts[x.status]||0)+1; });
   const entries = Object.entries(statusCounts).sort((a,b)=>b[1]-a[1]);
   const maxS = Math.max(...Object.values(statusCounts), 1);
   const sg = document.getElementById('dash-status-grid');
-  sg.innerHTML = entries.length ? `<div class="summary-grid">${entries.map(([s,n]) =>
-    `<div class="summary-card">
-      <div class="summary-card-name">${s}</div>
-      <div class="summary-card-num" style="color:var(--gold)">${n}</div>
-      <div class="summary-bar"><div class="summary-bar-fill" style="width:${Math.round(n/maxS*100)}%;background:var(--gold)"></div></div>
-    </div>`).join('')}</div>` : `<div class="empty"><div class="ei">📈</div><p>Add prospects to see breakdown.</p></div>`;
+  const statusColors = {
+    'Invited to Friendraiser':    '#e74c3c',
+    'Committed':                  '#2ecc71',
+    'Onboarding - Need BG Check': '#88ded0',
+    'Late Intake - ask again':    '#f0c917',
+    'Final Email Sent':           '#ffa550',
+    'RSVPed to Training':         '#b478ff',
+    'RSVP July Bingo':            '#88c4ff',
+    'Unavailable':                '#e74c3c',
+    'Interested!':                '#f0c917',
+    'Zoom interest!':             '#aaa',
+    'Zoom attended':              '#aaa',
+    'Reask':                      '#aaa',
+    'Attended Bingo - Convos in Progress': '#2ecc71',
+    'Final Text Sent':            '#ffa550',
+    'Convos in Progress':         '#ccc',
+    'Friendraiser Guest':         '#bbb',
+    'Friendraiser RSVP':          '#aaa',
+  };
+  sg.innerHTML = entries.length ? `<div class="summary-grid">${entries.map(([s,n]) => {
+    const col = statusColors[s] || 'var(--gold)';
+    return `<div class="summary-card" style="border-left:3px solid ${col}">
+      <div class="summary-card-name" style="color:${col};font-size:12px">${s}</div>
+      <div class="summary-card-num" style="color:${col}">${n}</div>
+      <div class="summary-bar"><div class="summary-bar-fill" style="width:${Math.round(n/maxS*100)}%;background:${col}"></div></div>
+    </div>`;}).join('')}</div>` : `<div class="empty"><div class="ei">📈</div><p>Add prospects to see breakdown.</p></div>`;
 }
 
 // ══ PROSPECTS ════════════════════════════════════
