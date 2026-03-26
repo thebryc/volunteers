@@ -237,8 +237,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
 .info-box p{font-size:13px;color:var(--muted);line-height:1.6;}
 
 /* ══ DIET / ROLE SUMMARY GRID ═══════════════════ */
-.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;padding:18px;}
-.summary-card{background:rgba(0,0,0,.18);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:18px;}.summary-card{background:rgba(0,0,0,.18);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
 .summary-card-name{font-size:12px;color:var(--muted);margin-bottom:5px;}
 .summary-card-num{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1;color:#ed125f;}
 .summary-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:7px;}
@@ -447,20 +446,6 @@ select.g-empty{background:var(--card);color:var(--ink);}
     <div class="stat"><div class="stat-lbl">Good Prospects</div><div class="stat-num gold" id="d-good">0</div><div class="stat-detail">flagged ⭐</div></div>
     <div class="stat"><div class="stat-lbl">Events</div><div class="stat-num green" id="d-events">1</div><div class="stat-detail">this program year</div></div>
     <div class="stat"><div class="stat-lbl">Form Responses</div><div class="stat-num white" id="d-responses">0</div><div class="stat-detail">volunteer + intake</div></div>
-  </div>
-
-  <!-- Recent Activity -->
-  <div class="block">
-    <div class="block-hdr">
-      <div class="block-title">📌 Recent Prospects Added</div>
-      <button class="btn btn-gold btn-sm" onclick="goPage('prospects',document.querySelector('.sb-item:nth-child(2))'))">View All →</button>
-    </div>
-    <div class="tbl-wrap">
-      <table>
-        <thead><tr><th>Name</th><th>Category</th><th>Status</th><th>Good?</th><th>Added</th></tr></thead>
-        <tbody id="dash-recent-tbody"><tr><td colspan="5"><div class="empty"><div class="ei">🎯</div><p>No prospects yet. Add your first one!</p></div></td></tr></tbody>
-      </table>
-    </div>
   </div>
 
   <!-- Status Breakdown -->
