@@ -2099,8 +2099,10 @@ function submitVolunteerForm() {
   else DB.formResponses.applications.push(entry);
 
   // Also add to prospects pipeline
-  DB.prospects.push({name:entry.name, fname, lname:document.getElementById('vol-lname').value.trim(), email, phone:entry.phone, category:'Interest Form', status:'Interested!', teamRef:'', comms:'Interest Follow-up', good:'yes', dateAdded:entry.date, notes:entry.interest||entry.why||''});
-
+ const newP = {name:entry.name, fname, lname:document.getElementById('vol-lname').value.trim(), email, phone:entry.phone, category:'Interest Form', status:'Interested!', teamRef:'', comms:'Interest Follow-up', good:'yes', dateAdded:entry.date, notes:entry.interest||entry.why||''};
+  DB.prospects.push(newP);
+  saveDB();
+  gsWriteProspectToSheet(newP, 'add').catch(() => {});
   saveDB();
   document.getElementById('vol-form-wrap').style.display = 'none';
   document.getElementById('vol-success').classList.add('show');
