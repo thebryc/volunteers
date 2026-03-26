@@ -183,6 +183,32 @@ select option{background:#4a1530;color:white;}
 .b-red{background:rgba(231,76,60,.14);color:#e74c3c;}
 .b-blue{background:rgba(100,180,255,.14);color:#88c4ff;}
 .b-teal{background:rgba(100,220,200,.14);color:#88ded0;}
+/* Inline prospect dropdown colors */
+.sel-status,.sel-category,.sel-good{font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:6px;max-width:160px;font-weight:600;}
+.sel-good{max-width:90px;}
+.sel-category{max-width:130px;}
+/* Status colors */
+select.s-invited    {background:rgba(231,76,60,.2);color:#e74c3c;border-color:rgba(231,76,60,.4);}
+select.s-committed  {background:rgba(39,174,96,.2);color:#2ecc71;border-color:rgba(39,174,96,.4);}
+select.s-onboarding {background:rgba(100,220,200,.2);color:#88ded0;border-color:rgba(100,220,200,.4);}
+select.s-late       {background:rgba(240,201,23,.2);color:#f0c917;border-color:rgba(240,201,23,.4);}
+select.s-finalemail {background:rgba(255,165,80,.2);color:#ffa550;border-color:rgba(255,165,80,.4);}
+select.s-rsvptrain  {background:rgba(180,120,255,.2);color:#b478ff;border-color:rgba(180,120,255,.4);}
+select.s-rsvpbingo  {background:rgba(100,180,255,.2);color:#88c4ff;border-color:rgba(100,180,255,.4);}
+select.s-unavail    {background:rgba(231,76,60,.15);color:#e74c3c;border-color:rgba(231,76,60,.35);}
+select.s-interested {background:rgba(240,201,23,.2);color:#f0c917;border-color:rgba(240,201,23,.4);}
+select.s-zoom       {background:rgba(160,160,160,.2);color:#aaa;border-color:rgba(160,160,160,.3);}
+select.s-reask      {background:rgba(160,160,160,.15);color:#aaa;border-color:rgba(160,160,160,.25);}
+select.s-bingo      {background:rgba(39,174,96,.25);color:#2ecc71;border-color:rgba(39,174,96,.5);}
+select.s-finaltext  {background:rgba(255,165,80,.18);color:#ffa550;border-color:rgba(255,165,80,.35);}
+select.s-convos     {background:rgba(160,160,160,.15);color:#ccc;border-color:rgba(160,160,160,.25);}
+select.s-fguest     {background:rgba(160,160,160,.18);color:#bbb;border-color:rgba(160,160,160,.3);}
+select.s-frsvp      {background:rgba(160,160,160,.15);color:#aaa;border-color:rgba(160,160,160,.25);}
+select.s-default    {background:var(--card);color:var(--ink);}
+/* Good prospect colors */
+select.g-yes{background:rgba(39,174,96,.2);color:#2ecc71;border-color:rgba(39,174,96,.4);}
+select.g-no {background:var(--card);color:var(--muted);}
+select.g-empty{background:var(--card);color:var(--ink);}
 .b-purple{background:rgba(180,100,255,.14);color:#c488ff;}
 .b-orange{background:rgba(255,160,50,.14);color:#ffb060;}
 
@@ -1469,6 +1495,29 @@ function sortProspects(col) {
   renderProspects();
 }
 
+function statusSelectClass(s) {
+  const m = {
+    'Invited to Friendraiser':'s-invited',
+    'Committed':'s-committed',
+    'Onboarding - Need BG Check':'s-onboarding',
+    'Late Intake - ask again':'s-late',
+    'Final Email Sent':'s-finalemail',
+    'RSVPed to Training':'s-rsvptrain',
+    'RSVP July Bingo':'s-rsvpbingo',
+    'Unavailable':'s-unavail',
+    'Interested!':'s-interested',
+    'Zoom interest!':'s-zoom',
+    'Zoom attended':'s-zoom',
+    'Reask':'s-reask',
+    'Attended Bingo - Convos in Progress':'s-bingo',
+    'Final Text Sent':'s-finaltext',
+    'Convos in Progress':'s-convos',
+    'Friendraiser Guest':'s-fguest',
+    'Friendraiser RSVP':'s-frsvp',
+  };
+  return m[s] || 's-default';
+}
+
 function inlineUpdateProspect(realIdx, field, value) {
   DB.prospects[realIdx][field] = value;
   const updated = DB.prospects[realIdx];
@@ -1519,22 +1568,25 @@ function renderProspects() {
     const catOpts    = categories.map(c => `<option value="${c}" ${p.category===c?'selected':''}>${c||'— category —'}</option>`).join('');
     const goodOpts   = `<option value="" ${!p.good?'selected':''}>—</option><option value="yes" ${p.good==='yes'?'selected':''}>⭐ Yes</option><option value="no" ${p.good==='no'?'selected':''}>No</option>`;
 
+    const statCls = statusSelectClass(p.status);
+    const goodCls = p.good === 'yes' ? 'g-yes' : p.good === 'no' ? 'g-no' : 'g-empty';
+    const gmailUrl = p.email ? `https://mail.google.com/mail/?authuser=angela@thebryc.org&view=cm&fs=1&to=${encodeURIComponent(p.email)}&su=${encodeURIComponent('BRYC Volunteer Opportunity PY27')}&body=${encodeURIComponent('Hi ' + p.name.split(' ')[0] + ',\n\n' + (p.customMsg || "We\'d love to connect with you about volunteering with BRYC this program year!"))}` : '';
     return `<tr>
       <td><strong>${p.name}</strong></td>
       <td>
-        <select onchange="inlineUpdateProspect(${realIdx},'category',this.value)" style="font-size:11px;padding:3px 6px;background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:6px;max-width:130px">
+        <select class="sel-category s-default" onchange="inlineUpdateProspect(${realIdx},'category',this.value)">
           ${catOpts}
         </select>
       </td>
       <td>
-        <select onchange="inlineUpdateProspect(${realIdx},'status',this.value)" style="font-size:11px;padding:3px 6px;background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:6px;max-width:160px">
+        <select class="sel-status ${statCls}" onchange="inlineUpdateProspect(${realIdx},'status',this.value); this.className='sel-status '+statusSelectClass(this.value);">
           ${statusOpts}
         </select>
       </td>
       <td>${p.comms ? `<span class="badge b-blue">${p.comms}</span>` : '—'}</td>
       <td>${p.teamRef ? `<span class="badge b-teal">${p.teamRef}</span>` : '—'}</td>
       <td>
-        <select onchange="inlineUpdateProspect(${realIdx},'good',this.value)" style="font-size:11px;padding:3px 6px;background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:6px">
+        <select class="sel-good ${goodCls}" onchange="inlineUpdateProspect(${realIdx},'good',this.value); this.className='sel-good '+(this.value==='yes'?'g-yes':this.value==='no'?'g-no':'g-empty');">
           ${goodOpts}
         </select>
       </td>
@@ -1543,7 +1595,7 @@ function renderProspects() {
       <td style="font-size:11px;color:var(--muted)">${p.dateAdded||'—'}</td>
       <td style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
         <button class="btn btn-gold btn-xs" onclick="openEditProspect(${realIdx})">✏ Edit</button>
-        ${p.email ? `<a href="mailto:${p.email}?subject=BRYC Volunteer Opportunity PY27&body=Hi ${p.name.split(' ')[0]},%0D%0A%0D%0A${encodeURIComponent(p.customMsg||'We\'d love to connect with you about volunteering with BRYC this program year!')}" class="btn btn-ghost btn-xs" style="text-decoration:none">✉</a>` : ''}
+        ${p.email ? `<a href="${gmailUrl}" target="_blank" class="btn btn-ghost btn-xs" style="text-decoration:none" title="Email ${p.name}">✉ Email</a>` : ''}
       </td>
     </tr>`;
   }).join('');
