@@ -782,58 +782,134 @@ select.g-empty{background:var(--card);color:var(--ink);}
   </div>
 
   <div class="pub-wrap" id="vol-form-wrap">
-    <div class="pub-card">
-      <div class="pub-card-title">👤 I want to…</div>
+
+    <div class="pub-card" id="vol-step-choose">
+      <div class="pub-card-title">👋 What would you like to do?</div>
       <div class="radio-list">
-        <label class="ri"><input type="radio" name="vol-type" value="interest" onchange="setVolType('interest')" checked> Express interest in volunteering</label>
-        <label class="ri"><input type="radio" name="vol-type" value="apply" onchange="setVolType('apply')"> Apply as a Mentor or Tutor</label>
+        <label class="ri"><input type="radio" name="vol-path" value="interest" onchange="setVolPath('interest')" checked> 📋 Submit a volunteer interest form</label>
+        <label class="ri"><input type="radio" name="vol-path" value="intake" onchange="setVolPath('intake')"> ✅ Complete the volunteer intake form (I am ready to become a Mentor/Tutor)!</label>
+        <label class="ri"><input type="radio" name="vol-path" value="referral" onchange="setVolPath('referral')"> 🤝 Refer a volunteer prospect</label>
       </div>
     </div>
 
-    <div class="pub-card">
+    <div class="pub-card" id="vol-core-fields">
       <div class="pub-card-title">👤 Your Info</div>
       <div class="frow">
         <div class="fg"><label class="fl">First Name <span class="req">*</span></label><input type="text" id="vol-fname" placeholder="First"></div>
         <div class="fg"><label class="fl">Last Name <span class="req">*</span></label><input type="text" id="vol-lname" placeholder="Last"></div>
       </div>
+      <div class="fg"><label class="fl">Preferred Name</label><input type="text" id="vol-preferred" placeholder="What should we call you?"></div>
       <div class="frow">
         <div class="fg"><label class="fl">Email <span class="req">*</span></label><input type="email" id="vol-email" placeholder="email@example.com"></div>
-        <div class="fg"><label class="fl">Phone</label><input type="tel" id="vol-phone" placeholder="(225) 555-0100"></div>
+        <div class="fg"><label class="fl">Phone <span class="req">*</span></label><input type="tel" id="vol-phone" placeholder="(225) 555-0100"></div>
       </div>
-      <div class="fg"><label class="fl">Employer / Organization</label><input type="text" id="vol-org" placeholder="Where do you work or go to school?"></div>
     </div>
 
-    <!-- Interest Section -->
     <div class="pub-card" id="vol-interest-section">
-      <div class="pub-card-title">💡 Your Interest</div>
+      <div class="pub-card-title">📋 Interest Form</div>
+      <div class="fg">
+        <label class="fl">Have you volunteered at BRYC before? <span class="req">*</span></label>
+        <div class="radio-list">
+          <label class="ri"><input type="radio" name="vol-prior" value="Yes (one year)"> Yes (one year)</label>
+          <label class="ri"><input type="radio" name="vol-prior" value="Yes (two or more years)"> Yes (two or more years)</label>
+          <label class="ri"><input type="radio" name="vol-prior" value="First time"> This would be my first time volunteering at BRYC.</label>
+        </div>
+      </div>
       <div class="fg">
         <label class="fl">How did you hear about BRYC?</label>
         <select id="vol-how">
           <option value="">Select one…</option>
-          <option>Friend/Colleague Referral</option>
+          <option>Friend / Colleague Referral</option>
           <option>Social Media</option>
           <option>BRYC Event</option>
           <option>Organization Partner</option>
           <option>Other</option>
         </select>
       </div>
-      <div class="fg"><label class="fl">What interests you about volunteering?</label><textarea id="vol-interest-text" rows="3" placeholder="Tell us a bit about yourself…"></textarea></div>
     </div>
 
-    <!-- Application Section -->
-    <div class="pub-card" id="vol-apply-section" style="display:none">
-      <div class="pub-card-title">📝 Application</div>
+    <div class="pub-card" id="vol-intake-section" style="display:none">
+      <div class="pub-card-title">📝 Intake Form</div>
       <div class="fg">
-        <label class="fl">Role Applying For <span class="req">*</span></label>
+        <label class="fl">Have you volunteered at BRYC before? <span class="req">*</span></label>
         <div class="radio-list">
-          <label class="ri"><input type="radio" name="vol-role" value="Mentor"> Mentor (weekly sessions, relationship-based)</label>
-          <label class="ri"><input type="radio" name="vol-role" value="Tutor"> Tutor (academic support focus)</label>
-          <label class="ri"><input type="radio" name="vol-role" value="Either"> Either — open to both</label>
+          <label class="ri"><input type="radio" name="vol-prior-intake" value="Yes (one year)"> Yes (one year)</label>
+          <label class="ri"><input type="radio" name="vol-prior-intake" value="Yes (two or more years)"> Yes (two or more years)</label>
+          <label class="ri"><input type="radio" name="vol-prior-intake" value="First time"> This would be my first time volunteering at BRYC.</label>
         </div>
       </div>
-      <div class="fg"><label class="fl">Availability</label><input type="text" id="vol-avail" placeholder="e.g. Weekday evenings, Saturday mornings"></div>
-      <div class="fg"><label class="fl">Why do you want to be a BRYC volunteer?</label><textarea id="vol-why" rows="3" placeholder="Share your motivation…"></textarea></div>
-      <div class="fg"><label class="fl">Any relevant experience?</label><textarea id="vol-exp" rows="2" placeholder="Teaching, coaching, mentoring, etc."></textarea></div>
+      <div class="fg">
+        <label class="fl">Are you a former BRYC Fellow?</label>
+        <div class="radio-list">
+          <label class="ri"><input type="radio" name="vol-fellow" value="Yes"> Yes</label>
+          <label class="ri"><input type="radio" name="vol-fellow" value="No"> No</label>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Where do you work or go to school?</label><input type="text" id="vol-org" placeholder="Employer / School"></div>
+      <div class="fg"><label class="fl">Job Title or School + Major</label><input type="text" id="vol-title" placeholder="e.g. Software Engineer / Biology Junior"></div>
+      <div class="fg">
+        <label class="fl">First-choice volunteer role <span class="req">*</span></label>
+        <div class="radio-list">
+          <label class="ri"><input type="radio" name="vol-role1" value="Mentor" onchange="showRoleFields('Mentor')"> Mentor (weekly sessions, relationship-based)</label>
+          <label class="ri"><input type="radio" name="vol-role1" value="Tutor" onchange="showRoleFields('Tutor')"> Tutor (academic support focus)</label>
+          <label class="ri"><input type="radio" name="vol-role1" value="Either" onchange="showRoleFields('Either')"> Either — open to both</label>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Second-choice volunteer role</label>
+        <div class="radio-list">
+          <label class="ri"><input type="radio" name="vol-role2" value="Mentor"> Mentor</label>
+          <label class="ri"><input type="radio" name="vol-role2" value="Tutor"> Tutor</label>
+          <label class="ri"><input type="radio" name="vol-role2" value="No preference"> No preference</label>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Campus preference</label>
+        <select id="vol-campus">
+          <option value="">Select one…</option>
+          <option>No preference</option>
+          <option>McKinley Middle</option>
+          <option>Scotlandville Middle</option>
+          <option>Westdale Middle</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Available day(s)</label><input type="text" id="vol-avail" placeholder="e.g. Weekday evenings, Saturday mornings"></div>
+      <div class="fg" id="vol-tutor-subjects-wrap" style="display:none"><label class="fl">Subjects comfortable tutoring</label><input type="text" id="vol-tutor-subjects" placeholder="e.g. Math, Reading, Science"></div>
+      <div class="fg" id="vol-mentor-exp-wrap" style="display:none"><label class="fl">Post-secondary familiarity (Senior Mentor)</label><textarea id="vol-mentor-exp" rows="2" placeholder="College experience, career field, etc."></textarea></div>
+      <div class="fg"><label class="fl">Scheduling notes</label><textarea id="vol-sched-notes" rows="2" placeholder="Any constraints or preferences…"></textarea></div>
+      <div class="fg">
+        <label class="fl">How did you hear about BRYC?</label>
+        <select id="vol-how-intake">
+          <option value="">Select one…</option>
+          <option>Friend / Colleague Referral</option>
+          <option>Social Media</option>
+          <option>BRYC Event</option>
+          <option>Organization Partner</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Referral name + contact (optional)</label><input type="text" id="vol-referral-info" placeholder="Name and email of someone who'd make a great volunteer"></div>
+    </div>
+
+    <div class="pub-card" id="vol-referral-section" style="display:none">
+      <div class="pub-card-title">🤝 Your Info</div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Your First Name <span class="req">*</span></label><input type="text" id="ref-your-fname" placeholder="First"></div>
+        <div class="fg"><label class="fl">Your Last Name <span class="req">*</span></label><input type="text" id="ref-your-lname" placeholder="Last"></div>
+      </div>
+      <div class="fg"><label class="fl">Your Email <span class="req">*</span></label><input type="email" id="ref-your-email" placeholder="email@example.com"></div>
+      <div class="pub-card-title" style="margin-top:16px">👤 Referral Info</div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Referral First Name <span class="req">*</span></label><input type="text" id="ref-fname" placeholder="First"></div>
+        <div class="fg"><label class="fl">Referral Last Name <span class="req">*</span></label><input type="text" id="ref-lname" placeholder="Last"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Referral Email</label><input type="email" id="ref-email" placeholder="email@example.com"></div>
+        <div class="fg"><label class="fl">Referral Phone</label><input type="tel" id="ref-phone" placeholder="(225) 555-0100"></div>
+      </div>
+      <div class="fg"><label class="fl">Organization (if relevant)</label><input type="text" id="ref-org" placeholder="Where do they work or go to school?"></div>
+      <div class="fg"><label class="fl">Why would this person be a strong fit for BRYC?</label><textarea id="ref-why" rows="3" placeholder="Tell us about them…"></textarea></div>
     </div>
 
     <button class="pub-submit" onclick="submitVolunteerForm()">SUBMIT →</button>
@@ -842,7 +918,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
   <div class="pub-success" id="vol-success">
     <div class="pub-success-icon">🙌</div>
     <h2>Thank You!</h2>
-    <p>We've received your information and a member of the BRYC team will be in touch soon.<br><br>Questions? <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="14757a7371787554607c7176666d773a7b6673">[email&#160;protected]</a></strong></p>
+    <p id="vol-success-msg">We've received your information and a member of the BRYC team will be in touch soon.<br><br>Questions? <strong>angela@thebryc.org</strong></p>
     <button class="btn btn-gold" style="margin-top:24px" onclick="resetVolForm()">Submit Another Response</button>
   </div>
 
@@ -2066,44 +2142,130 @@ function submitRSVP() {
 }
 
 function resetVolForm() {
-  document.getElementById('vol-form-wrap').style.display = '';
   document.getElementById('vol-success').classList.remove('show');
+  document.getElementById('vol-form-wrap').style.display = '';
+  document.querySelectorAll('#vol-form-wrap input[type="text"], #vol-form-wrap input[type="email"], #vol-form-wrap input[type="tel"], #vol-form-wrap textarea, #vol-form-wrap select').forEach(el => el.value = '');
+  document.querySelectorAll('#vol-form-wrap input[type="radio"]').forEach(el => el.checked = false);
+  document.querySelector('input[name="vol-path"][value="interest"]').checked = true;
+  setVolPath('interest');
+}
+
+function showRoleFields(role) {
+  document.getElementById('vol-tutor-subjects-wrap').style.display = role === 'Tutor' ? '' : 'none';
+  document.getElementById('vol-mentor-exp-wrap').style.display = role === 'Mentor' ? '' : 'none';
 }
 
 // ══ VOLUNTEER FORM ═══════════════════════════════
-function setVolType(type) {
-  document.getElementById('vol-interest-section').style.display = type==='interest'?'':'none';
-  document.getElementById('vol-apply-section').style.display   = type==='apply'?'':'none';
+function setVolPath(path) {
+  document.getElementById('vol-core-fields').style.display = path === 'referral' ? 'none' : '';
+  document.getElementById('vol-interest-section').style.display = path === 'interest' ? '' : 'none';
+  document.getElementById('vol-intake-section').style.display = path === 'intake' ? '' : 'none';
+  document.getElementById('vol-referral-section').style.display = path === 'referral' ? '' : 'none';
 }
 
-function submitVolunteerForm() {
-  const fname = document.getElementById('vol-fname').value.trim();
-  const email = document.getElementById('vol-email').value.trim();
-  const type  = document.querySelector('input[name="vol-type"]:checked')?.value;
-  if (!fname||!email) { alert('Please enter your name and email.'); return; }
+async function submitVolunteerForm() {
+  const path = document.querySelector('input[name="vol-path"]:checked')?.value || 'interest';
+  const cfg  = getSheetConfig();
 
-  const entry = {
-    name:`${fname} ${document.getElementById('vol-lname').value.trim()}`.trim(),
-    email, phone: document.getElementById('vol-phone').value.trim(),
-    org: document.getElementById('vol-org').value.trim(),
-    type, date: new Date().toLocaleDateString(),
-    how: document.getElementById('vol-how')?.value,
-    interest: document.getElementById('vol-interest-text')?.value.trim(),
-    roleApplied: document.querySelector('input[name="vol-role"]:checked')?.value,
-    avail: document.getElementById('vol-avail')?.value.trim(),
-    why: document.getElementById('vol-why')?.value.trim(),
-    exp: document.getElementById('vol-exp')?.value.trim()
-  };
+  if (path === 'referral') {
+    const yourFname = document.getElementById('ref-your-fname').value.trim();
+    const yourEmail = document.getElementById('ref-your-email').value.trim();
+    const refFname  = document.getElementById('ref-fname').value.trim();
+    const refLname  = document.getElementById('ref-lname').value.trim();
+    if (!yourFname || !yourEmail || !refFname) { alert('Please fill in all required fields.'); return; }
+    const row = [
+      new Date().toLocaleDateString(),
+      yourFname + ' ' + document.getElementById('ref-your-lname').value.trim(),
+      yourEmail, refFname, refLname,
+      document.getElementById('ref-email').value.trim(),
+      document.getElementById('ref-phone').value.trim(),
+      document.getElementById('ref-org').value.trim(),
+      document.getElementById('ref-why').value.trim()
+    ];
+    await gsAppendRowToTab(cfg, 'Referral Submission', row);
+    const refProspect = {
+      name: `${refFname} ${refLname}`.trim(), fname: refFname, lname: refLname,
+      email: document.getElementById('ref-email').value.trim(),
+      phone: document.getElementById('ref-phone').value.trim(),
+      category: 'Referral', status: 'Interested!',
+      teamRef: yourFname + ' ' + document.getElementById('ref-your-lname').value.trim(),
+      good: 'yes', dateAdded: new Date().toLocaleDateString(),
+      notes: document.getElementById('ref-why').value.trim(), comms: '', customMsg: ''
+    };
+    DB.prospects.push(refProspect);
+    saveDB();
+    gsWriteProspectToSheet(refProspect, 'add').catch(() => {});
+    document.getElementById('vol-success-msg').innerHTML = `We've passed along your referral — thank you!<br><br>Questions? <strong>angela@thebryc.org</strong>`;
 
-  if (type==='interest') DB.formResponses.interest.push(entry);
-  else DB.formResponses.applications.push(entry);
+  } else if (path === 'interest') {
+    const fname = document.getElementById('vol-fname').value.trim();
+    const email = document.getElementById('vol-email').value.trim();
+    if (!fname || !email) { alert('Please enter your name and email.'); return; }
+    const prior = document.querySelector('input[name="vol-prior"]:checked')?.value || '';
+    const how   = document.getElementById('vol-how').value;
+    const row = [
+      new Date().toLocaleDateString(), fname,
+      document.getElementById('vol-lname').value.trim(),
+      document.getElementById('vol-preferred').value.trim(),
+      email, document.getElementById('vol-phone').value.trim(),
+      prior, how
+    ];
+    await gsAppendRowToTab(cfg, 'Interest Form', row);
+    const p = {
+      name: `${fname} ${document.getElementById('vol-lname').value.trim()}`.trim(),
+      fname, lname: document.getElementById('vol-lname').value.trim(),
+      email, phone: document.getElementById('vol-phone').value.trim(),
+      category: 'Interest Form', status: 'Interested!', teamRef: '',
+      comms: 'Interest Follow-up', good: 'yes',
+      dateAdded: new Date().toLocaleDateString(),
+      notes: `Prior volunteer: ${prior} | Heard: ${how}`, customMsg: ''
+    };
+    DB.prospects.push(p);
+    saveDB();
+    gsWriteProspectToSheet(p, 'add').catch(() => {});
+    document.getElementById('vol-success-msg').innerHTML = `Thanks for your interest! We'll be in touch soon.<br><br>Questions? <strong>angela@thebryc.org</strong>`;
 
-  // Also add to prospects pipeline
- const newP = {name:entry.name, fname, lname:document.getElementById('vol-lname').value.trim(), email, phone:entry.phone, category:'Interest Form', status:'Interested!', teamRef:'', comms:'Interest Follow-up', good:'yes', dateAdded:entry.date, notes:entry.interest||entry.why||''};
-  DB.prospects.push(newP);
-  saveDB();
-  gsWriteProspectToSheet(newP, 'add').catch(() => {});
-  saveDB();
+  } else if (path === 'intake') {
+    const fname = document.getElementById('vol-fname').value.trim();
+    const email = document.getElementById('vol-email').value.trim();
+    const role1 = document.querySelector('input[name="vol-role1"]:checked')?.value || '';
+    if (!fname || !email || !role1) { alert('Please fill in your name, email, and first-choice role.'); return; }
+    const prior  = document.querySelector('input[name="vol-prior-intake"]:checked')?.value || '';
+    const fellow = document.querySelector('input[name="vol-fellow"]:checked')?.value || '';
+    const role2  = document.querySelector('input[name="vol-role2"]:checked')?.value || '';
+    const row = [
+      new Date().toLocaleDateString(), fname,
+      document.getElementById('vol-lname').value.trim(),
+      document.getElementById('vol-preferred').value.trim(),
+      email, document.getElementById('vol-phone').value.trim(),
+      prior, fellow,
+      document.getElementById('vol-org').value.trim(),
+      document.getElementById('vol-title').value.trim(),
+      role1, role2,
+      document.getElementById('vol-campus').value,
+      document.getElementById('vol-avail').value.trim(),
+      document.getElementById('vol-tutor-subjects').value.trim(),
+      document.getElementById('vol-mentor-exp').value.trim(),
+      document.getElementById('vol-sched-notes').value.trim(),
+      document.getElementById('vol-how-intake').value,
+      document.getElementById('vol-referral-info').value.trim()
+    ];
+    await gsAppendRowToTab(cfg, 'Intake Form', row);
+    const p = {
+      name: `${fname} ${document.getElementById('vol-lname').value.trim()}`.trim(),
+      fname, lname: document.getElementById('vol-lname').value.trim(),
+      email, phone: document.getElementById('vol-phone').value.trim(),
+      category: 'Intake Form', status: 'Interested!', teamRef: '',
+      comms: 'Intake Welcome', good: 'yes',
+      dateAdded: new Date().toLocaleDateString(),
+      notes: `Role: ${role1} | Prior: ${prior}`, customMsg: ''
+    };
+    DB.prospects.push(p);
+    saveDB();
+    gsWriteProspectToSheet(p, 'add').catch(() => {});
+    document.getElementById('vol-success-msg').innerHTML = `Your intake form has been submitted! We'll follow up soon.<br><br>Questions? <strong>angela@thebryc.org</strong>`;
+  }
+
   document.getElementById('vol-form-wrap').style.display = 'none';
   document.getElementById('vol-success').classList.add('show');
 }
@@ -2637,6 +2799,24 @@ function gsRequestToken(clientId) {
     });
     _gisClient.requestAccessToken({ prompt: 'consent' });
   });
+}
+
+// ── Append a row to a specific sheet tab ──
+async function gsAppendRowToTab(cfg, tabName, rowData) {
+  if (!cfg.clientId || !cfg.sheetId) return;
+  let token = gsGetToken();
+  if (!token) {
+    try { token = await gsRequestToken(cfg.clientId); gsSetToken(token); }
+    catch(e) { console.warn('Sheet append auth failed:', e); return; }
+  }
+  try {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${encodeURIComponent(tabName)}!A1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+    await fetch(url, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ values: [rowData] })
+    });
+  } catch(e) { console.warn('Sheet append failed:', e); }
 }
 
 // ── Fetch sheet rows via Sheets API ──
