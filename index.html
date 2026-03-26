@@ -850,36 +850,42 @@ select.g-empty{background:var(--card);color:var(--ink);}
       <div class="fg">
         <label class="fl">First-choice volunteer role <span class="req">*</span></label>
         <div class="radio-list">
-          <label class="ri"><input type="radio" name="vol-role1" value="Mentor" onchange="showRoleFields('Research Mentor')"> Research Mentor (8th Grade) — Support 2-4 Fellows weekly, working on a year-long project.</label>
-          <label class="ri"><input type="radio" name="vol-role1" value="Mentor" onchange="showRoleFields('Learning Mentor')"> Learning Mentor (9th & 10th Grade) – Support 2–4 Fellows weekly, working to master study skills.</label>
-          <label class="ri"><input type="radio" name="vol-role1" value="Mentor" onchange="showRoleFields('Upperclassmen Mentor')"> Upperclassmen Mentor (11th Grade) – Support 2–4 Fellows, weekly working to increase their ACT scores.</label>
-          <label class="ri"><input type="radio" name="vol-role1" value="Mentor" onchange="showRoleFields('Senior Mentor')"> Senior Mentor (12th Grade) – Support 1-2 Fellows weekly, working on post-secondary applications.</label>
+          <div class="fg">
+        <label class="fl">First-choice volunteer role <span class="req">*</span></label>
+        <div class="radio-list">
+          <label class="ri"><input type="radio" name="vol-role1" value="Research Mentor" onchange="showRoleFields('Research Mentor')"> Research Mentor (8th Grade) — Support 2-4 Fellows weekly, working on a year-long project.</label>
+          <label class="ri"><input type="radio" name="vol-role1" value="Learning Mentor" onchange="showRoleFields('Learning Mentor')"> Learning Mentor (9th & 10th Grade) – Support 2–4 Fellows weekly, working to master study skills.</label>
+          <label class="ri"><input type="radio" name="vol-role1" value="Upperclassmen Mentor" onchange="showRoleFields('Upperclassmen Mentor')"> Upperclassmen Mentor (11th Grade) – Support 2–4 Fellows, weekly working to increase their ACT scores.</label>
+          <label class="ri"><input type="radio" name="vol-role1" value="Senior Mentor" onchange="showRoleFields('Senior Mentor')"> Senior Mentor (12th Grade) – Support 1-2 Fellows weekly, working on post-secondary applications.</label>
           <label class="ri"><input type="radio" name="vol-role1" value="Tutor" onchange="showRoleFields('Tutor')"> Tutor — Provide academic support to 8th-12th graders in your area of expertise, appointment-based.</label>
-          <label class="ri"><input type="radio" name="vol-role1" value="Either" onchange="showRoleFields('Any')"> Open to all roles.</label>
+          <label class="ri"><input type="radio" name="vol-role1" value="Any" onchange="showRoleFields('Any')"> Open to all roles.</label>
+        </div>
+      </div>
         </div>
       </div>
       <div class="fg">
         <label class="fl">Second-choice volunteer role</label>
         <div class="radio-list">
-          <label class="ri"><input type="radio" name="vol-role1" value="Mentor" onchange="showRoleFields('Research Mentor')"> Research Mentor (8th Grade) — Support 2-4 Fellows weekly, working on a year-long project.</label>
-          <label class="ri"><input type="radio" name="vol-role1" value="Mentor" onchange="showRoleFields('Learning Mentor')"> Learning Mentor (9th & 10th Grade) – Support 2–4 Fellows weekly, working to master study skills.</label>
-          <label class="ri"><input type="radio" name="vol-role1" value="Mentor" onchange="showRoleFields('Upperclassmen Mentor')"> Upperclassmen Mentor (11th Grade) – Support 2–4 Fellows, weekly working to increase their ACT scores.</label>
-          <label class="ri"><input type="radio" name="vol-role1" value="Mentor" onchange="showRoleFields('Senior Mentor')"> Senior Mentor (12th Grade) – Support 1-2 Fellows weekly, working on post-secondary applications.</label>
+          <label class="ri"><input type="radio" name="vol-role1" value="Research Mentor" onchange="showRoleFields('Research Mentor')"> Research Mentor (8th Grade) — Support 2-4 Fellows weekly, working on a year-long project.</label>
+          <label class="ri"><input type="radio" name="vol-role1" value="Learning Mentor" onchange="showRoleFields('Learning Mentor')"> Learning Mentor (9th & 10th Grade) – Support 2–4 Fellows weekly, working to master study skills.</label>
+          <label class="ri"><input type="radio" name="vol-role1" value="Upperclassmen Mentor" onchange="showRoleFields('Upperclassmen Mentor')"> Upperclassmen Mentor (11th Grade) – Support 2–4 Fellows, weekly working to increase their ACT scores.</label>
+          <label class="ri"><input type="radio" name="vol-role1" value="Senior Mentor" onchange="showRoleFields('Senior Mentor')"> Senior Mentor (12th Grade) – Support 1-2 Fellows weekly, working on post-secondary applications.</label>
           <label class="ri"><input type="radio" name="vol-role1" value="Tutor" onchange="showRoleFields('Tutor')"> Tutor — Provide academic support to 8th-12th graders in your area of expertise, appointment-based.</label>
-          <label class="ri"><input type="radio" name="vol-role1" value="Either" onchange="showRoleFields('Any')"> Open to all roles.</label>
+          <label class="ri"><input type="radio" name="vol-role1" value="Any" onchange="showRoleFields('Any')"> Open to all roles.</label>
         </div>
       </div>
       <div class="fg">
         <label class="fl">Campus preference</label>
-      <select id="vol-campus">
+        <select id="vol-campus">
           <option value="">Select one…</option>
-          <option>Downtown (460 N. 11th St)</option>
-          <option>Airline (14141 Airline Hwy, Suite B)</option>
           <option>No preference</option>
-          <option>N/A - Tutoring</option>
+          <option>McKinley Middle</option>
+          <option>Scotlandville Middle</option>
+          <option>Westdale Middle</option>
+          <option>Other</option>
         </select>
       </div>
-      <div class="fg"><label class="fl">Available day(s)</label><input type="text" id="vol-avail" placeholder="e.g. Mondays and Wednesdays, Tuesdays or Thursdays, etc."></div>
+      <div class="fg"><label class="fl">Available day(s)</label><input type="text" id="vol-avail" placeholder="e.g. Weekday evenings, Saturday mornings"></div>
       <div class="fg" id="vol-tutor-subjects-wrap" style="display:none"><label class="fl">Subjects comfortable tutoring</label><input type="text" id="vol-tutor-subjects" placeholder="e.g. Math, Reading, Science"></div>
       <div class="fg" id="vol-mentor-exp-wrap" style="display:none"><label class="fl">Post-secondary familiarity (Senior Mentor)</label><textarea id="vol-mentor-exp" rows="2" placeholder="College experience, career field, etc."></textarea></div>
       <div class="fg"><label class="fl">Scheduling notes</label><textarea id="vol-sched-notes" rows="2" placeholder="Any constraints or preferences…"></textarea></div>
@@ -2178,16 +2184,6 @@ async function submitVolunteerForm() {
     const refFname  = document.getElementById('ref-fname').value.trim();
     const refLname  = document.getElementById('ref-lname').value.trim();
     if (!yourFname || !yourEmail || !refFname) { alert('Please fill in all required fields.'); return; }
-    const row = [
-      new Date().toLocaleDateString(),
-      yourFname + ' ' + document.getElementById('ref-your-lname').value.trim(),
-      yourEmail, refFname, refLname,
-      document.getElementById('ref-email').value.trim(),
-      document.getElementById('ref-phone').value.trim(),
-      document.getElementById('ref-org').value.trim(),
-      document.getElementById('ref-why').value.trim()
-    ];
-    await gsAppendRowToTab(cfg, 'Referral Submission', row);
     const refProspect = {
       name: `${refFname} ${refLname}`.trim(), fname: refFname, lname: refLname,
       email: document.getElementById('ref-email').value.trim(),
@@ -2198,8 +2194,13 @@ async function submitVolunteerForm() {
       notes: document.getElementById('ref-why').value.trim(), comms: '', customMsg: ''
     };
     DB.prospects.push(refProspect);
-    saveDB();
-    gsWriteProspectToSheet(refProspect, 'add').catch(() => {});
+    await saveDB();
+    // Sheet write is best-effort — no login prompt for public users
+    if (gsGetToken()) {
+      const row = [new Date().toLocaleDateString(), yourFname+' '+document.getElementById('ref-your-lname').value.trim(), yourEmail, refFname, refLname, document.getElementById('ref-email').value.trim(), document.getElementById('ref-phone').value.trim(), document.getElementById('ref-org').value.trim(), document.getElementById('ref-why').value.trim()];
+      gsAppendRowToTab(cfg, 'Referral Submission', row).catch(() => {});
+      gsWriteProspectToSheet(refProspect, 'add').catch(() => {});
+    }
     document.getElementById('vol-success-msg').innerHTML = `We've passed along your referral — thank you!<br><br>Questions? <strong>angela@thebryc.org</strong>`;
 
   } else if (path === 'interest') {
@@ -2208,14 +2209,6 @@ async function submitVolunteerForm() {
     if (!fname || !email) { alert('Please enter your name and email.'); return; }
     const prior = document.querySelector('input[name="vol-prior"]:checked')?.value || '';
     const how   = document.getElementById('vol-how').value;
-    const row = [
-      new Date().toLocaleDateString(), fname,
-      document.getElementById('vol-lname').value.trim(),
-      document.getElementById('vol-preferred').value.trim(),
-      email, document.getElementById('vol-phone').value.trim(),
-      prior, how
-    ];
-    await gsAppendRowToTab(cfg, 'Interest Form', row);
     const p = {
       name: `${fname} ${document.getElementById('vol-lname').value.trim()}`.trim(),
       fname, lname: document.getElementById('vol-lname').value.trim(),
@@ -2226,8 +2219,13 @@ async function submitVolunteerForm() {
       notes: `Prior volunteer: ${prior} | Heard: ${how}`, customMsg: ''
     };
     DB.prospects.push(p);
-    saveDB();
-    gsWriteProspectToSheet(p, 'add').catch(() => {});
+    await saveDB();
+    // Sheet write is best-effort — no login prompt for public users
+    if (gsGetToken()) {
+      const row = [new Date().toLocaleDateString(), fname, document.getElementById('vol-lname').value.trim(), document.getElementById('vol-preferred').value.trim(), email, document.getElementById('vol-phone').value.trim(), prior, how];
+      gsAppendRowToTab(cfg, 'Interest Form', row).catch(() => {});
+      gsWriteProspectToSheet(p, 'add').catch(() => {});
+    }
     document.getElementById('vol-success-msg').innerHTML = `Thanks for your interest! We'll be in touch soon.<br><br>Questions? <strong>angela@thebryc.org</strong>`;
 
   } else if (path === 'intake') {
@@ -2238,24 +2236,6 @@ async function submitVolunteerForm() {
     const prior  = document.querySelector('input[name="vol-prior-intake"]:checked')?.value || '';
     const fellow = document.querySelector('input[name="vol-fellow"]:checked')?.value || '';
     const role2  = document.querySelector('input[name="vol-role2"]:checked')?.value || '';
-    const row = [
-      new Date().toLocaleDateString(), fname,
-      document.getElementById('vol-lname').value.trim(),
-      document.getElementById('vol-preferred').value.trim(),
-      email, document.getElementById('vol-phone').value.trim(),
-      prior, fellow,
-      document.getElementById('vol-org').value.trim(),
-      document.getElementById('vol-title').value.trim(),
-      role1, role2,
-      document.getElementById('vol-campus').value,
-      document.getElementById('vol-avail').value.trim(),
-      document.getElementById('vol-tutor-subjects').value.trim(),
-      document.getElementById('vol-mentor-exp').value.trim(),
-      document.getElementById('vol-sched-notes').value.trim(),
-      document.getElementById('vol-how-intake').value,
-      document.getElementById('vol-referral-info').value.trim()
-    ];
-    await gsAppendRowToTab(cfg, 'Intake Form', row);
     const p = {
       name: `${fname} ${document.getElementById('vol-lname').value.trim()}`.trim(),
       fname, lname: document.getElementById('vol-lname').value.trim(),
@@ -2266,8 +2246,13 @@ async function submitVolunteerForm() {
       notes: `Role: ${role1} | Prior: ${prior}`, customMsg: ''
     };
     DB.prospects.push(p);
-    saveDB();
-    gsWriteProspectToSheet(p, 'add').catch(() => {});
+    await saveDB();
+    // Sheet write is best-effort — no login prompt for public users
+    if (gsGetToken()) {
+      const row = [new Date().toLocaleDateString(), fname, document.getElementById('vol-lname').value.trim(), document.getElementById('vol-preferred').value.trim(), email, document.getElementById('vol-phone').value.trim(), prior, fellow, document.getElementById('vol-org').value.trim(), document.getElementById('vol-title').value.trim(), role1, role2, document.getElementById('vol-campus').value, document.getElementById('vol-avail').value.trim(), document.getElementById('vol-tutor-subjects').value.trim(), document.getElementById('vol-mentor-exp').value.trim(), document.getElementById('vol-sched-notes').value.trim(), document.getElementById('vol-how-intake').value, document.getElementById('vol-referral-info').value.trim()];
+      gsAppendRowToTab(cfg, 'Intake Form', row).catch(() => {});
+      gsWriteProspectToSheet(p, 'add').catch(() => {});
+    }
     document.getElementById('vol-success-msg').innerHTML = `Your intake form has been submitted! We'll follow up soon.<br><br>Questions? <strong>angela@thebryc.org</strong>`;
   }
 
