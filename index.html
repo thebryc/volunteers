@@ -1290,17 +1290,17 @@ function loadDB() {
   } catch(e) { return JSON.parse(JSON.stringify(DEFAULT)); }
 }
 
-// Save to Firebase (primary) + localStorage cache
 async function saveDB() {
-  // Cache locally for instant reload
   try { localStorage.setItem('bryc-py27-cache', JSON.stringify(DB)); } catch(e) {}
-  // Save to Firestore
   if (window._fb) {
-    setSyncStatus('saving');
+    if (currentRole) setSyncStatus('saving');
     try {
       await window._fb.setDoc(window._fb.DB_DOC, DB);
-      setSyncStatus('saved');
-    } catch(e) { console.warn('Firebase save failed:', e); setSyncStatus('error'); }
+      if (currentRole) setSyncStatus('saved');
+    } catch(e) {
+      console.warn('Firebase save failed:', e);
+      if (currentRole) setSyncStatus('error');
+    }
   }
 }
 
