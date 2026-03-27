@@ -1706,7 +1706,7 @@ function saveProspect() {
     customMsg: document.getElementById('ap-message').value.trim()
   });
   const newProspect = DB.prospects[DB.prospects.length - 1];
-  saveDB(); closeModal('add-prospect-modal');
+  saveDB().then(() => {}); closeModal('add-prospect-modal');
   ['ap-fname','ap-lname','ap-email','ap-phone','ap-notes','ap-message'].forEach(id => document.getElementById(id).value = '');
   renderProspects(); renderDashboard();
   // Write back to Google Sheet
@@ -1750,8 +1750,7 @@ function updateProspect() {
     customMsg: document.getElementById('ep-message').value.trim()
   };
   const updatedProspect = DB.prospects[idx];
-  saveDB(); closeModal('edit-prospect-modal'); renderProspects(); renderDashboard();
-  // Write back to Google Sheet
+  saveDB().then(() => {}); closeModal('edit-prospect-modal'); renderProspects(); renderDashboard();  // Write back to Google Sheet
   gsWriteProspectToSheet(updatedProspect, 'update').catch(() => {});
 }
 
@@ -1760,8 +1759,7 @@ function deleteProspect() {
   if (!confirm(`Delete ${DB.prospects[idx].name}?`)) return;
   const deletedProspect = DB.prospects[idx];
   DB.prospects.splice(idx, 1);
-  saveDB(); closeModal('edit-prospect-modal'); renderProspects(); renderDashboard();
-  // Clear row in Google Sheet
+  saveDB().then(() => {}); closeModal('edit-prospect-modal'); renderProspects(); renderDashboard();  // Clear row in Google Sheet
   gsWriteProspectToSheet(deletedProspect, 'delete').catch(() => {});
 }
 
