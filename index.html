@@ -1648,7 +1648,7 @@ function renderProspects() {
 
     const statCls = statusSelectClass(p.status);
     const goodCls = p.good === 'yes' ? 'g-yes' : p.good === 'no' ? 'g-no' : 'g-empty';
-    const gmailUrl = p.email ? `https://mail.google.com/mail/?authuser=angela@thebryc.org&view=cm&fs=1&to=${encodeURIComponent(p.email)}&su=${encodeURIComponent('BRYC Volunteer Opportunity PY27')}&body=${encodeURIComponent('Hi ' + p.name.split(' ')[0] + ',\n\n' + (p.customMsg || "We\'d love to connect with you about volunteering with BRYC this program year!"))}` : '';
+    const gmailUrl = p.email ? `https://mail.google.com/mail/?authuser=angela@thebryc.org&view=cm&fs=1&to=${encodeURIComponent(p.email)}&su=${encodeURIComponent('Volunteer with BRYC: Join us for Court Connections, 4/9!')}&body=${encodeURIComponent('Hi ' + p.name.split(' ')[0] + ',\n\nThis is Angela with BRYC — so glad we got to meet on Sunday, and sorry I didn\'t get back to you sooner.\n\nWe\'d love to have you as a mentor, visit thebryc.org/volunteer to learn more. Plus, as promised, here is the invite to our upcoming recruitment event, please RSVP and bring friends: https://forms.gle/iU5YPEEHneF8z9yg7\n\nIn community,')}` : '';
     return `<tr>
       <td><strong>${p.name}</strong></td>
       <td>
