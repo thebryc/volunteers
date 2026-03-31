@@ -2149,6 +2149,33 @@ function renderAll() {
   if (apDate) apDate.value = new Date().toISOString().split('T')[0];
 }
 
+// ══ RSVP SHEET SYNC ══════════════════════════════
+function saveRsvpSheetConfig() {
+  const cfg = {
+    sheetId: document.getElementById('rsvp-sheet-id').value.trim(),
+    tabName:  document.getElementById('rsvp-sheet-tab').value.trim() || 'Form Responses 1',
+  };
+  if (!cfg.sheetId) {
+    document.getElementById('rsvp-sheet-status').textContent = '⚠️ Sheet ID required.';
+    return;
+  }
+  localStorage.setItem('bryc-rsvp-sheet', JSON.stringify(cfg));
+  document.getElementById('rsvp-sheet-status').textContent = '✅ Saved!';
+  setTimeout(() => document.getElementById('rsvp-sheet-status').textContent = '', 3000);
+}
+
+function getRsvpSheetConfig() {
+  try { return JSON.parse(localStorage.getItem('bryc-rsvp-sheet') || '{}'); } catch(e) { return {}; }
+}
+
+function populateRsvpSheetSettings() {
+  const cfg = getRsvpSheetConfig();
+  const si = document.getElementById('rsvp-sheet-id');
+  const st = document.getElementById('rsvp-sheet-tab');
+  if (si && cfg.sheetId) si.value = cfg.sheetId;
+  if (st && cfg.tabName)  st.value = cfg.tabName;
+}
+  
 // ══ GOOGLE SHEETS SYNC ═══════════════════════════
 const PROSPECT_FIELDS = [
   { key: 'dateAdded',  label: 'Date Added' },
