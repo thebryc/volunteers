@@ -2175,6 +2175,105 @@ function populateRsvpSheetSettings() {
   if (si && cfg.sheetId) si.value = cfg.sheetId;
   if (st && cfg.tabName)  st.value = cfg.tabName;
 }
+
+  async function syncRSVPSheet() {
+  const rsvpCfg = getRsvpSheetConfig();
+  const gsCfg   = getSheetConfig();
+  const btn = document.getElementById('rsvp-sheet-sync-btn');
+
+  if (!rsvpCfg.sheetId) {
+    alert('Please set your RSVP Sheet ID in Settings first.');
+    goPage('settings', document.getElementById('settings-btn'));
+    return;
+  }
+  if (!gsCfg.clientId) {
+    alert('Please set your OAuth Client ID in Settings → Google Sheets Sync first.');
+    goPage('settings', document.getElementById('settings-btn'));
+    return;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Syncing…'; }
+  try {
+    let token = gsGetToken();
+    if (!token) token = await gsRequestToken(gsCfg.clientId);
+    gsSetToken(token);
+
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${rsvpCfg.sheetId}/values/${encodeURIComponent(rsvpCfg.tabName || 'Form Responses 1')}`;
+    const res = await fetch(url, { headers: { Authorization: 'Bearer ' + token } });
+    if (res.status === 401) { gsClearToken(); throw new Error('Auth expired — please sync again.'); }
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    const rows = json.values || [];
+    if (rows.length < 2) { alert('Sheet has no data rows.'); return; }
+
+    const ev = DB.events.find(e => e.id === currentEventId) || DB.events[0];
+    if (!ev) return;
+
+    const h = rows[0].map(x => x.toLowerCase().trim());
+    const col = k => h.findIndex(x => x === k.toLowerCase());
+    const iTs       = col('timestamp');
+    const iEmail    = col('email');
+    const iFname    = col('first name');
+    const iLname    = col('last name');
+    const iFullName = col('full name');
+    const iRole     = col('community role');
+    const iStatus   = col('rsvp status');
+    const iG1name   = col('guest 1 name');
+    const iG1con    = col('guest 1 contact');
+    const iG2name   = col('guest 2 name');
+    const iG2con    = col('guest 2 contact');
+    const iG3name   = col('guest 3 name');
+    const iG3con    = col('guest 3 contact');
+    const iDiet     = col('dietary restrictions');
+
+    const existingEmails = new Set((ev.rsvps||[]).map(r => r.email?.toLowerCase()).filter(Boolean));
+    let added = 0;
+
+    rows.slice(1).forEach(cols => {
+      const g = i => i >= 0 ? (cols[i]||'').trim() : '';
+      const fname = g(iFname);
+      const lname  = g(iLname);
+      const name   = g(iFullName) || [fname,lname].filter(Boolean).join(' ');
+      const email  = g(iEmail).toLowerCase();
+      if (!name) return;
+      if (email && existingEmails.has(email)) return;
+
+      const statusRaw = g(iStatus).toLowerCase();
+      let attending = 'no';
+      if (statusRaw.includes('yes') || statusRaw.includes('attending') || statusRaw.includes('ready')) attending = 'yes';
+      else if (statusRaw.includes('maybe')) attending = 'maybe';
+
+      const guests = [];
+      [[iG1name,iG1con],[iG2name,iG2con],[iG3name,iG3con]].forEach(([ni,ci]) => {
+        const gn = g(ni); if (!gn) return;
+        guests.push({ name: gn, contact: g(ci) });
+      });
+
+      const diet = g(iDiet) ? g(iDiet).split(',').map(d=>d.trim()).filter(Boolean) : [];
+
+      ev.rsvps.push({
+        id: Date.now() + Math.random(),
+        fname, lname, name, email,
+        role: g(iRole),
+        attending,
+        guests,
+        diet,
+        date: g(iTs).split(' ')[0] || new Date().toLocaleDateString(),
+        fromSheet: true
+      });
+      if (email) existingEmails.add(email);
+      added++;
+    });
+
+    saveDB();
+    refreshEventDetail();
+    alert(`✅ RSVP sheet synced — ${added} new responses loaded (${ev.rsvps.length} total)`);
+  } catch(err) {
+    alert('Sync failed: ' + err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🔄 Sync RSVP Sheet'; }
+  }
+}
   
 // ══ GOOGLE SHEETS SYNC ═══════════════════════════
 const PROSPECT_FIELDS = [
