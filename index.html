@@ -602,6 +602,29 @@ select.g-empty{background:var(--card);color:var(--ink);}
       </div>
     </div>
 
+    <!-- RSVP Sheet Sync -->
+<div class="settings-card" style="grid-column:1/-1">
+  <div class="settings-card-title">🏓 Court Connections RSVP Sheet</div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">Connect your RSVP Google Sheet so the kiosk can look up attendees live. Uses the same OAuth Client ID as the Sheets Sync above.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    <div class="fg">
+      <label class="fl">RSVP Sheet ID</label>
+      <input type="text" id="rsvp-sheet-id" placeholder="1BxiMVs0XRA5…" style="font-size:12px;font-family:monospace">
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">From your RSVP sheet URL: /spreadsheets/d/<strong>THIS_PART</strong>/edit</div>
+    </div>
+    <div class="fg">
+      <label class="fl">Tab Name</label>
+      <input type="text" id="rsvp-sheet-tab" placeholder="Form Responses 1" style="font-size:12px">
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Exact tab name at the bottom of your sheet</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <button class="btn btn-gold btn-sm" onclick="saveRsvpSheetConfig()">💾 Save</button>
+    <button class="btn btn-sheets btn-sm" onclick="syncRSVPSheet()">🔄 Test Sync</button>
+    <span id="rsvp-sheet-status" style="font-size:12px;color:var(--muted)"></span>
+  </div>
+</div>
+    
     <!-- Google Sheets Sync -->
     <div class="settings-card" style="grid-column:1/-1">
       <div class="settings-card-title">🔗 Google Sheets Sync</div>
@@ -700,17 +723,30 @@ select.g-empty{background:var(--card);color:var(--ink);}
     </div>
     <button onclick="kioskWalkinSubmit()" style="width:100%;background:var(--gold);color:var(--forest-dark);border:none;border-radius:12px;padding:15px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;cursor:pointer;margin-top:8px">✅ CHECK ME IN</button>
   </div>
-  <div id="kiosk-confirm-panel" style="display:none;position:absolute;inset:0;background:var(--forest-dark);align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px">
-    <div style="font-size:72px;margin-bottom:16px">🎉</div>
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--gold);letter-spacing:3px;margin-bottom:10px" id="kiosk-confirm-name">You're In!</div>
-    <div style="font-size:15px;color:var(--soft);margin-bottom:8px" id="kiosk-confirm-msg"></div>
-    <div id="kiosk-raffle-badge" style="display:none;background:rgba(240,201,23,0.12);border:1px solid rgba(240,201,23,0.3);border-radius:12px;padding:14px 22px;margin:14px 0">
-      <div style="font-size:26px;margin-bottom:4px">🏆</div>
-      <div style="font-size:14px;font-weight:800;letter-spacing:1px;color:var(--gold)">YOU'RE IN THE RAFFLE!</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:3px">iPad Drawing — September 2026</div>
-    </div>
-    <button onclick="resetKiosk()" style="margin-top:22px;background:var(--gold);color:var(--forest-dark);border:none;border-radius:12px;padding:14px 36px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer">NEXT PERSON →</button>
+<div id="kiosk-confirm-panel" style="display:none;position:absolute;inset:0;background:var(--forest-dark);align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px;overflow-y:auto">
+  <div style="font-size:64px;margin-bottom:12px">🎉</div>
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--gold);letter-spacing:3px;margin-bottom:8px" id="kiosk-confirm-name">You're In!</div>
+  <div style="font-size:15px;color:var(--soft);margin-bottom:8px" id="kiosk-confirm-msg"></div>
+  <div id="kiosk-raffle-badge" style="display:none;background:rgba(240,201,23,0.12);border:1px solid rgba(240,201,23,0.3);border-radius:12px;padding:14px 22px;margin:10px 0">
+    <div style="font-size:24px;margin-bottom:4px">🏆</div>
+    <div style="font-size:14px;font-weight:800;letter-spacing:1px;color:var(--gold)">YOU'RE IN THE RAFFLE!</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:3px">iPad Drawing — September 2026</div>
   </div>
+
+  <!-- Pickleball queue prompt -->
+  <div id="kiosk-pickle-prompt" style="margin-top:18px;width:100%;max-width:460px;background:rgba(100,220,200,0.07);border:1px solid rgba(100,220,200,0.25);border-radius:14px;padding:20px">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#88ded0;letter-spacing:2px;margin-bottom:6px">🏓 WANT TO PLAY PICKLEBALL?</div>
+    <div style="font-size:13px;color:var(--soft);margin-bottom:14px">Sign up for the court queue — we'll call your name when a court opens!</div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button onclick="joinPickleQueue('solo')" style="background:#88ded0;color:#04342c;border:none;border-radius:10px;padding:12px 22px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;cursor:pointer">Just Me</button>
+      <button id="kiosk-pickle-party-btn" onclick="joinPickleQueue('party')" style="background:rgba(100,220,200,0.2);color:#88ded0;border:1px solid rgba(100,220,200,0.4);border-radius:10px;padding:12px 22px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;cursor:pointer">Me + My Party</button>
+      <button onclick="skipPickleQueue()" style="background:transparent;color:rgba(255,255,255,0.3);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:12px 22px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;cursor:pointer">No Thanks</button>
+    </div>
+    <div id="kiosk-pickle-joined" style="display:none;margin-top:12px;font-size:14px;color:#88ded0;font-weight:700"></div>
+  </div>
+
+  <button onclick="resetKiosk()" id="kiosk-next-btn" style="margin-top:20px;background:var(--gold);color:var(--forest-dark);border:none;border-radius:12px;padding:14px 36px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer">NEXT PERSON →</button>
+</div>
 </div>
 
 <!-- ══════════════════════════════════════════════
@@ -1747,11 +1783,18 @@ function kioskWalkinSubmit() {
   refreshEventDetail();
 }
 
-function showKioskConfirm(fname,raffleEntry,guestName) {
-  document.getElementById('kiosk-confirm-name').textContent=`You're in, ${fname}!`;
-  document.getElementById('kiosk-confirm-msg').textContent=guestName?`You and ${guestName} are checked in.`:'You are checked in. Enjoy the event!';
-  document.getElementById('kiosk-raffle-badge').style.display=raffleEntry?'block':'none';
-  document.getElementById('kiosk-confirm-panel').style.display='flex';
+function showKioskConfirm(fname, raffleEntry, guestName, checkinRecord) {
+  window._lastCheckinRecord = checkinRecord;
+  document.getElementById('kiosk-confirm-name').textContent = `You're in, ${fname}!`;
+  document.getElementById('kiosk-confirm-msg').textContent = guestName
+    ? `You and ${guestName} are checked in.`
+    : 'You are checked in. Enjoy the event!';
+  document.getElementById('kiosk-raffle-badge').style.display = raffleEntry ? 'block' : 'none';
+  const hasParty = guestName && guestName.trim();
+  document.getElementById('kiosk-pickle-party-btn').style.display = hasParty ? '' : 'none';
+  document.getElementById('kiosk-pickle-joined').style.display = 'none';
+  document.getElementById('kiosk-pickle-prompt').style.display = '';
+  document.getElementById('kiosk-confirm-panel').style.display = 'flex';
 }
 
 function resetKiosk() {
@@ -1763,6 +1806,158 @@ function resetKiosk() {
   ['kw-commit-self','kw-commit-guest'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
   document.querySelectorAll('input[name="kw-guest"]').forEach(r=>r.checked=r.value==='no');
   document.getElementById('kw-guest-block').style.display='none';
+}
+
+function joinPickleQueue(mode) {
+  const ev = DB.events.find(e => e.id === currentEventId);
+  if (!ev) return;
+  if (!ev.pickleQueue) ev.pickleQueue = [];
+  const rec = window._lastCheckinRecord || {};
+  const guestName = rec.guestName || '';
+  let displayName = rec.name || 'Guest';
+  let partySize = 1;
+  if (mode === 'party' && guestName) {
+    displayName = `${rec.name} + ${guestName}`;
+    partySize = 2;
+  }
+  if (ev.pickleQueue.find(e => e.primaryName === rec.name)) {
+    document.getElementById('kiosk-pickle-joined').textContent = "You're already in the queue!";
+    document.getElementById('kiosk-pickle-joined').style.display = 'block';
+    return;
+  }
+  ev.pickleQueue.push({
+    id: Date.now(),
+    name: displayName,
+    primaryName: rec.name,
+    partySize,
+    joinedAt: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+    status: 'waiting'
+  });
+  saveDB();
+  renderCourtQueue();
+  const pos = ev.pickleQueue.filter(e => e.status === 'waiting').length;
+  document.getElementById('kiosk-pickle-joined').textContent = `✅ You're #${pos} in the queue!`;
+  document.getElementById('kiosk-pickle-joined').style.display = 'block';
+  document.querySelectorAll('#kiosk-pickle-prompt button').forEach(b => b.disabled = true);
+}
+
+function skipPickleQueue() {
+  document.getElementById('kiosk-pickle-prompt').style.display = 'none';
+}
+
+function renderCourtQueue() {
+  const ev = DB.events.find(e => e.id === currentEventId);
+  if (!ev) return;
+  if (!ev.pickleQueue) ev.pickleQueue = [];
+  if (!ev.courts) ev.courts = [
+    {id:1, status:'open', players:'', calledAt:null},
+    {id:2, status:'open', players:'', calledAt:null}
+  ];
+  const queue = ev.pickleQueue;
+  const waiting = queue.filter(e => e.status === 'waiting');
+  const badge = document.getElementById('cq-waiting-badge');
+  if (badge) badge.textContent = `${waiting.length} waiting`;
+
+  [1,2].forEach(n => {
+    const court = ev.courts[n-1];
+    const isPlaying = court.status === 'playing';
+    const statusEl = document.getElementById(`court-${n}-status`);
+    const playersEl = document.getElementById(`court-${n}-players`);
+    const callBtn   = document.getElementById(`court-${n}-call-btn`);
+    const doneBtn   = document.getElementById(`court-${n}-done-btn`);
+    const timerEl   = document.getElementById(`court-${n}-timer`);
+    const cardEl    = document.getElementById(`court-${n}-card`);
+    if (!statusEl) return;
+
+    if (isPlaying) {
+      statusEl.textContent = 'Playing';
+      statusEl.className = 'badge b-red';
+      cardEl.style.borderColor = 'rgba(231,76,60,0.4)';
+      cardEl.style.background  = 'rgba(231,76,60,0.05)';
+      playersEl.innerHTML = `<strong style="color:var(--ink)">${court.players}</strong>`;
+      callBtn.style.display = 'none';
+      doneBtn.style.display = '';
+      if (court.calledAt) {
+        const mins = Math.floor((Date.now() - court.calledAt) / 60000);
+        timerEl.textContent = `⏱ On court ${mins}m`;
+      }
+    } else {
+      statusEl.textContent = 'Open';
+      statusEl.className = 'badge b-green';
+      cardEl.style.borderColor = 'rgba(74,158,110,0.3)';
+      cardEl.style.background  = 'rgba(74,158,110,0.08)';
+      playersEl.textContent = waiting.length > 0
+        ? `${waiting.length} group${waiting.length > 1 ? 's' : ''} waiting`
+        : 'No one in queue';
+      callBtn.style.display = '';
+      doneBtn.style.display = 'none';
+      timerEl.textContent = '';
+    }
+  });
+
+  const listEl = document.getElementById('cq-list');
+  if (!listEl) return;
+  if (!waiting.length) {
+    listEl.innerHTML = `<div class="empty" style="padding:24px"><div class="ei">🏓</div><p>No one in queue yet. Players join at the kiosk after check-in.</p></div>`;
+    return;
+  }
+  listEl.innerHTML = waiting.map((entry, i) => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);min-width:36px;text-align:center">${i+1}</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:14px">${entry.name}</div>
+        <div style="font-size:11px;color:var(--muted)">Joined ${entry.joinedAt} · Party of ${entry.partySize}</div>
+      </div>
+      <button class="btn btn-danger btn-xs" onclick="removeFromQueue(${entry.id})">✕</button>
+    </div>`).join('');
+}
+
+function callNextGroup(courtNum) {
+  const ev = DB.events.find(e => e.id === currentEventId);
+  if (!ev || !ev.pickleQueue) return;
+  const next = ev.pickleQueue.find(e => e.status === 'waiting');
+  if (!next) { alert('No one in the queue!'); return; }
+  next.status = 'playing';
+  next.courtNum = courtNum;
+  if (!ev.courts) ev.courts = [
+    {id:1, status:'open', players:'', calledAt:null},
+    {id:2, status:'open', players:'', calledAt:null}
+  ];
+  ev.courts[courtNum-1] = {id: courtNum, status: 'playing', players: next.name, calledAt: Date.now()};
+  saveDB();
+  renderCourtQueue();
+  setTimeout(() => renderCourtQueue(), 60000);
+}
+
+function courtDone(courtNum) {
+  const ev = DB.events.find(e => e.id === currentEventId);
+  if (!ev || !ev.courts) return;
+  const playing = (ev.pickleQueue||[]).find(e => e.status === 'playing' && e.courtNum === courtNum);
+  if (playing) playing.status = 'done';
+  ev.courts[courtNum-1] = {id: courtNum, status: 'open', players: '', calledAt: null};
+  saveDB();
+  renderCourtQueue();
+}
+
+function removeFromQueue(entryId) {
+  const ev = DB.events.find(e => e.id === currentEventId);
+  if (!ev || !ev.pickleQueue) return;
+  ev.pickleQueue = ev.pickleQueue.filter(e => e.id !== entryId);
+  saveDB();
+  renderCourtQueue();
+}
+
+function clearCourtQueue() {
+  if (!confirm('Clear the entire court queue?')) return;
+  const ev = DB.events.find(e => e.id === currentEventId);
+  if (!ev) return;
+  ev.pickleQueue = [];
+  ev.courts = [
+    {id:1, status:'open', players:'', calledAt:null},
+    {id:2, status:'open', players:'', calledAt:null}
+  ];
+  saveDB();
+  renderCourtQueue();
 }
 
 // ══ SETTINGS ═════════════════════════════════════
