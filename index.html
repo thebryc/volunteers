@@ -2216,6 +2216,7 @@ function populateSheetSettings() {
   if (hr && cfg.headerRow) hr.value = cfg.headerRow;
   const sob = document.getElementById('gs-signout-btn');
   if (sob) sob.style.display = gsGetToken() ? '' : 'none';
+  populateRsvpSheetSettings();
 }
 
 let _gsToken = null;
