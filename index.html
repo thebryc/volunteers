@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BRYC PY27 — Volunteer CRM</title>
-<link rel="stylesheet" href="https://use.typekit.net/oyd0hvb.css"><style>
+<link rel="stylesheet" href="https://use.typekit.net/oyd0hvb.css">
+<link rel="stylesheet" href="https://use.typekit.net/hte4vgd.css">
+<style>
 :root {
   --forest:#ed125f; --forest-dark:#ffffff; --forest-mid:#c8004a;
   --forest-light:#ed125f; --forest-pale:#fdf0f4;
@@ -29,14 +31,14 @@ body{font-family:'proxima-nova',sans-serif;background:#f0ede8;color:#1a1a1a;min-
 .login-close{position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(0,0,0,0.2);font-size:20px;cursor:pointer;}
 .login-close:hover{color:#333;}
 .login-logo{width:52px;height:52px;border-radius:50%;margin:0 auto 14px;display:block;}
-.login-title{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#ed125f;letter-spacing:3px;margin-bottom:4px;}
+.login-title{font-family:'barlow-semi-condensed',sans-serif;font-size:32px;color:#ed125f;letter-spacing:3px;margin-bottom:4px;}
 .login-sub{font-size:11px;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;}
 .login-tabs{display:flex;gap:4px;background:#f0ede8;border-radius:10px;padding:4px;margin-bottom:20px;}
 .login-tab{flex:1;padding:8px;border-radius:7px;border:none;background:transparent;color:#aaa;font-family:'proxima-nova',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
 .login-tab.active{background:#ed125f;color:white;}
 .login-input{width:100%;background:#f9f9f9;border:1px solid #eee;border-radius:10px;padding:13px 16px;color:#1a1a1a;font-family:'proxima-nova',sans-serif;font-size:15px;margin-bottom:14px;transition:border-color .2s;}
 .login-input:focus{outline:none;border-color:#ed125f;}
-.login-btn{width:100%;background:#ed125f;color:white;border:none;border-radius:10px;padding:14px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.login-btn{width:100%;background:#ed125f;color:white;border:none;border-radius:10px;padding:14px;font-family:'barlow-semi-condensed',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
 .login-btn:hover{background:#c8004a;transform:translateY(-1px);}
 .login-err{color:#e74c3c;font-size:13px;margin-top:10px;display:none;}
 
@@ -57,7 +59,7 @@ backdrop-filter:blur(10px);
 .sb-brand{padding:24px 20px 20px;border-bottom:1px solid var(--border);}
 .sb-bryc{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
 .sb-mark{width:32px;height:32px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10px;color:var(--forest);flex-shrink:0;}
-.sb-name{font-family:'Bebas Neue',sans-serif;font-size:18px;color:white;letter-spacing:2px;}
+.sb-name{font-family:'barlow-semi-condensed',sans-serif;font-size:18px;color:white;letter-spacing:2px;font-weight:700;text-transform:uppercase;}
 .sb-year{font-size:10px;color:rgba(255,255,255,0.6);letter-spacing:2px;text-transform:uppercase;}
 .sb-role-badge{display:inline-block;background:rgba(255,255,255,0.2);color:white;border-radius:50px;padding:2px 10px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:6px;}
 .sb-section{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.5);padding:12px 10px 6px;}
@@ -77,7 +79,7 @@ backdrop-filter:blur(10px);
 
 /* ══ PAGE HEADER ════════════════════════════════ */
 .page-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
-.page-title{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--gold);letter-spacing:4px;line-height:1;text-transform:uppercase;font-weight:700;}
+.page-title{font-family:'barlow-semi-condensed',sans-serif;font-size:38px;color:var(--gold);letter-spacing:3px;line-height:1;text-transform:uppercase;font-weight:700;}
 .page-sub{font-size:12px;color:var(--muted);margin-top:5px;}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 
@@ -102,7 +104,7 @@ backdrop-filter:blur(10px);
 .stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;transition:transform .2s;}
 .stat:hover{transform:translateY(-2px);}
 .stat-lbl{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:8px;}
-.stat-num{font-family:'Bebas Neue',sans-serif;font-size:44px;line-height:1;margin-bottom:3px;}
+.stat-num{font-family:'barlow-semi-condensed',sans-serif;font-size:44px;line-height:1;margin-bottom:3px;}
 .stat-num.gold{color:var(--gold);}
 .stat-num.green{color:#ed125f;}
 .stat-num.white{color:var(--ink);}
@@ -185,7 +187,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
 .overlay.open{display:flex;}
 .modal{background:white;border:1px solid rgba(0,0,0,0.1);border-radius:18px;padding:28px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;position:relative;animation:fadeUp .22s ease both;}
 .modal-lg{max-width:760px;}
-.modal-title{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);letter-spacing:2px;margin-bottom:20px;}
+.modal-title{font-family:'barlow-semi-condensed',sans-serif;font-size:26px;color:var(--gold);letter-spacing:2px;margin-bottom:20px;}
 .modal-close{position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,.3);font-size:20px;cursor:pointer;transition:color .15s;}
 .modal-close:hover{color:white;}
 .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
@@ -204,7 +206,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
 .summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:18px;width:100%;box-sizing:border-box;}
 .summary-card{background:white;border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:14px 16px;min-width:0;width:100%;box-sizing:border-box;}
 .summary-card-name{font-size:12px;color:var(--muted);margin-bottom:5px;}
-.summary-card-num{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1;color:#ed125f;}
+.summary-card-num{font-family:'barlow-semi-condensed',sans-serif;font-size:34px;line-height:1;color:#ed125f;}
 .summary-bar{height:3px;background:rgba(0,0,0,.08);border-radius:2px;margin-top:7px;}
 .summary-bar-fill{height:100%;background:#4a9e6e;border-radius:2px;transition:width .4s;}
 
@@ -218,10 +220,10 @@ select.g-empty{background:var(--card);color:var(--ink);}
 .event-card:hover{transform:translateY(-2px);}
 .event-card-bar{height:5px;background:linear-gradient(90deg,var(--forest-light),var(--gold));}
 .event-card-body{padding:18px 20px;}
-.event-card-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--ink);margin-bottom:3px;}
+.event-card-name{font-family:'barlow-semi-condensed',sans-serif;font-size:20px;letter-spacing:1px;color:var(--ink);margin-bottom:3px;}
 .event-card-date{font-size:12px;color:var(--gold);margin-bottom:12px;}
 .event-card-stats{display:flex;gap:14px;margin-bottom:14px;}
-.ecs-num{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#ed125f;line-height:1;}
+.ecs-num{font-family:'barlow-semi-condensed',sans-serif;font-size:26px;color:#ed125f;line-height:1;}
 .ecs-lbl{font-size:10px;color:var(--muted);}
 .event-add-card{background:transparent;border:1px dashed rgba(255,255,255,.12);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;min-height:190px;transition:all .2s;}
 .event-add-card:hover{border-color:var(--gold);background:rgba(240,201,23,.04);}
@@ -292,7 +294,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
       <div style="position:absolute;bottom:-80px;left:-40px;width:260px;height:260px;background:rgba(0,0,0,0.08);border-radius:50%;"></div>
       <div style="position:relative;z-index:1;">
         <div style="display:inline-block;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;padding:5px 14px;border-radius:20px;margin-bottom:20px;">▶ Welcome to the PY27</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,8vw,72px);color:white;letter-spacing:4px;line-height:1;margin-bottom:16px;">VOLUNTEER HUB</div>
+        <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:clamp(40px,8vw,72px);color:white;letter-spacing:4px;line-height:1;margin-bottom:16px;">VOLUNTEER HUB</div>
         <div style="font-size:15px;color:rgba(255,255,255,0.8);max-width:480px;margin:0 auto;line-height:1.6;margin-bottom:28px;">Your all-in-one hub for managing PY27 volunteers, events, and check-ins.</div>
         <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);padding:9px 18px;border-radius:30px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.9);">
           <div style="width:8px;height:8px;background:#f0c917;border-radius:50%;animation:pulse 2s ease-in-out infinite;flex-shrink:0;"></div>
@@ -739,7 +741,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
   </div>
   <div id="kiosk-walkin-panel" style="display:none;position:absolute;inset:0;background:var(--forest-dark);overflow-y:auto;padding:28px 24px;max-width:580px;margin:0 auto;width:100%">
     <button onclick="hideKioskWalkin()" style="background:none;border:none;color:var(--muted);font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;margin-bottom:18px">← Back</button>
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);letter-spacing:2px;margin-bottom:18px">Welcome! Let's check you in.</div>
+    <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:28px;color:var(--gold);letter-spacing:2px;margin-bottom:18px">Welcome! Let's check you in.</div>
     <div class="frow" style="margin-bottom:12px"><div class="fg"><label class="fl">Full Name *</label><input type="text" id="kw-name" placeholder="First and last name" style="font-size:16px;padding:13px"></div></div>
     <div class="frow" style="margin-bottom:12px">
       <div class="fg"><label class="fl">Email or Phone</label><input type="text" id="kw-contact" placeholder="Contact info" style="font-size:15px"></div>
@@ -758,11 +760,11 @@ select.g-empty{background:var(--card);color:var(--ink);}
        <img src="https://thebryc.github.io/volunteers/IPAD_DRAWING.png" style="width:100%;max-width:340px;border-radius:10px;margin-top:8px;">
       </div>
     </div>
-    <button onclick="kioskWalkinSubmit()" style="width:100%;background:var(--gold);color:var(--forest-dark);border:none;border-radius:12px;padding:15px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;cursor:pointer;margin-top:8px">✅ CHECK ME IN</button>
+    <button onclick="kioskWalkinSubmit()" style="width:100%;background:var(--gold);color:var(--forest-dark);border:none;border-radius:12px;padding:15px;font-family:'barlow-semi-condensed',sans-serif;font-size:22px;letter-spacing:2px;cursor:pointer;margin-top:8px">✅ CHECK ME IN</button>
   </div>
 <div id="kiosk-confirm-panel" style="display:none;position:absolute;inset:0;background:var(--forest-dark);align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px;overflow-y:auto">
   <div style="font-size:64px;margin-bottom:12px">🎉</div>
-  <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--gold);letter-spacing:3px;margin-bottom:8px" id="kiosk-confirm-name">You're In!</div>
+  <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:48px;color:var(--gold);letter-spacing:3px;margin-bottom:8px" id="kiosk-confirm-name">You're In!</div>
   <div style="font-size:15px;color:var(--soft);margin-bottom:8px" id="kiosk-confirm-msg"></div>
   <div id="kiosk-raffle-badge" style="display:none;background:rgba(240,201,23,0.12);border:1px solid rgba(240,201,23,0.3);border-radius:12px;padding:14px 22px;margin:10px 0">
     <div style="font-size:24px;margin-bottom:4px">🏆</div>
@@ -772,16 +774,16 @@ select.g-empty{background:var(--card);color:var(--ink);}
 
 <!-- Pickleball queue prompt -->
   <div id="kiosk-pickle-prompt" style="margin-top:18px;width:100%;max-width:460px;background:#0a7c5c;border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:24px">
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:#f0c917;letter-spacing:2px;margin-bottom:6px">🏓 WANT TO PLAY PICKLEBALL?</div>
+    <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:26px;color:#f0c917;letter-spacing:2px;margin-bottom:6px">🏓 WANT TO PLAY PICKLEBALL?</div>
     <div style="font-size:13px;color:rgba(255,255,255,0.8);margin-bottom:16px">Sign up for the court queue — we'll call your name when a court opens!</div>
 
     <div id="kiosk-pickle-step1">
       <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:10px">How many players in your group?</div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
-        <button onclick="selectPicklePlayers(1)" class="pickle-num-btn" style="width:60px;height:60px;background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3);border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:28px;cursor:pointer">1</button>
-        <button onclick="selectPicklePlayers(2)" class="pickle-num-btn" style="width:60px;height:60px;background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3);border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:28px;cursor:pointer">2</button>
-        <button onclick="selectPicklePlayers(3)" class="pickle-num-btn" style="width:60px;height:60px;background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3);border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:28px;cursor:pointer">3</button>
-        <button onclick="selectPicklePlayers(4)" class="pickle-num-btn" style="width:60px;height:60px;background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3);border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:28px;cursor:pointer">4</button>
+        <button onclick="selectPicklePlayers(1)" class="pickle-num-btn" style="width:60px;height:60px;background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3);border-radius:12px;font-family:'barlow-semi-condensed',sans-serif;font-size:28px;cursor:pointer">1</button>
+        <button onclick="selectPicklePlayers(2)" class="pickle-num-btn" style="width:60px;height:60px;background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3);border-radius:12px;font-family:'barlow-semi-condensed',sans-serif;font-size:28px;cursor:pointer">2</button>
+        <button onclick="selectPicklePlayers(3)" class="pickle-num-btn" style="width:60px;height:60px;background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3);border-radius:12px;font-family:'barlow-semi-condensed',sans-serif;font-size:28px;cursor:pointer">3</button>
+        <button onclick="selectPicklePlayers(4)" class="pickle-num-btn" style="width:60px;height:60px;background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3);border-radius:12px;font-family:'barlow-semi-condensed',sans-serif;font-size:28px;cursor:pointer">4</button>
       </div>
       <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:12px">Only one person per group needs to sign up!</div>
       <button onclick="skipPickleQueue()" style="background:transparent;color:rgba(255,255,255,0.35);border:none;font-size:12px;cursor:pointer;text-decoration:underline;font-family:'proxima-nova',sans-serif;">No thanks, skip</button>
@@ -790,13 +792,13 @@ select.g-empty{background:var(--card);color:var(--ink);}
     <div id="kiosk-pickle-step2" style="display:none">
       <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:8px">Your phone number</div>
       <input type="tel" id="pickle-phone" placeholder="(225) 555-0100" style="width:100%;padding:13px 16px;font-size:16px;border-radius:10px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:white;font-family:'proxima-nova',sans-serif;margin-bottom:12px;text-align:center;">
-      <button onclick="submitPickleQueue()" style="width:100%;background:#f0c917;color:#0a3d1f;border:none;border-radius:10px;padding:13px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">JOIN THE QUEUE →</button>
+      <button onclick="submitPickleQueue()" style="width:100%;background:#f0c917;color:#0a3d1f;border:none;border-radius:10px;padding:13px;font-family:'barlow-semi-condensed',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">JOIN THE QUEUE →</button>
       <button onclick="document.getElementById('kiosk-pickle-step2').style.display='none';document.getElementById('kiosk-pickle-step1').style.display='';" style="background:transparent;color:rgba(255,255,255,0.35);border:none;font-size:12px;cursor:pointer;text-decoration:underline;font-family:'proxima-nova',sans-serif;margin-top:10px;display:block;margin-left:auto;margin-right:auto;">← Back</button>
     </div>
 
     <div id="kiosk-pickle-joined" style="display:none;margin-top:12px;font-size:15px;color:#f0c917;font-weight:700;text-align:center"></div>
   </div>
-  <button onclick="resetKiosk()" id="kiosk-next-btn" style="margin-top:20px;background:#ed125f;color:white;border:none;border-radius:12px;padding:14px 36px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer">NEXT PERSON →</button>
+  <button onclick="resetKiosk()" id="kiosk-next-btn" style="margin-top:20px;background:#ed125f;color:white;border:none;border-radius:12px;padding:14px 36px;font-family:'barlow-semi-condensed',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer">NEXT PERSON →</button>
 </div>
 </div>
 
@@ -1767,7 +1769,7 @@ function kioskSearch(q) {
     const alreadyIn = (ev.checkins||[]).find(c=>c.rsvpId===r.id);
     return `<div style="background:rgba(255,255,255,0.04);border:1px solid ${alreadyIn?'rgba(74,158,110,0.4)':'rgba(255,255,255,0.1)'};border-radius:12px;padding:16px 20px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:10px">
       <div><div style="font-size:18px;font-weight:600">${r.name}</div><div style="font-size:12px;color:var(--muted)">${r.role||'BRYC Community'} ${r.guests?.length?'· '+r.guests.length+' guest(s)':''}</div></div>
-      ${alreadyIn?'<span style="color:#ed125f;font-size:13px;font-weight:700">✅ Checked In</span>':`<button onclick="kioskCheckIn(${idx})" style="background:var(--gold);color:var(--forest-dark);border:none;border-radius:10px;padding:11px 22px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;cursor:pointer">CHECK IN →</button>`}
+      ${alreadyIn?'<span style="color:#ed125f;font-size:13px;font-weight:700">✅ Checked In</span>':`<button onclick="kioskCheckIn(${idx})" style="background:var(--gold);color:var(--forest-dark);border:none;border-radius:10px;padding:11px 22px;font-family:'barlow-semi-condensed',sans-serif;font-size:18px;letter-spacing:1px;cursor:pointer">CHECK IN →</button>`}
     </div>`;
   }).join('');
 }
@@ -1778,7 +1780,7 @@ function kioskCheckIn(idx) {
   const gnames = (r.guests||[]).map(g=>g.name).join(', ');
   document.getElementById('kiosk-results').innerHTML = `
     <div style="background:rgba(240,201,23,0.06);border:1px solid var(--border-gold);border-radius:14px;padding:20px">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gold);letter-spacing:2px;margin-bottom:14px">Welcome, ${r.fname}! 🎉</div>
+      <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:24px;color:var(--gold);letter-spacing:2px;margin-bottom:14px">Welcome, ${r.fname}! 🎉</div>
       <div class="fg" style="margin-bottom:14px">
         <label class="fl">Is your guest here today?</label>
         <input type="text" id="kiosk-guest-inp" placeholder="Guest name (leave blank if none)" value="${gnames}"
@@ -1792,7 +1794,7 @@ function kioskCheckIn(idx) {
   </div>
 </div>
       </div>
-      <button onclick="kioskConfirm(${idx})" style="width:100%;background:var(--gold);color:var(--forest-dark);border:none;border-radius:12px;padding:15px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;cursor:pointer">✅ CONFIRM CHECK-IN</button>
+      <button onclick="kioskConfirm(${idx})" style="width:100%;background:var(--gold);color:var(--forest-dark);border:none;border-radius:12px;padding:15px;font-family:'barlow-semi-condensed',sans-serif;font-size:22px;letter-spacing:2px;cursor:pointer">✅ CONFIRM CHECK-IN</button>
     </div>`;
 }
 
@@ -1958,7 +1960,7 @@ function renderCourtQueue() {
   }
   listEl.innerHTML = waiting.map((entry, i) => `
     <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);min-width:36px;text-align:center">${i+1}</div>
+      <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:28px;color:var(--gold);min-width:36px;text-align:center">${i+1}</div>
       <div style="flex:1">
         <div style="font-weight:700;font-size:14px">${entry.name}</div>
         <div style="font-size:11px;color:var(--muted)">Joined ${entry.joinedAt} · Party of ${entry.partySize}</div>
