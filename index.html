@@ -238,9 +238,11 @@ select.g-empty{background:var(--card);color:var(--ink);}
 .cc-theme .block{border-color:rgba(255,255,255,0.15);}
 .cc-theme .block-title{color:#f0c917;}
 .cc-theme .stat{background:rgba(0,0,0,0.2);border-color:rgba(255,255,255,0.1);}
-.cc-theme .stat-lbl{color:rgba(255,255,255,0.5);}
+.cc-theme .stat-lbl{color:rgba(255,255,255,0.85);font-weight:600;}
 .cc-theme .stat-num{color:#f0c917;}
+.cc-theme .stat-detail{color:rgba(255,255,255,0.6);}
 .cc-theme .page-title,.cc-theme .page-sub{color:white;}
+.cc-theme .btn-ghost:hover{background:#f0f0f0;color:#00775f;}
   
 /* ══ PROSPECT TABLE SPECIAL ═════════════════════ */
 .good-prospect-yes{color:#ed125f;font-weight:700;}
@@ -739,22 +741,28 @@ select.g-empty{background:var(--card);color:var(--ink);}
      KIOSK MODE
 ══════════════════════════════════════════════ -->
 <div id="kiosk-overlay">
-  <button onclick="closeKiosk()" style="position:absolute;top:14px;right:18px;z-index:10;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 16px;color:rgba(255,255,255,0.4);font-family:'proxima-nova',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;cursor:pointer;text-transform:uppercase">✕ Exit Kiosk</button>
-  <div style="width:100%;position:relative;">
-    <img src="https://thebryc.github.io/volunteers/cc_banner.png" style="width:100%;max-height:220px;object-fit:cover;display:block;">
-    <div style="text-align:center;padding:14px 24px 6px;background:#0a7c5c;">
-      <div style="font-size:13px;color:rgba(255,255,255,0.7);letter-spacing:2px;text-transform:uppercase;">Find your name to check in 👇</div>
+  <button onclick="closeKiosk()" style="position:absolute;top:14px;right:18px;z-index:10;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 16px;color:rgba(255,255,255,0.7);font-family:'proxima-nova',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;cursor:pointer;text-transform:uppercase">✕ Exit Kiosk</button>
+
+  <div id="kiosk-event-title" style="display:none;"></div>
+
+  <img src="https://thebryc.github.io/volunteers/cc_banner.png" style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;flex-shrink:0;">
+
+  <div style="background:#00775f;text-align:center;padding:16px 24px 12px;flex-shrink:0;">
+    <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:20px;font-weight:700;color:#f0c917;letter-spacing:3px;text-transform:uppercase;">Find your name to check in 👇</div>
+  </div>
+
+  <div style="background:#00775f;padding:0 24px 16px;flex-shrink:0;">
+    <div style="max-width:560px;margin:0 auto;">
+      <input type="text" id="kiosk-search" placeholder="Start typing your name…" oninput="kioskSearch(this.value)" autocomplete="off"
+        style="width:100%;padding:16px 20px;font-size:18px;border-radius:14px;text-align:center;background:white;border:3px solid #f0c917;color:#1a1a1a;font-family:'proxima-nova',sans-serif;">
     </div>
   </div>
-  <div style="max-width:560px;margin:0 auto;padding:0 24px;width:100%">
-    <input type="text" id="kiosk-search" placeholder="🔍  Start typing your name…" oninput="kioskSearch(this.value)" autocomplete="off"
-      style="width:100%;padding:16px 20px;font-size:18px;border-radius:14px;text-align:center;background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.15);color:white;font-family:'proxima-nova',sans-serif;">
+
+  <div style="flex:1;overflow-y:auto;padding:16px 24px;max-width:560px;margin:0 auto;width:100%;background:#00775f;" id="kiosk-results"></div>
+
+  <div style="text-align:center;padding:16px;background:#00775f;border-top:1px solid rgba(255,255,255,0.15);flex-shrink:0;">
+    <button onclick="showKioskWalkin()" style="background:transparent;border:2px solid rgba(255,255,255,0.4);border-radius:10px;padding:11px 28px;color:white;font-family:'proxima-nova',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Can't find yourself? Add your name here →</button>
   </div>
-  <div style="flex:1;overflow-y:auto;padding:16px 24px;max-width:560px;margin:0 auto;width:100%" id="kiosk-results"></div>
-  <div style="text-align:center;padding:14px 24px 6px;background:#0a7c5c;">
-  <div id="kiosk-event-title" style="display:none;"></div>
-  <div style="font-size:13px;color:rgba(255,255,255,0.7);letter-spacing:2px;text-transform:uppercase;">Find your name to check in 👇</div>
-</div>
   <div id="kiosk-walkin-panel" style="display:none;position:absolute;inset:0;background:var(--forest-dark);overflow-y:auto;padding:28px 24px;max-width:580px;margin:0 auto;width:100%">
     <button onclick="hideKioskWalkin()" style="background:none;border:none;color:var(--muted);font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;margin-bottom:18px">← Back</button>
     <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:28px;color:var(--gold);letter-spacing:2px;margin-bottom:18px">Welcome! Let's check you in.</div>
