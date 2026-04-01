@@ -130,8 +130,8 @@ tbody tr:hover{background:rgba(255,255,255,.035);}
 .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
 .fl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
 .fl .req{color:var(--gold);}
-input[type=text],input[type=email],input[type=tel],input[type=date],input[type=password],select,textarea{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:11px 14px;color:var(--ink);font-family:'proxima-nova',sans-serif;font-size:14px;width:100%;transition:border-color .2s,box-shadow .2s;}
-input::placeholder,textarea::placeholder{color:rgba(255,255,255,.22);}
+input[type=text],input[type=email],input[type=tel],input[type=date],input[type=password],select,textarea{background:white;border:1px solid rgba(0,0,0,0.12);border-radius:8px;padding:11px 14px;color:#1a1a1a;font-family:'proxima-nova',sans-serif;font-size:14px;width:100%;transition:border-color .2s,box-shadow .2s;}
+input::placeholder,textarea::placeholder{color:#aaa;}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(240,201,23,.12);}
 select option{background:#4a1530;color:white;}
 .frow{display:grid;gap:14px;grid-template-columns:1fr 1fr;margin-bottom:0;}
@@ -293,7 +293,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
       <div style="position:absolute;bottom:-80px;left:-40px;width:260px;height:260px;background:rgba(0,0,0,0.08);border-radius:50%;"></div>
       <div style="position:relative;z-index:1;">
         <div style="display:inline-block;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;padding:5px 14px;border-radius:20px;margin-bottom:20px;">▶ Welcome to the PY27</div>
-        <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:clamp(40px,8vw,72px);color:white;letter-spacing:4px;line-height:1;margin-bottom:16px;">VOLUNTEER HUB</div>
+        <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:clamp(40px,8vw,72px);color:white;letter-spacing:4px;line-height:1;margin-bottom:16px;font-weight:800;">VOLUNTEER HUB</div>
         <div style="font-size:15px;color:rgba(255,255,255,0.8);max-width:480px;margin:0 auto;line-height:1.6;margin-bottom:28px;">Your all-in-one hub for managing PY27 volunteers, events, and check-ins.</div>
         <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);padding:9px 18px;border-radius:30px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.9);">
           <div style="width:8px;height:8px;background:#f0c917;border-radius:50%;animation:pulse 2s ease-in-out infinite;flex-shrink:0;"></div>
