@@ -759,19 +759,33 @@ select.g-empty{background:var(--card);color:var(--ink);}
     <div style="font-size:12px;color:var(--muted);margin-top:3px">Complete onboarding + start mentoring in September to qualify for the October iPad drawing.</div>
   </div>
 
-  <!-- Pickleball queue prompt -->
-  <div id="kiosk-pickle-prompt" style="margin-top:18px;width:100%;max-width:460px;background:rgba(100,220,200,0.07);border:1px solid rgba(100,220,200,0.25);border-radius:14px;padding:20px">
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#88ded0;letter-spacing:2px;margin-bottom:6px">🏓 WANT TO PLAY PICKLEBALL?</div>
-    <div style="font-size:13px;color:var(--soft);margin-bottom:14px">Sign up for the court queue — we'll call your name when a court opens!</div>
-    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-      <button onclick="joinPickleQueue('solo')" style="background:#88ded0;color:#04342c;border:none;border-radius:10px;padding:12px 22px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;cursor:pointer">Just Me</button>
-      <button id="kiosk-pickle-party-btn" onclick="joinPickleQueue('party')" style="background:rgba(100,220,200,0.2);color:#88ded0;border:1px solid rgba(100,220,200,0.4);border-radius:10px;padding:12px 22px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;cursor:pointer">Me + My Party</button>
-      <button onclick="skipPickleQueue()" style="background:transparent;color:rgba(255,255,255,0.3);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:12px 22px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;cursor:pointer">No Thanks</button>
-    </div>
-    <div id="kiosk-pickle-joined" style="display:none;margin-top:12px;font-size:14px;color:#88ded0;font-weight:700"></div>
-  </div>
+<!-- Pickleball queue prompt -->
+  <div id="kiosk-pickle-prompt" style="margin-top:18px;width:100%;max-width:460px;background:#0a7c5c;border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:24px">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:#f0c917;letter-spacing:2px;margin-bottom:6px">🏓 WANT TO PLAY PICKLEBALL?</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.8);margin-bottom:16px">Sign up for the court queue — we'll call your name when a court opens!</div>
 
-  <button onclick="resetKiosk()" id="kiosk-next-btn" style="margin-top:20px;background:var(--gold);color:var(--forest-dark);border:none;border-radius:12px;padding:14px 36px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer">NEXT PERSON →</button>
+    <div id="kiosk-pickle-step1">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:10px">How many players in your group?</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
+        <button onclick="selectPicklePlayers(1)" class="pickle-num-btn" style="width:60px;height:60px;background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3);border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:28px;cursor:pointer">1</button>
+        <button onclick="selectPicklePlayers(2)" class="pickle-num-btn" style="width:60px;height:60px;background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3);border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:28px;cursor:pointer">2</button>
+        <button onclick="selectPicklePlayers(3)" class="pickle-num-btn" style="width:60px;height:60px;background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3);border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:28px;cursor:pointer">3</button>
+        <button onclick="selectPicklePlayers(4)" class="pickle-num-btn" style="width:60px;height:60px;background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3);border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:28px;cursor:pointer">4</button>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:12px">Only one person per group needs to sign up!</div>
+      <button onclick="skipPickleQueue()" style="background:transparent;color:rgba(255,255,255,0.35);border:none;font-size:12px;cursor:pointer;text-decoration:underline;font-family:'proxima-nova',sans-serif;">No thanks, skip</button>
+    </div>
+
+    <div id="kiosk-pickle-step2" style="display:none">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:8px">Your phone number</div>
+      <input type="tel" id="pickle-phone" placeholder="(225) 555-0100" style="width:100%;padding:13px 16px;font-size:16px;border-radius:10px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:white;font-family:'proxima-nova',sans-serif;margin-bottom:12px;text-align:center;">
+      <button onclick="submitPickleQueue()" style="width:100%;background:#f0c917;color:#0a3d1f;border:none;border-radius:10px;padding:13px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">JOIN THE QUEUE →</button>
+      <button onclick="document.getElementById('kiosk-pickle-step2').style.display='none';document.getElementById('kiosk-pickle-step1').style.display='';" style="background:transparent;color:rgba(255,255,255,0.35);border:none;font-size:12px;cursor:pointer;text-decoration:underline;font-family:'proxima-nova',sans-serif;margin-top:10px;display:block;margin-left:auto;margin-right:auto;">← Back</button>
+    </div>
+
+    <div id="kiosk-pickle-joined" style="display:none;margin-top:12px;font-size:15px;color:#f0c917;font-weight:700;text-align:center"></div>
+  </div>
+  <button onclick="resetKiosk()" id="kiosk-next-btn" style="margin-top:20px;background:#ed125f;color:white;border:none;border-radius:12px;padding:14px 36px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer">NEXT PERSON →</button>
 </div>
 </div>
 
