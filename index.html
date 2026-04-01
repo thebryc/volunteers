@@ -72,8 +72,8 @@ backdrop-filter:blur(10px);
 
 /* ══ MAIN CONTENT ═══════════════════════════════ */
 #main{margin-left:var(--sidebar-w);flex:1;min-height:100vh;position:relative;z-index:1;}
-.page{display:none;padding:32px 28px 72px;}
-.page.active{display:block;}
+.page{display:none;padding:32px 28px 72px;width:100%;box-sizing:border-box;}
+.page.active{display:flex;flex-direction:column;}
 
 /* ══ PAGE HEADER ════════════════════════════════ */
 .page-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
@@ -109,7 +109,7 @@ backdrop-filter:blur(10px);
 .stat-detail{font-size:11px;color:var(--muted);}
 
 /* ══ CARDS / BLOCKS ═════════════════════════════ */
-.block{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;backdrop-filter:blur(4px);}
+.block{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;backdrop-filter:blur(4px);width:100%;display:block;}
 .block-hdr{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
 .block-title{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:8px;}
 .cnt{background:rgba(240,201,23,.18);color:var(--gold);border-radius:50px;padding:2px 9px;font-size:11px;font-weight:700;letter-spacing:0;}
