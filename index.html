@@ -23,8 +23,8 @@ body{font-family:'proxima-nova',sans-serif;background:#f0ede8;color:#1a1a1a;min-
 ::-webkit-scrollbar-thumb{background:var(--forest-mid);border-radius:3px;}
 
 /* ══ LOGIN MODAL ══════════════════════════════════ */
-#login-modal{display:none;position:fixed;inset:0;z-index:2000;background:#ed125f;overflow-y:auto;}
-#login-modal.open{display:block;}
+#login-modal{display:none;position:fixed;inset:0;z-index:2000;background:#ed125f;overflow-y:auto;pointer-events:none;}
+#login-modal.open{display:block;pointer-events:all;}
 .login-card{width:100%;max-width:400px;background:white;border:none;border-radius:20px;padding:36px 32px;text-align:center;position:relative;animation:fadeUp .22s ease both;box-shadow:0 8px 40px rgba(0,0,0,0.12);}
 .login-close{position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(0,0,0,0.2);font-size:20px;cursor:pointer;}
 .login-close:hover{color:#333;}
