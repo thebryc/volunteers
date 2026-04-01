@@ -6,18 +6,18 @@
 <title>BRYC PY27 — Volunteer CRM</title>
 <link rel="stylesheet" href="https://use.typekit.net/oyd0hvb.css"><style>
 :root {
-  --forest:#ed125f; --forest-dark:#f5f5f3; --forest-mid:#c8004a;
+  --forest:#ed125f; --forest-dark:#ffffff; --forest-mid:#c8004a;
   --forest-light:#ed125f; --forest-pale:#fdf0f4;
-  --gold:#c8a800; --gold2:#e6c200; --gold-pale:#fff8d6;
-  --ink:#1a1a1a; --muted:#888; --soft:#555;
-  --card:rgba(0,0,0,0.03); --card-h:rgba(0,0,0,0.06);
-  --border:rgba(0,0,0,0.08); --border-gold:rgba(200,168,0,0.35);
+  --gold:#f0c917; --gold2:#f5d94d; --gold-pale:#fff8d6;
+  --ink:#1a1a1a; --muted:#666; --soft:#444;
+  --card:#ffffff; --card-h:#fafafa;
+  --border:rgba(0,0,0,0.09); --border-gold:rgba(237,18,95,0.25);
   --danger:#e74c3c; --danger-bg:rgba(231,76,60,0.08);
   --sidebar-w:220px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{font-family:'proxima-nova',sans-serif;background:#f5f5f3;color:#1a1a1a;min-height:100vh;overflow-x:hidden;}
+body{font-family:'proxima-nova',sans-serif;background:#f0ede8;color:#1a1a1a;min-height:100vh;overflow-x:hidden;}
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:rgba(0,0,0,0.15);}
 ::-webkit-scrollbar-thumb{background:var(--forest-mid);border-radius:3px;}
@@ -48,23 +48,22 @@ body{font-family:'proxima-nova',sans-serif;background:#f5f5f3;color:#1a1a1a;min-
 /* ══ SIDEBAR ════════════════════════════════════ */
 #sidebar{
 width:var(--sidebar-w);flex-shrink:0;
-background:white;
-border-right:1px solid rgba(0,0,0,0.08);
-  display:flex;flex-direction:column;
-  position:fixed;top:0;left:0;bottom:0;z-index:100;
-  backdrop-filter:blur(10px);
+background:#ed125f;
+border-right:none;
+display:flex;flex-direction:column;
+position:fixed;top:0;left:0;bottom:0;z-index:100;
+backdrop-filter:blur(10px);
 }
 .sb-brand{padding:24px 20px 20px;border-bottom:1px solid var(--border);}
 .sb-bryc{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
 .sb-mark{width:32px;height:32px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10px;color:var(--forest);flex-shrink:0;}
-.sb-name{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gold);letter-spacing:2px;}
-.sb-year{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
-.sb-role-badge{display:inline-block;background:rgba(240,201,23,0.18);color:var(--gold);border-radius:50px;padding:2px 10px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:6px;}
-.sb-nav{flex:1;padding:12px 10px;overflow-y:auto;}
-.sb-section{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:12px 10px 6px;}
-.sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:all .18s;color:rgba(255,255,255,0.5);font-size:13px;font-weight:600;border:none;background:transparent;width:100%;text-align:left;margin-bottom:2px;}
-.sb-item:hover{background:rgba(255,255,255,0.07);color:var(--ink);}
-.sb-item.active{background:rgba(240,201,23,0.15);color:var(--gold);}
+.sb-name{font-family:'Bebas Neue',sans-serif;font-size:18px;color:white;letter-spacing:2px;}
+.sb-year{font-size:10px;color:rgba(255,255,255,0.6);letter-spacing:2px;text-transform:uppercase;}
+.sb-role-badge{display:inline-block;background:rgba(255,255,255,0.2);color:white;border-radius:50px;padding:2px 10px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:6px;}
+.sb-section{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.5);padding:12px 10px 6px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:all .18s;color:rgba(255,255,255,0.75);font-size:13px;font-weight:600;border:none;background:transparent;width:100%;text-align:left;margin-bottom:2px;}
+.sb-item:hover{background:rgba(255,255,255,0.15);color:white;}
+.sb-item.active{background:rgba(255,255,255,0.2);color:white;}
 .sb-item .icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
 .sb-item .badge{margin-left:auto;background:rgba(240,201,23,0.2);color:var(--gold);border-radius:50px;padding:1px 8px;font-size:10px;font-weight:700;}
 .sb-bottom{padding:12px 10px;border-top:1px solid var(--border);}
@@ -202,8 +201,8 @@ select.g-empty{background:var(--card);color:var(--ink);}
 .info-box p{font-size:13px;color:var(--muted);line-height:1.6;}
 
 /* ══ SUMMARY GRID ═══════════════════════════════ */
-.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;padding:18px;width:100%;}
-.summary-card{background:rgba(0,0,0,.18);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:18px;width:100%;box-sizing:border-box;}
+.summary-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;min-width:0;width:100%;}
 .summary-card-name{font-size:12px;color:var(--muted);margin-bottom:5px;}
 .summary-card-num{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1;color:#ed125f;}
 .summary-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:7px;}
