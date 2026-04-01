@@ -23,22 +23,22 @@ body{font-family:'proxima-nova',sans-serif;background:#f0ede8;color:#1a1a1a;min-
 ::-webkit-scrollbar-thumb{background:var(--forest-mid);border-radius:3px;}
 
 /* ══ LOGIN MODAL ══════════════════════════════════ */
-#login-modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:24px;}
-#login-modal.open{display:flex;}
-.login-card{width:100%;max-width:380px;background:white;border:2px solid #ed125f;border-radius:20px;padding:36px 32px;text-align:center;position:relative;animation:fadeUp .22s ease both;}
-.login-close{position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,.3);font-size:20px;cursor:pointer;}
-.login-close:hover{color:white;}
+#login-modal{display:none;position:fixed;inset:0;z-index:2000;background:#ed125f;overflow-y:auto;}
+#login-modal.open{display:block;}
+.login-card{width:100%;max-width:400px;background:white;border:none;border-radius:20px;padding:36px 32px;text-align:center;position:relative;animation:fadeUp .22s ease both;box-shadow:0 8px 40px rgba(0,0,0,0.12);}
+.login-close{position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(0,0,0,0.2);font-size:20px;cursor:pointer;}
+.login-close:hover{color:#333;}
 .login-logo{width:52px;height:52px;border-radius:50%;margin:0 auto 14px;display:block;}
-.login-title{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gold);letter-spacing:3px;margin-bottom:4px;}
-.login-sub{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;}
-.login-tabs{display:flex;gap:4px;background:rgba(0,0,0,0.2);border-radius:10px;padding:4px;margin-bottom:20px;}
-.login-tab{flex:1;padding:8px;border-radius:7px;border:none;background:transparent;color:rgba(255,255,255,0.4);font-family:'proxima-nova',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
-.login-tab.active{background:var(--gold);color:var(--forest-dark);}
-.login-input{width:100%;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:13px 16px;color:var(--ink);font-family:'proxima-nova',sans-serif;font-size:15px;margin-bottom:14px;transition:border-color .2s;}
-.login-input:focus{outline:none;border-color:var(--gold);}
-.login-btn{width:100%;background:var(--gold);color:var(--forest-dark);border:none;border-radius:10px;padding:14px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
-.login-btn:hover{background:var(--gold2);transform:translateY(-1px);}
-.login-err{color:var(--danger);font-size:13px;margin-top:10px;display:none;}
+.login-title{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#ed125f;letter-spacing:3px;margin-bottom:4px;}
+.login-sub{font-size:11px;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;}
+.login-tabs{display:flex;gap:4px;background:#f0ede8;border-radius:10px;padding:4px;margin-bottom:20px;}
+.login-tab{flex:1;padding:8px;border-radius:7px;border:none;background:transparent;color:#aaa;font-family:'proxima-nova',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.login-tab.active{background:#ed125f;color:white;}
+.login-input{width:100%;background:#f9f9f9;border:1px solid #eee;border-radius:10px;padding:13px 16px;color:#1a1a1a;font-family:'proxima-nova',sans-serif;font-size:15px;margin-bottom:14px;transition:border-color .2s;}
+.login-input:focus{outline:none;border-color:#ed125f;}
+.login-btn{width:100%;background:#ed125f;color:white;border:none;border-radius:10px;padding:14px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.login-btn:hover{background:#c8004a;transform:translateY(-1px);}
+.login-err{color:#e74c3c;font-size:13px;margin-top:10px;display:none;}
 
 /* ══ APP SHELL ══════════════════════════════════ */
 #app{display:none;min-height:100vh;}
