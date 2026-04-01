@@ -421,6 +421,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
       <button class="btn btn-ghost" onclick="goPage('events',null)">← All Events</button>
       <button class="btn btn-ghost" onclick="exportCSV('event-rsvps')">⬇ Export RSVPs</button>
       <button class="btn btn-ghost btn-sm" onclick="openEventFormUrlEditor()">🔗 Set RSVP Form URL</button>
+      <button class="btn btn-sheets btn-sm" id="rsvp-sheet-sync-btn" onclick="syncRSVPSheet()">🔄 Sync RSVP Sheet</button>
       <button class="btn btn-green" onclick="openKiosk()">🖥 Kiosk Mode</button>
       <button class="btn btn-gold" onclick="openModal('import-rsvp-modal')">⬆ Import RSVPs</button>
     </div>
