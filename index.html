@@ -232,6 +232,17 @@ select.g-empty{background:var(--card);color:var(--ink);}
 .live-dot{width:7px;height:7px;border-radius:50%;background:#4a9e6e;display:inline-block;margin-right:5px;animation:pulse 1.5s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 
+.cc-theme{background:#0a7c5c;}
+.cc-theme .page-hdr{background:url('https://thebryc.github.io/volunteers/cc_banner.png') center/cover no-repeat;border-radius:16px;padding:0;margin-bottom:24px;overflow:hidden;min-height:180px;align-items:flex-end;}
+.cc-theme .page-hdr > div:first-child{display:none;}
+.cc-theme .btn-row{background:rgba(0,0,0,0.35);padding:14px 20px;width:100%;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;}
+.cc-theme .block{border-color:rgba(255,255,255,0.15);}
+.cc-theme .block-title{color:#f0c917;}
+.cc-theme .stat{background:rgba(0,0,0,0.2);border-color:rgba(255,255,255,0.1);}
+.cc-theme .stat-lbl{color:rgba(255,255,255,0.5);}
+.cc-theme .stat-num{color:#f0c917;}
+.cc-theme .page-title,.cc-theme .page-sub{color:white;}
+  
 /* ══ PROSPECT TABLE SPECIAL ═════════════════════ */
 .good-prospect-yes{color:#ed125f;font-weight:700;}
 .good-prospect-no{color:rgba(255,255,255,.3);}
@@ -1482,6 +1493,8 @@ function openEventDetail(eventId) {
 }
 
 function refreshEventDetail() {
+  const isCC = currentEventId === 'court-connections';
+  document.getElementById('page-event-detail').className = isCC ? 'page active cc-theme' : 'page active';
   const ev = DB.events.find(e => e.id === currentEventId);
   if (!ev) return;
   const rsvps = ev.rsvps || [];
