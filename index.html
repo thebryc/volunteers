@@ -1040,7 +1040,7 @@ window.dispatchEvent(new Event('fb-ready'));
 <script>
 // ══ STATE ════════════════════════════════════════
 const DEFAULT = {
-  passwords: { admin: 'bryc-admin-27', staff: 'bryc-staff-27' },
+  passwords: { admin: 'vip27', staff: 'bryc-staff-27' },
   categories: ['PY26 Interest/Waitlist','Mentor Referral','Team Referral','Late Intake/Interest Form','Interest Form','PY26 Self-Dismissed','Friendraiser','Court Connections','Alumni','Intake After Kickoff','Bingo','Exxon','Unsure Returners','Dow','FranU','LSU MBA','CityYear','Unitech','BRCC','PY25 Mentors','PY24 Mentors'],
   statuses: ['Invited to Friendraiser','Committed','Onboarding - Need BG Check','Late Intake - ask again','Final Email Sent','RSVPed to Training','RSVP July Bingo','Unavailable','Interested!','Zoom interest!','Zoom attended','Reask','Attended Bingo - Convos in Progress','Final Text Sent','Convos in Progress'],
   comms: ['Intake Welcome','Interest Follow-up','Follow-up 2','Bingo Invite','First Email Sent','Bingo Thank You','Missed Bingo Follow-Up','Virtual Session Invite','Intake Ask','Unavailable','Virtual Follow-up'],
@@ -1611,11 +1611,10 @@ const roleColors = {
   'Local Institution/Organization': '#eb2627',
   'Friend of BRYC': '#00775f'
 };
-roleGrid.innerHTML = roleEntries.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;padding:18px;width:100%;box-sizing:border-box;min-width:0;">${roleEntries.map(([role,cnt]) => {
+roleGrid.innerHTML = roleEntries.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;padding:18px;width:100%;box-sizing:border-box;">${roleEntries.map(([role,cnt]) => {
   const col = roleColors[role] || '#888';
-  return `<div style="background:white;border:1px solid rgba(0,0,0,0.08);border-top:3px solid ${col};border-radius:10px;padding:14px 16px;min-width:0;box-sizing:border-box;word-break:break-word;overflow:hidden;">
-    <div style="background:white;border:1px solid rgba(0,0,0,0.08);border-top:3px solid ${col};border-radius:10px;padding:14px 16px;min-width:0;box-sizing:border-box;">
-    <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:${col};margin-bottom:8px;">${role}</div>
+  return `<div style="background:white;border:1px solid rgba(0,0,0,0.08);border-top:3px solid ${col};border-radius:10px;padding:14px 16px;min-width:0;box-sizing:border-box;word-break:break-word;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:${col};margin-bottom:8px;">${role}</div>
     <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:34px;font-weight:400;color:#1a1a1a;line-height:1;">${cnt}</div>
     <div style="font-size:11px;color:#888;margin-top:2px;">${Math.round(cnt/rsvps.length*100)}%</div>
     <div style="height:3px;background:rgba(0,0,0,0.06);border-radius:2px;margin-top:8px;"><div style="width:${Math.round(cnt/maxR*100)}%;height:100%;background:${col};border-radius:2px;"></div></div>
