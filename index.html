@@ -28,7 +28,7 @@ body{font-family:'proxima-nova',sans-serif;background:var(--forest-dark);color:v
 .login-card{width:100%;max-width:380px;background:#3a0f22;border:1px solid var(--border-gold);border-radius:20px;padding:36px 32px;text-align:center;position:relative;animation:fadeUp .22s ease both;}
 .login-close{position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,.3);font-size:20px;cursor:pointer;}
 .login-close:hover{color:white;}
-.login-logo{width:48px;height:48px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:var(--forest);margin:0 auto 14px;letter-spacing:-0.3px;}
+.login-logo{width:52px;height:52px;border-radius:50%;margin:0 auto 14px;display:block;}
 .login-title{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gold);letter-spacing:3px;margin-bottom:4px;}
 .login-sub{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:24px;}
 .login-tabs{display:flex;gap:4px;background:rgba(0,0,0,0.2);border-radius:10px;padding:4px;margin-bottom:20px;}
@@ -78,7 +78,7 @@ body{font-family:'proxima-nova',sans-serif;background:var(--forest-dark);color:v
 
 /* ══ PAGE HEADER ════════════════════════════════ */
 .page-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
-.page-title{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--gold);letter-spacing:3px;line-height:1;}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--gold);letter-spacing:3px;line-height:1;text-transform:uppercase;}
 .page-sub{font-size:12px;color:var(--muted);margin-top:5px;}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 
@@ -267,7 +267,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
 ══════════════════════════════════════════════ -->
 <div id="login-modal">
   <div class="login-card">
-    <div style="width:52px;height:52px;background:white;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:var(--forest);letter-spacing:-0.3px">BRYC</div>
+    <img class="login-logo" src="https://thebryc.github.io/volunteers/logo.png">
     <div class="login-title">BRYC Volunteers</div>
     <div class="login-sub">Volunteer Hub · PY27</div>
     <div style="font-size:11px;color:var(--muted);margin-top:4px;margin-bottom:20px;text-align:center">Requires Google sign-in + password</div>
@@ -291,7 +291,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
 <nav id="sidebar">
   <div class="sb-brand">
     <div class="sb-bryc">
-      <div class="sb-mark">BRYC</div>
+      <img src="https://thebryc.github.io/volunteers/logo.png" style="width:32px;height:32px;border-radius:50%;flex-shrink:0;">
       <div>
         <div class="sb-name">Volunteers</div>
         <div id="fb-sync-status" style="font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:.3px">⬤ connecting…</div>
