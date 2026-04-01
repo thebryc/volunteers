@@ -1732,12 +1732,12 @@ function kioskCheckIn(idx) {
           oninput="document.getElementById('kiosk-raffle-sec').style.display=this.value.trim()?'':'none'" style="font-size:16px;padding:13px">
       </div>
       <div id="kiosk-raffle-sec" style="${gnames?'':'display:none'}">
-        <div style="background:rgba(240,201,23,0.08);border:1px solid rgba(240,201,23,0.25);border-radius:10px;padding:14px;margin-bottom:14px">
-          <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">🏆 iPAD RAFFLE — SEPTEMBER DRAWING</div>
-          <p style="font-size:13px;color:var(--soft);margin-bottom:12px">Both you and your guest must commit to mentorship to qualify.</p>
-          <label class="ci" style="margin-bottom:9px;font-size:15px"><input type="checkbox" id="kk-self"> I commit to mentorship next year</label>
-          <label class="ci" style="font-size:15px"><input type="checkbox" id="kk-guest"> My guest commits to mentorship next year</label>
-        </div>
+        <div style="background:rgba(240,201,23,0.08);border:1px solid rgba(240,201,23,0.25);border-radius:10px;padding:14px;margin-bottom:14px;text-align:center">
+          <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">🏆 iPAD DRAWING — OCTOBER</div>
+          <p style="font-size:13px;color:var(--soft);margin-bottom:12px">You're both one step closer to the October iPad drawing!</p>
+          <img src="https://thebryc.github.io/volunteers/IPAD_DRAWING.png" style="width:100%;max-width:340px;border-radius:10px;">
+  </div>
+</div>
       </div>
       <button onclick="kioskConfirm(${idx})" style="width:100%;background:var(--gold);color:var(--forest-dark);border:none;border-radius:12px;padding:15px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;cursor:pointer">✅ CONFIRM CHECK-IN</button>
     </div>`;
