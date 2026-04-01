@@ -1703,8 +1703,10 @@ function kioskSearch(q) {
   if (!q.trim()) { res.innerHTML=''; return; }
   const ev = DB.events.find(e=>e.id===currentEventId);
   const rsvps = ev?.rsvps||[];
-  const matches = rsvps.filter(r=>r.name.toLowerCase().includes(q.toLowerCase()));
-  if (!matches.length) {
+  const matches = rsvps.filter(r =>
+    r.name.toLowerCase().includes(q.toLowerCase()) ||
+    (r.guests||[]).some(g => g.name.toLowerCase().includes(q.toLowerCase()))
+  );  if (!matches.length) {
     res.innerHTML=`<div style="text-align:center;color:var(--muted);font-size:16px;padding:20px">No match. <button onclick="showKioskWalkin()" style="background:none;border:none;color:var(--gold);font-size:16px;cursor:pointer;text-decoration:underline">Add yourself →</button></div>`;
     return;
   }
