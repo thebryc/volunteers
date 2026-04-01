@@ -1835,14 +1835,14 @@ function kioskCheckIn(idx) {
     <div style="background:rgba(240,201,23,0.06);border:1px solid var(--border-gold);border-radius:14px;padding:20px">
       <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:24px;color:var(--gold);letter-spacing:2px;margin-bottom:14px">Welcome, ${r.fname}! 🎉</div>
       <div class="fg" style="margin-bottom:14px">
-        <label class="fl">Is your guest here today?</label>
+        <label class="fl" style="color:white;">Is your guest here today?</label>
         <input type="text" id="kiosk-guest-inp" placeholder="Guest name (leave blank if none)" value="${gnames}"
           oninput="document.getElementById('kiosk-raffle-sec').style.display=this.value.trim()?'':'none'" style="font-size:16px;padding:13px">
       </div>
       <div id="kiosk-raffle-sec" style="${gnames?'':'display:none'}">
         <div style="background:rgba(240,201,23,0.08);border:1px solid rgba(240,201,23,0.25);border-radius:10px;padding:14px;margin-bottom:14px;text-align:center">
           <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">🏆 iPAD DRAWING — OCTOBER</div>
-          <p style="font-size:13px;color:var(--soft);margin-bottom:12px">You're both one step closer to the October iPad drawing!</p>
+          <p style="font-size:13px;color:white;margin-bottom:12px">You're both one step closer to the October iPad drawing!</p>
           <img src="https://thebryc.github.io/volunteers/IPAD_DRAWING.png" style="width:100%;max-width:340px;border-radius:10px;">
   </div>
 </div>
