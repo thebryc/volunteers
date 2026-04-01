@@ -387,6 +387,23 @@ select.g-empty{background:var(--card);color:var(--ink);}
   </div>
 </div>
 
+<div class="block">
+  <div class="block-hdr">
+    <div class="block-title">🕐 Recently Added Prospects</div>
+    <button class="btn btn-ghost btn-sm" onclick="goPage('prospects',document.querySelector('.sb-item:nth-child(2)'))">View All →</button>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>Name</th><th>Category</th><th>Status</th><th>Date Added</th><th></th>
+      </tr></thead>
+      <tbody id="dash-recent-tbody">
+        <tr><td colspan="5"><div class="empty"><div class="ei">🕐</div><p>No prospects yet.</p></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>  
+
 <!-- ══ PROSPECTS ══════════════════════════════ -->
 <div class="page" id="page-prospects">
   <div class="page-hdr">
@@ -1201,6 +1218,20 @@ function renderDashboard() {
   document.getElementById('d-events').textContent = DB.events.length;
   document.getElementById('d-responses').textContent = DB.formResponses.interest.length + DB.formResponses.applications.length;
   document.getElementById('sb-prospect-cnt').textContent = p.length;
+
+  const recentTbody = document.getElementById('dash-recent-tbody');
+if (recentTbody) {
+  const recent = [...DB.prospects]
+    .sort((a,b) => new Date(b.dateAdded||0) - new Date(a.dateAdded||0))
+    .slice(0,8);
+  recentTbody.innerHTML = recent.length ? recent.map(p => `<tr>
+    <td><strong>${p.name||[p.fname,p.lname].filter(Boolean).join(' ')}</strong></td>
+    <td>${p.category?`<span class="badge b-teal">${p.category}</span>`:'—'}</td>
+    <td>${p.status?`<span class="badge b-gold">${p.status}</span>`:'—'}</td>
+    <td style="font-size:12px;color:var(--muted)">${p.dateAdded||'—'}</td>
+    <td><button class="btn btn-ghost btn-xs" onclick="openEditProspect('${p.email||''}')">Edit</button></td>
+  </tr>`).join('') : `<tr><td colspan="5"><div class="empty"><div class="ei">🕐</div><p>No prospects yet.</p></div></td></tr>`;
+}
 
   const statusCounts = {};
   p.forEach(x => { if(x.status) statusCounts[x.status] = (statusCounts[x.status]||0)+1; });
