@@ -2176,7 +2176,7 @@ function populateRsvpSheetSettings() {
   if (st && cfg.tabName)  st.value = cfg.tabName;
 }
 
-  async function syncRSVPSheet() {
+async function syncRSVPSheet() {
   const rsvpCfg = getRsvpSheetConfig();
   const gsCfg   = getSheetConfig();
   const btn = document.getElementById('rsvp-sheet-sync-btn');
