@@ -242,7 +242,8 @@ select.g-empty{background:var(--card);color:var(--ink);}
 .cc-theme .stat-num{color:#f0c917;}
 .cc-theme .stat-detail{color:rgba(255,255,255,0.6);}
 .cc-theme .page-title,.cc-theme .page-sub{color:white;}
-.cc-theme .btn-ghost:hover{background:#f0f0f0;color:#00775f;}
+.cc-theme .btn-ghost{background:white !important;color:#00775f !important;border-color:white !important;}
+.cc-theme .btn-ghost:hover{background:#f0ede8 !important;color:#00775f !important;}
   
 /* ══ PROSPECT TABLE SPECIAL ═════════════════════ */
 .good-prospect-yes{color:#ed125f;font-weight:700;}
@@ -490,6 +491,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
     <div class="stat"><div class="stat-lbl">Guests</div><div class="stat-num green" id="ev-guests">0</div><div class="stat-detail">plus-ones</div></div>
     <div class="stat"><div class="stat-lbl">Checked In</div><div class="stat-num gold" id="ev-checkedin">0</div><div class="stat-detail">at the door</div></div>
     <div class="stat"><div class="stat-lbl">Raffle Entries</div><div class="stat-num gold" id="ev-raffle">0</div><div class="stat-detail">guest + both commit</div></div>
+    <div class="stat"><div class="stat-lbl">Expected Attendance</div><div class="stat-num gold" id="ev-expected">0</div><div class="stat-detail">RSVPs + guests</div></div>
   </div>
 
   <div class="block">
@@ -1591,6 +1593,7 @@ function refreshEventDetail() {
   document.getElementById('ev-guests').textContent = guests;
   document.getElementById('ev-checkedin').textContent = checkins.length;
   document.getElementById('ev-raffle').textContent = raffle;
+  document.getElementById('ev-expected').textContent = yes + maybe + guests;
   document.getElementById('ev-rsvp-badge').textContent = rsvps.length;
   document.getElementById('ev-ci-badge').textContent = checkins.length;
 
@@ -1608,7 +1611,8 @@ const roleColors = {
 };
 roleGrid.innerHTML = roleEntries.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:18px;width:100%;box-sizing:border-box;">${roleEntries.map(([role,cnt]) => {
   const col = roleColors[role] || '#888';
-  return `<div style="background:white;border:1px solid rgba(0,0,0,0.08);border-top:3px solid ${col};border-radius:10px;padding:14px 16px;min-width:0;box-sizing:border-box;">
+  return `<div style="background:white;border:1px solid rgba(0,0,0,0.08);border-top:3px solid ${col};border-radius:10px;padding:14px 16px;min-width:0;box-sizing:border-box;word-break:break-word;overflow:hidden;">
+    <div style="background:white;border:1px solid rgba(0,0,0,0.08);border-top:3px solid ${col};border-radius:10px;padding:14px 16px;min-width:0;box-sizing:border-box;">
     <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:${col};margin-bottom:8px;">${role}</div>
     <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:34px;font-weight:400;color:#1a1a1a;line-height:1;">${cnt}</div>
     <div style="font-size:11px;color:#888;margin-top:2px;">${Math.round(cnt/rsvps.length*100)}%</div>
