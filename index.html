@@ -798,7 +798,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
 <div id="kiosk-confirm-panel" style="display:none;position:fixed;inset:0;z-index:1000;background:#00775f;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px;overflow-y:auto">
   <div style="font-size:64px;margin-bottom:12px">🎉</div>
   <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:48px;color:var(--gold);letter-spacing:3px;margin-bottom:8px" id="kiosk-confirm-name">You're In!</div>
-  <div style="font-size:15px;color:var(--soft);margin-bottom:8px" id="kiosk-confirm-msg"></div>
+  <div style="font-size:15px;color:white;margin-bottom:8px" id="kiosk-confirm-msg"></div>
   <div id="kiosk-raffle-badge" style="display:none;background:rgba(240,201,23,0.12);border:1px solid rgba(240,201,23,0.3);border-radius:12px;padding:14px 22px;margin:10px 0">
     <div style="font-size:24px;margin-bottom:4px">🏆</div>
     <div style="font-size:14px;font-weight:800;letter-spacing:1px;color:var(--gold)">YOU'RE ONE STEP CLOSER!</div>
@@ -826,7 +826,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
     <div id="kiosk-pickle-step2" style="display:none">
       <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:8px">Your phone number</div>
       <input type="tel" id="pickle-phone" placeholder="(225) 555-0100" style="width:100%;padding:13px 16px;font-size:16px;border-radius:10px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:white;font-family:'proxima-nova',sans-serif;margin-bottom:12px;text-align:center;">
-      <button onclick="submitPickleQueue()" style="width:100%;background:#f0c917;color:#0a3d1f;border:none;border-radius:10px;padding:13px;font-family:'barlow-semi-condensed',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">JOIN THE QUEUE →</button>
+      <button onclick="this.style.background='#00775f';this.style.color='white';this.textContent='⏳ Adding you...';this.disabled=true;submitPickleQueue()" style="width:100%;background:#f0c917;color:#0a3d1f;border:none;border-radius:10px;padding:13px;font-family:'barlow-semi-condensed',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">JOIN THE QUEUE →</button>
       <button onclick="document.getElementById('kiosk-pickle-step2').style.display='none';document.getElementById('kiosk-pickle-step1').style.display='';" style="background:transparent;color:rgba(255,255,255,0.35);border:none;font-size:12px;cursor:pointer;text-decoration:underline;font-family:'proxima-nova',sans-serif;margin-top:10px;display:block;margin-left:auto;margin-right:auto;">← Back</button>
     </div>
 
