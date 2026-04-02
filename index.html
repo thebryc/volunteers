@@ -101,6 +101,8 @@ backdrop-filter:blur(10px);
 
 /* ══ STATS ══════════════════════════════════════ */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:14px;margin-bottom:24px;}
+.cc-theme .stats-grid{display:grid;grid-template-columns:200px 1fr;gap:12px;margin-bottom:24px;align-items:start;}
+.cc-theme .stat-featured{grid-row:1/4;display:flex;flex-direction:column;justify-content:center;min-height:200px;}
 .stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;transition:transform .2s;}
 .stat:hover{transform:translateY(-2px);}
 .stat-lbl{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#ed125f;margin-bottom:8px;}
@@ -485,6 +487,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
   </div>
 
   <div class="stats-grid">
+    <div class="stat stat-featured"><div class="stat-lbl">Expected Attendance</div><div class="stat-num gold" id="ev-expected" style="font-size:64px;">0</div><div class="stat-detail">RSVPs + guests</div></div>
     <div class="stat"><div class="stat-lbl">Total RSVPs</div><div class="stat-num gold" id="ev-total">0</div><div class="stat-detail">all responses</div></div>
     <div class="stat"><div class="stat-lbl">Attending</div><div class="stat-num green" id="ev-yes">0</div><div class="stat-detail">confirmed yes</div></div>
     <div class="stat"><div class="stat-lbl">Maybe</div><div class="stat-num white" id="ev-maybe">0</div><div class="stat-detail">possibly coming</div></div>
@@ -492,7 +495,6 @@ select.g-empty{background:var(--card);color:var(--ink);}
     <div class="stat"><div class="stat-lbl">Guests</div><div class="stat-num green" id="ev-guests">0</div><div class="stat-detail">plus-ones</div></div>
     <div class="stat"><div class="stat-lbl">Checked In</div><div class="stat-num gold" id="ev-checkedin">0</div><div class="stat-detail">at the door</div></div>
     <div class="stat"><div class="stat-lbl">Raffle Entries</div><div class="stat-num gold" id="ev-raffle">0</div><div class="stat-detail">guest + both commit</div></div>
-    <div class="stat"><div class="stat-lbl">Expected Attendance</div><div class="stat-num gold" id="ev-expected">0</div><div class="stat-detail">RSVPs + guests</div></div>
 </div>
 
   <div class="block">
@@ -1612,7 +1614,7 @@ const roleColors = {
   'Local Institution/Organization': '#eb2627',
   'Friend of BRYC': '#00775f'
 };
-roleGrid.innerHTML = roleEntries.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;padding:18px;width:100%;box-sizing:border-box;">${roleEntries.map(([role,cnt]) => {
+roleGrid.innerHTML = roleEntries.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding:18px;width:100%;box-sizing:border-box;">${roleEntries.map(([role,cnt]) => {
   const col = roleColors[role] || '#888';
   return `<div style="background:white;border:1px solid rgba(0,0,0,0.08);border-top:3px solid ${col};border-radius:10px;padding:14px 16px;min-width:0;box-sizing:border-box;word-break:break-word;">
     <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:${col};margin-bottom:8px;">${role}</div>
