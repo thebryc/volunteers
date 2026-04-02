@@ -470,13 +470,12 @@ select.g-empty{background:var(--card);color:var(--ink);}
 </div>
 
 <!-- ══ EVENT DETAIL ═══════════════════════════ -->
-<div class="page" id="page-event-detail">
-  <div class="page-hdr">
+<div class="page-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
     <div>
       <div class="page-title" id="ev-detail-title">Event</div>
       <div class="page-sub" id="ev-detail-sub"></div>
     </div>
-    <div class="btn-row">
+    <div class="btn-row" style="flex-wrap:wrap;justify-content:flex-end;">
       <button class="btn btn-ghost" onclick="goPage('events',null)">← All Events</button>
       <button class="btn btn-green" onclick="openKiosk()">🖥 Kiosk Mode</button>
       <button class="btn btn-ghost btn-sm" onclick="document.getElementById('ev-ci-tbody').scrollIntoView({behavior:'smooth'})">✅ Check-In List</button>
