@@ -2576,9 +2576,9 @@ async function syncRSVPSheet() {
 
     const statusRaw = g(iStatus).toLowerCase().trim();
       let attending = 'No';
-      if (statusRaw === 'Not attending') attending = 'no';
-      else if (statusRaw === 'Maybe') attending = 'maybe';
-      else if (statusRaw === 'Attending' || statusRaw.includes('yes')) attending = 'yes';
+      if (statusRaw.includes('not attending') || statusRaw.includes("can't make") || statusRaw.includes('cannot')) attending = 'no';
+      else if (statusRaw.includes('maybe')) attending = 'maybe';
+      else if (statusRaw === 'attending' || statusRaw.includes('yes')) attending = 'yes';
 
       const guests = [];
       [[iG1name,iG1con],[iG2name,iG2con],[iG3name,iG3con]].forEach(([ni,ci]) => {
