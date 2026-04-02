@@ -820,6 +820,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
       </div>
       <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:12px">Only one person per group needs to sign up!</div>
       <button onclick="skipPickleQueue()" style="background:transparent;color:rgba(255,255,255,0.35);border:none;font-size:12px;cursor:pointer;text-decoration:underline;font-family:'proxima-nova',sans-serif;">No thanks, skip</button>
+      
     </div>
 
     <div id="kiosk-pickle-step2" style="display:none">
@@ -1960,6 +1961,23 @@ function joinPickleQueue(mode) {
 
 function skipPickleQueue() {
   document.getElementById('kiosk-pickle-prompt').style.display = 'none';
+}
+
+function selectPicklePlayers(n, btn) {
+  window._picklePlayerCount = n;
+  document.querySelectorAll('.pickle-num-btn').forEach(b => {
+    b.style.background = 'rgba(255,255,255,0.15)';
+    b.style.borderColor = 'rgba(255,255,255,0.3)';
+    b.style.color = 'white';
+  });
+  btn.style.background = '#f0c917';
+  btn.style.borderColor = '#f0c917';
+  btn.style.color = '#0a3d1f';
+  setTimeout(() => {
+    document.getElementById('kiosk-pickle-step1').style.display = 'none';
+    document.getElementById('kiosk-pickle-step2').style.display = '';
+    document.getElementById('pickle-phone').focus();
+  }, 300);
 }
 
 function renderCourtQueue() {
