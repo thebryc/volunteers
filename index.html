@@ -2196,7 +2196,7 @@ function renderCourtQueue() {
         ${entry.phone ? `<a href="tel:${entry.phone}" style="display:inline-flex;align-items:center;gap:5px;margin-top:4px;background:rgba(0,119,95,0.12);border:1px solid rgba(0,119,95,0.3);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700;color:#00775f;text-decoration:none;">📞 ${entry.phone}</a>` : ''}
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-        ${entry.phone ? `<a href="sms:${entry.phone}?body=${encodeURIComponent(`Hi ${entry.name}, your court is ready! You have 5 minutes before your time starts. Head to the court now! 🏓`)}" style="display:inline-flex;align-items:center;gap:5px;background:#00775f;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;color:white;text-decoration:none;">💬 Text</a>` : ''}
+        ${entry.phone ? `<a href="sms:${entry.phone}?body=${encodeURIComponent(`Hi ${entry.name}, you have 5 minutes before your time starts. Head to the court now! 🏓`)}" style="display:inline-flex;align-items:center;gap:5px;background:#00775f;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;color:white;text-decoration:none;">💬 Text</a>` : ''}
         <button class="btn btn-danger btn-xs" onclick="removeFromQueue(${entry.id})">✕</button>
       </div>
     </div>`).join('');
