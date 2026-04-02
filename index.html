@@ -866,7 +866,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
     <div id="kiosk-pickle-step2" style="display:none">
       <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:8px">Your phone number</div>
       <input type="tel" id="pickle-phone" placeholder="(225) 555-0100" style="width:100%;padding:13px 16px;font-size:16px;border-radius:10px;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:white;font-family:'proxima-nova',sans-serif;margin-bottom:12px;text-align:center;">
-      <button onclick="this.style.background='#00775f';this.style.color='white';this.textContent='⏳ Adding you...';this.disabled=true;submitPickleQueue()" style="width:100%;background:#f0c917;color:#0a3d1f;border:none;border-radius:10px;padding:13px;font-family:'barlow-semi-condensed',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">JOIN THE QUEUE →</button>
+      <button id="pickle-submit-btn" onclick="submitPickleQueue()" style="width:100%;background:#f0c917;color:#0a3d1f;border:none;border-radius:10px;padding:13px;font-family:'barlow-semi-condensed',sans-serif;font-size:20px;letter-spacing:1px;cursor:pointer">JOIN THE QUEUE →</button>
       <button onclick="document.getElementById('kiosk-pickle-step2').style.display='none';document.getElementById('kiosk-pickle-step1').style.display='';" style="background:transparent;color:rgba(255,255,255,0.35);border:none;font-size:12px;cursor:pointer;text-decoration:underline;font-family:'proxima-nova',sans-serif;margin-top:10px;display:block;margin-left:auto;margin-right:auto;">← Back</button>
     </div>
 
@@ -2073,35 +2073,14 @@ function selectPicklePlayers(n, btn) {
 }
 
   function submitPickleQueue() {
+  const submitBtn = document.getElementById('pickle-submit-btn');
+  if (submitBtn) { submitBtn.textContent = '⏳ Adding you...'; submitBtn.disabled = true; }
   const ev = DB.events.find(e => e.id === currentEventId);
   if (!ev) return;
   if (!ev.pickleQueue) ev.pickleQueue = [];
   const rec = window._lastCheckinRecord || {};
   const phone = document.getElementById('pickle-phone').value.trim();
-  if (!phone) { alert('Please enter a phone number.'); return; }
-  const partySize = window._picklePlayerCount || 1;
-  if (ev.pickleQueue.find(e => e.primaryName === rec.name)) {
-    document.getElementById('kiosk-pickle-joined').textContent = "You're already in the queue!";
-    document.getElementById('kiosk-pickle-joined').style.display = 'block';
-    return;
-  }
-  ev.pickleQueue.push({
-    id: Date.now(),
-    name: rec.name || 'Guest',
-    primaryName: rec.name,
-    partySize,
-    phone,
-    joinedAt: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
-    status: 'waiting'
-  });
-  saveDB();
-  renderCourtQueue();
-  const pos = ev.pickleQueue.filter(e => e.status === 'waiting').length;
-  document.getElementById('kiosk-pickle-step2').style.display = 'none';
-  document.getElementById('kiosk-pickle-step1').style.display = 'none';
-  document.getElementById('kiosk-pickle-joined').textContent = `✅ You're #${pos} in the queue! We'll call you when a court opens.`;
-  document.getElementById('kiosk-pickle-joined').style.display = 'block';
-}
+  if (!phone) { alert('Please enter a phone number.'); if (submitBtn) { submitBtn.textContent =
 
 function renderCourtQueue() {
   const ev = DB.events.find(e => e.id === currentEventId);
