@@ -548,6 +548,46 @@ select.g-empty{background:var(--card);color:var(--ink);}
       </table>
     </div>
   </div>
+  <!-- Court Queue -->
+<div class="block">
+  <div class="block-hdr">
+    <div class="block-title">🏓 Pickleball Court Queue</div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span id="cq-waiting-badge" class="cnt">0 waiting</span>
+      <button class="btn btn-danger btn-sm" onclick="clearCourtQueue()">🗑 Clear Queue</button>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px 20px 0">
+    <div id="court-1-card" style="background:rgba(74,158,110,0.08);border:1px solid rgba(74,158,110,0.3);border-radius:12px;padding:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:20px;color:#2ecc71;letter-spacing:2px;font-weight:700">COURT 1</div>
+        <span id="court-1-status" class="badge b-green">Open</span>
+      </div>
+      <div id="court-1-players" style="font-size:13px;color:var(--muted);margin-bottom:12px;min-height:36px">Waiting for players…</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-green btn-sm" id="court-1-call-btn" onclick="callNextGroup(1)">📣 Call Next</button>
+        <button class="btn btn-ghost btn-sm" id="court-1-done-btn" onclick="courtDone(1)" style="display:none">✅ Court Open</button>
+      </div>
+      <div id="court-1-timer" style="font-size:11px;color:var(--muted);margin-top:8px"></div>
+    </div>
+    <div id="court-2-card" style="background:rgba(74,158,110,0.08);border:1px solid rgba(74,158,110,0.3);border-radius:12px;padding:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:20px;color:#2ecc71;letter-spacing:2px;font-weight:700">COURT 2</div>
+        <span id="court-2-status" class="badge b-green">Open</span>
+      </div>
+      <div id="court-2-players" style="font-size:13px;color:var(--muted);margin-bottom:12px;min-height:36px">Waiting for players…</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-green btn-sm" id="court-2-call-btn" onclick="callNextGroup(2)">📣 Call Next</button>
+        <button class="btn btn-ghost btn-sm" id="court-2-done-btn" onclick="courtDone(2)" style="display:none">✅ Court Open</button>
+      </div>
+      <div id="court-2-timer" style="font-size:11px;color:var(--muted);margin-top:8px"></div>
+    </div>
+  </div>
+  <div style="padding:16px 20px">
+    <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Waiting Queue</div>
+    <div id="cq-list"><div class="empty" style="padding:24px"><div class="ei">🏓</div><p>No one in queue yet.</p></div></div>
+  </div>
+</div>
 </div>
 
 <!-- ══ FORMS HUB ══════════════════════════════ -->
@@ -2030,6 +2070,37 @@ function selectPicklePlayers(n, btn) {
     document.getElementById('kiosk-pickle-step2').style.display = '';
     document.getElementById('pickle-phone').focus();
   }, 300);
+}
+
+  function submitPickleQueue() {
+  const ev = DB.events.find(e => e.id === currentEventId);
+  if (!ev) return;
+  if (!ev.pickleQueue) ev.pickleQueue = [];
+  const rec = window._lastCheckinRecord || {};
+  const phone = document.getElementById('pickle-phone').value.trim();
+  if (!phone) { alert('Please enter a phone number.'); return; }
+  const partySize = window._picklePlayerCount || 1;
+  if (ev.pickleQueue.find(e => e.primaryName === rec.name)) {
+    document.getElementById('kiosk-pickle-joined').textContent = "You're already in the queue!";
+    document.getElementById('kiosk-pickle-joined').style.display = 'block';
+    return;
+  }
+  ev.pickleQueue.push({
+    id: Date.now(),
+    name: rec.name || 'Guest',
+    primaryName: rec.name,
+    partySize,
+    phone,
+    joinedAt: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+    status: 'waiting'
+  });
+  saveDB();
+  renderCourtQueue();
+  const pos = ev.pickleQueue.filter(e => e.status === 'waiting').length;
+  document.getElementById('kiosk-pickle-step2').style.display = 'none';
+  document.getElementById('kiosk-pickle-joined').textContent = `✅ You're #${pos} in the queue! We'll call you when a court opens.`;
+  document.getElementById('kiosk-pickle-joined').style.display = 'block';
+  document.querySelectorAll('#kiosk-pickle-prompt button').forEach(b => b.disabled = true);
 }
 
 function renderCourtQueue() {
