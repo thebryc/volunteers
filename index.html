@@ -1822,15 +1822,35 @@ function kioskSearch(q) {
     res.innerHTML=`<div style="text-align:center;color:var(--muted);font-size:16px;padding:20px">No match. <button onclick="showKioskWalkin()" style="background:none;border:none;color:var(--gold);font-size:16px;cursor:pointer;text-decoration:underline">Add yourself →</button></div>`;
     return;
   }
-  res.innerHTML = matches.map(r => {
-    const idx = rsvps.indexOf(r);
-    const alreadyIn = (ev.checkins||[]).find(c=>c.rsvpId===r.id);
-    return `<div style="background:white;border:2px solid ${alreadyIn?'#00775f':'#f0c917'};border-radius:12px;padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:560px;margin-left:auto;margin-right:auto;">
-      <div style="font-size:18px;font-weight:700;color:#1a1a1a;">${r.name}</div>
-      <div style="font-size:12px;color:#666;">${r.role||'BRYC Community'} ${r.guests?.length?'· '+r.guests.length+' guest(s)':''}</div>
-      ${(r.guests||[]).some(g=>g.name.toLowerCase().includes(q.toLowerCase())) ? `<div style="font-size:12px;color:#00775f;font-weight:700;margin-top:4px;">🔍 Found via guest name</div>` : ''}
-    </div>`;
-  }).join('');
+  const cards = [];
+matches.forEach(r => {
+  const idx = rsvps.indexOf(r);
+  const alreadyIn = (ev.checkins||[]).find(c=>c.rsvpId===r.id);
+  const isGuestMatch = !r.name.toLowerCase().includes(q.toLowerCase()) && (r.guests||[]).some(g=>g.name.toLowerCase().includes(q.toLowerCase()));
+  
+  if (isGuestMatch) {
+    // Show a card for each matching guest
+    (r.guests||[]).filter(g=>g.name.toLowerCase().includes(q.toLowerCase())).forEach(g => {
+      const guestAlreadyIn = (ev.checkins||[]).find(c=>c.name===g.name);
+      cards.push(`<div style="background:white;border:2px solid ${guestAlreadyIn?'#00775f':'#f0c917'};border-radius:12px;padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:560px;margin-left:auto;margin-right:auto;">
+        <div>
+          <div style="font-size:18px;font-weight:700;color:#1a1a1a;">${g.name}</div>
+          <div style="font-size:12px;color:#666;">BRYC Community</div>
+        </div>
+        ${guestAlreadyIn?'<span style="color:#00775f;font-size:13px;font-weight:700">✅ Checked In</span>':`<button onclick="kioskGuestCheckIn('${g.name}','${g.contact||''}')" style="background:#f0c917;color:#1a1a1a;border:none;border-radius:10px;padding:11px 22px;font-family:'barlow-semi-condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;cursor:pointer">CHECK IN →</button>`}
+      </div>`);
+    });
+  } else {
+    cards.push(`<div style="background:white;border:2px solid ${alreadyIn?'#00775f':'#f0c917'};border-radius:12px;padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:560px;margin-left:auto;margin-right:auto;">
+      <div>
+        <div style="font-size:18px;font-weight:700;color:#1a1a1a;">${r.name}</div>
+        <div style="font-size:12px;color:#666;">${r.role||'BRYC Community'} ${r.guests?.length?'· '+r.guests.length+' guest(s)':''}</div>
+      </div>
+      ${alreadyIn?'<span style="color:#00775f;font-size:13px;font-weight:700">✅ Checked In</span>':`<button onclick="kioskCheckIn(${idx})" style="background:#f0c917;color:#1a1a1a;border:none;border-radius:10px;padding:11px 22px;font-family:'barlow-semi-condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;cursor:pointer">CHECK IN →</button>`}
+    </div>`);
+  }
+});
+res.innerHTML = cards.join('');
 }
 
 function kioskCheckIn(idx) {
