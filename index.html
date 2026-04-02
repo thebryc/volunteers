@@ -459,12 +459,10 @@ select.g-empty{background:var(--card);color:var(--ink);}
 </div>
 
 <!-- ══ EVENTS ═════════════════════════════════════ -->
-<div class="page-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-    <div>
-      <div class="page-title" id="ev-detail-title">Event</div>
-      <div class="page-sub" id="ev-detail-sub"></div>
-    </div>
-    <div class="btn-row" style="flex-wrap:wrap;justify-content:flex-end;">
+<div class="page" id="page-events">
+  <div class="page-hdr">
+    <div><div class="page-title">Events</div><div class="page-sub">Track RSVPs, check-ins &amp; referrals per event</div></div>
+    <div class="btn-row">
       <button class="btn btn-gold" onclick="openModal('create-event-modal')">＋ Create Event</button>
     </div>
   </div>
@@ -473,12 +471,12 @@ select.g-empty{background:var(--card);color:var(--ink);}
 
 <!-- ══ EVENT DETAIL ═══════════════════════════ -->
 <div class="page" id="page-event-detail">
-  <div class="page-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+  <div class="page-hdr">
     <div>
       <div class="page-title" id="ev-detail-title">Event</div>
       <div class="page-sub" id="ev-detail-sub"></div>
     </div>
-    <div class="btn-row" style="flex-wrap:wrap;justify-content:flex-end;">
+    <div class="btn-row">
       <button class="btn btn-ghost" onclick="goPage('events',null)">← All Events</button>
       <button class="btn btn-green" onclick="openKiosk()">🖥 Kiosk Mode</button>
       <button class="btn btn-ghost btn-sm" onclick="document.getElementById('ev-ci-tbody').scrollIntoView({behavior:'smooth'})">✅ Check-In List</button>
@@ -498,11 +496,12 @@ select.g-empty{background:var(--card);color:var(--ink);}
     <div class="stat"><div class="stat-lbl">Guests</div><div class="stat-num green" id="ev-guests">0</div><div class="stat-detail">plus-ones</div></div>
     <div class="stat"><div class="stat-lbl">Checked In</div><div class="stat-num gold" id="ev-checkedin">0</div><div class="stat-detail">at the door</div></div>
     <div class="stat"><div class="stat-lbl">Raffle Entries</div><div class="stat-num gold" id="ev-raffle">0</div><div class="stat-detail">guest + both commit</div></div>
-  </div>
+</div>
 
   <div class="block">
     <div class="block-hdr"><div class="block-title">🏅 Community Role Breakdown</div></div>
-    <div id="ev-role-grid" style="width:100%;display:block;"><div class="empty"><div class="ei">🏅</div><p>Import RSVPs to see role breakdown.</p></div></div>
+    <div id="ev-role-grid" style="width:100%;display:block;">
+    <div class="empty"><div class="ei">🏅</div><p>Import RSVPs to see role breakdown.</p></div></div>
   </div>
 
   <div class="block">
@@ -512,7 +511,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
         <input class="tbl-search" placeholder="🔍 Search…" oninput="filterTable('ev-rsvp-tbody',this.value)" onclick="event.stopPropagation()">
         <button class="btn btn-green btn-sm" onclick="event.stopPropagation();emailEventAll('attending')">✉ Email Attending</button>
         <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();emailEventAll('all')">✉ Email All</button>
-        <span id="rsvp-block-toggle" style="color:var(--muted);font-size:18px;">▶</span>
+        <span id="rsvp-block-toggle" style="color:var(--muted);font-size:18px;">▼</span>
       </div>
     </div>
     <div id="rsvp-block" style="display:none;">
@@ -528,7 +527,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
   <div class="block">
     <div class="block-hdr" onclick="toggleBlock('guest-block')" style="cursor:pointer;">
       <div class="block-title">👥 Guest Breakdown</div>
-      <span id="guest-block-toggle" style="color:var(--muted);font-size:18px;">▶</span>
+      <span id="guest-block-toggle" style="color:var(--muted);font-size:18px;">▼</span>
     </div>
     <div id="guest-block" style="display:none;">
       <div class="tbl-wrap">
@@ -541,75 +540,62 @@ select.g-empty{background:var(--card);color:var(--ink);}
   </div>
 
   <div class="block">
-    <div class="block-hdr" onclick="toggleBlock('diet-block')" style="cursor:pointer;">
-      <div class="block-title">🥗 Dietary Restrictions</div>
-      <span id="diet-block-toggle" style="color:var(--muted);font-size:18px;">▶</span>
-    </div>
-    <div id="diet-block" style="display:none;">
-      <div id="ev-diet-body"></div>
-    </div>
-  </div>
-
-  <div class="block">
-    <div class="block-hdr" onclick="toggleBlock('checkin-block')" style="cursor:pointer;">
-      <div class="block-title">✅ Check-In List <span class="cnt" id="ev-ci-badge">0</span></div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();exportCSV('checkins')">⬇ Export</button>
-        <span id="checkin-block-toggle" style="color:var(--muted);font-size:18px;">▶</span>
-      </div>
-    </div>
-    <div id="checkin-block" style="display:none;">
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Name</th><th>Type</th><th>Role</th><th>Guest</th><th>Both Commit</th><th>Raffle</th><th>Time</th></tr></thead>
-          <tbody id="ev-ci-tbody"><tr><td colspan="7"><div class="empty"><div class="ei">🚪</div><p>No check-ins yet.</p></div></td></tr></tbody>
-        </table>
-      </div>
-    </div>
+    <div class="block-hdr"><div class="block-title">🥗 Dietary Restrictions</div></div>
+    <div id="ev-diet-body"><div class="empty"><div class="ei">🥗</div><p>Dietary data will populate after import.</p></div></div>
   </div>
 
   <div class="block">
     <div class="block-hdr">
-      <div class="block-title">🏓 Pickleball Court Queue</div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <span id="cq-waiting-badge" class="cnt">0 waiting</span>
-        <button class="btn btn-danger btn-sm" onclick="clearCourtQueue()">🗑 Clear Queue</button>
-      </div>
+      <div class="block-title">✅ Check-In List <span class="cnt" id="ev-ci-badge">0</span></div>
+      <button class="btn btn-ghost btn-sm" onclick="exportCSV('checkins')">⬇ Export</button>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px 20px 0">
-      <div id="court-1-card" style="background:rgba(74,158,110,0.08);border:1px solid rgba(74,158,110,0.3);border-radius:12px;padding:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:20px;color:#2ecc71;letter-spacing:2px;font-weight:700">COURT 1</div>
-          <span id="court-1-status" class="badge b-green">Open</span>
-        </div>
-        <div id="court-1-players" style="font-size:13px;color:var(--muted);margin-bottom:12px;min-height:36px">Waiting for players…</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-green btn-sm" id="court-1-call-btn" onclick="callNextGroup(1)">📣 Call Next</button>
-          <button class="btn btn-gold btn-sm" id="court-1-fill-btn" onclick="fillCourt(1)" style="display:none">➕ Fill Court</button>
-          <button class="btn btn-ghost btn-sm" id="court-1-done-btn" onclick="courtDone(1)" style="display:none">✅ Court Open</button>
-        </div>
-        <div id="court-1-timer" style="font-size:11px;color:var(--muted);margin-top:8px"></div>
-      </div>
-      <div id="court-2-card" style="background:rgba(74,158,110,0.08);border:1px solid rgba(74,158,110,0.3);border-radius:12px;padding:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:20px;color:#2ecc71;letter-spacing:2px;font-weight:700">COURT 2</div>
-          <span id="court-2-status" class="badge b-green">Open</span>
-        </div>
-        <div id="court-2-players" style="font-size:13px;color:var(--muted);margin-bottom:12px;min-height:36px">Waiting for players…</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-green btn-sm" id="court-2-call-btn" onclick="callNextGroup(2)">📣 Call Next</button>
-          <button class="btn btn-gold btn-sm" id="court-2-fill-btn" onclick="fillCourt(2)" style="display:none">➕ Fill Court</button>
-          <button class="btn btn-ghost btn-sm" id="court-2-done-btn" onclick="courtDone(2)" style="display:none">✅ Court Open</button>
-        </div>
-        <div id="court-2-timer" style="font-size:11px;color:var(--muted);margin-top:8px"></div>
-      </div>
-    </div>
-    <div style="padding:16px 20px">
-      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Waiting Queue</div>
-      <div id="cq-list"><div class="empty" style="padding:24px"><div class="ei">🏓</div><p>No one in queue yet.</p></div></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Type</th><th>Role</th><th>Guest</th><th>Both Commit</th><th>Raffle</th><th>Time</th></tr></thead>
+        <tbody id="ev-ci-tbody"><tr><td colspan="7"><div class="empty"><div class="ei">🚪</div><p>No check-ins yet.</p></div></td></tr></tbody>
+      </table>
     </div>
   </div>
-
+  <!-- Court Queue -->
+<div class="block">
+  <div class="block-hdr">
+    <div class="block-title">🏓 Pickleball Court Queue</div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span id="cq-waiting-badge" class="cnt">0 waiting</span>
+      <button class="btn btn-danger btn-sm" onclick="clearCourtQueue()">🗑 Clear Queue</button>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px 20px 0">
+    <div id="court-1-card" style="background:rgba(74,158,110,0.08);border:1px solid rgba(74,158,110,0.3);border-radius:12px;padding:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:20px;color:#2ecc71;letter-spacing:2px;font-weight:700">COURT 1</div>
+        <span id="court-1-status" class="badge b-green">Open</span>
+      </div>
+      <div id="court-1-players" style="font-size:13px;color:var(--muted);margin-bottom:12px;min-height:36px">Waiting for players…</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-green btn-sm" id="court-1-call-btn" onclick="callNextGroup(1)">📣 Call Next</button>
+        <button class="btn btn-ghost btn-sm" id="court-1-done-btn" onclick="courtDone(1)" style="display:none">✅ Court Open</button>
+      </div>
+      <div id="court-1-timer" style="font-size:11px;color:var(--muted);margin-top:8px"></div>
+    </div>
+    <div id="court-2-card" style="background:rgba(74,158,110,0.08);border:1px solid rgba(74,158,110,0.3);border-radius:12px;padding:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:20px;color:#2ecc71;letter-spacing:2px;font-weight:700">COURT 2</div>
+        <span id="court-2-status" class="badge b-green">Open</span>
+      </div>
+      <div id="court-2-players" style="font-size:13px;color:var(--muted);margin-bottom:12px;min-height:36px">Waiting for players…</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-green btn-sm" id="court-2-call-btn" onclick="callNextGroup(2)">📣 Call Next</button>
+        <button class="btn btn-ghost btn-sm" id="court-2-done-btn" onclick="courtDone(2)" style="display:none">✅ Court Open</button>
+      </div>
+      <div id="court-2-timer" style="font-size:11px;color:var(--muted);margin-top:8px"></div>
+    </div>
+  </div>
+  <div style="padding:16px 20px">
+    <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Waiting Queue</div>
+    <div id="cq-list"><div class="empty" style="padding:24px"><div class="ei">🏓</div><p>No one in queue yet.</p></div></div>
+  </div>
+</div>
 </div>
 
 <!-- ══ FORMS HUB ══════════════════════════════ -->
