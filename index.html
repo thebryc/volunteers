@@ -539,22 +539,34 @@ select.g-empty{background:var(--card);color:var(--ink);}
   </div>
 
   <div class="block">
-    <div class="block-hdr"><div class="block-title">🥗 Dietary Restrictions</div></div>
-    <div id="ev-diet-body"><div class="empty"><div class="ei">🥗</div><p>Dietary data will populate after import.</p></div></div>
+    <div class="block-hdr" onclick="toggleBlock('diet-block')" style="cursor:pointer;">
+      <div class="block-title">🥗 Dietary Restrictions</div>
+      <span id="diet-block-toggle" style="color:var(--muted);font-size:18px;">▶</span>
+    </div>
+    <div id="diet-block" style="display:none;">
+      <div id="ev-diet-body"><div class="empty"><div class="ei">🥗</div><p>Dietary data will populate after import.</p></div></div>
+    </div>
   </div>
 
   <div class="block">
-    <div class="block-hdr">
+    <div class="block-hdr" onclick="toggleBlock('checkin-block')" style="cursor:pointer;">
       <div class="block-title">✅ Check-In List <span class="cnt" id="ev-ci-badge">0</span></div>
-      <button class="btn btn-ghost btn-sm" onclick="exportCSV('checkins')">⬇ Export</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();exportCSV('checkins')">⬇ Export</button>
+        <span id="checkin-block-toggle" style="color:var(--muted);font-size:18px;">▶</span>
+      </div>
     </div>
-    <div class="tbl-wrap">
-      <table>
-        <thead><tr><th>Name</th><th>Type</th><th>Role</th><th>Guest</th><th>Both Commit</th><th>Raffle</th><th>Time</th></tr></thead>
-        <tbody id="ev-ci-tbody"><tr><td colspan="7"><div class="empty"><div class="ei">🚪</div><p>No check-ins yet.</p></div></td></tr></tbody>
-      </table>
+    <div id="checkin-block" style="display:none;">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Type</th><th>Role</th><th>Guest</th><th>Both Commit</th><th>Raffle</th><th>Time</th></tr></thead>
+          <tbody id="ev-ci-tbody"><tr><td colspan="7"><div class="empty"><div class="ei">🚪</div><p>No check-ins yet.</p></div></td></tr></tbody>
+        </table>
+      </div>
     </div>
   </div>
+
+  
   <!-- Court Queue -->
 <div class="block">
   <div class="block-hdr">
