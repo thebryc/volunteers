@@ -1127,6 +1127,15 @@ function loadDB() {
   } catch(e) { return JSON.parse(JSON.stringify(DEFAULT)); }
 }
 
+  function toggleBlock(id) {
+  const el = document.getElementById(id);
+  const toggle = document.getElementById(id + '-toggle');
+  if (!el) return;
+  const isHidden = el.style.display === 'none';
+  el.style.display = isHidden ? '' : 'none';
+  if (toggle) toggle.textContent = isHidden ? '▼' : '▶';
+}
+
 async function saveDB() {
   try { localStorage.setItem('bryc-py27-cache', JSON.stringify(DB)); } catch(e) {}
   if (window._fb) {
