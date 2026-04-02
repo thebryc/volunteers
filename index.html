@@ -2230,7 +2230,7 @@ function callNextGroup(courtNum) {
     {id:1, status:'open', players:'', calledAt:null},
     {id:2, status:'open', players:'', calledAt:null}
   ];
-  ev.courts[courtNum-1] = {id: courtNum, status: 'playing', players: next.name, calledAt: Date.now()};
+  ev.courts[courtNum-1] = {id: courtNum, status: 'playing', players: next.name, playerCount: next.partySize, calledAt: Date.now()};
   saveDB();
   renderCourtQueue();
   setTimeout(() => renderCourtQueue(), 60000);
