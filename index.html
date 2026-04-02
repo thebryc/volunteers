@@ -1863,10 +1863,11 @@ function kioskConfirm(idx) {
   const commitGuest = document.getElementById('kk-guest')?.checked||false;
   const raffleEntry = !!(guestName&&commitSelf&&commitGuest);
   if (!ev.checkins) ev.checkins = [];
-  ev.checkins.push({rsvpId:r.id,name:r.name,role:r.role,guestName,commitSelf,commitGuest,raffleEntry,walkIn:false,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});
+  const ciRecord = {rsvpId:r.id, name:r.name, role:r.role, guestName, commitSelf, commitGuest, raffleEntry, walkIn:false, time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};
+  ev.checkins.push(ciRecord);
   saveDB();
-  showKioskConfirm(r.fname, raffleEntry, guestName);
-  refreshEventDetail();
+  showKioskConfirm(r.fname, raffleEntry, guestName, ciRecord);
+  try { refreshEventDetail(); } catch(e) {}
 }
 
 function showKioskWalkin() { document.getElementById('kiosk-walkin-panel').style.display='block'; }
@@ -1890,11 +1891,12 @@ function kioskWalkinSubmit() {
   const raffleEntry=!!(guestName&&commitSelf&&commitGuest);
   const ev=DB.events.find(e=>e.id===currentEventId);
   if(!ev.checkins)ev.checkins=[];
-  ev.checkins.push({name,role:document.getElementById('kw-role').value,contact:document.getElementById('kw-contact').value.trim(),guestName,commitSelf,commitGuest,raffleEntry,walkIn:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});
+  const ciRecord2={name,role:document.getElementById('kw-role').value,contact:document.getElementById('kw-contact').value.trim(),guestName,commitSelf,commitGuest,raffleEntry,walkIn:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};
+  ev.checkins.push(ciRecord2);
   saveDB();
   hideKioskWalkin();
-  showKioskConfirm(name.split(' ')[0],raffleEntry,guestName);
-  refreshEventDetail();
+  showKioskConfirm(name.split(' ')[0], raffleEntry, guestName, ciRecord2);
+  try { refreshEventDetail(); } catch(e) {}
 }
 
 function showKioskConfirm(fname, raffleEntry, guestName, checkinRecord) {
