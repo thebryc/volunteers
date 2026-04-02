@@ -1851,7 +1851,7 @@ function kioskCheckIn(idx) {
   </div>
 </div>
       </div>
-      <button onclick="kioskConfirm(${idx})" style="width:100%;background:var(--gold);color:var(--forest-dark);border:none;border-radius:12px;padding:15px;font-family:'barlow-semi-condensed',sans-serif;font-size:22px;letter-spacing:2px;cursor:pointer">✅ CONFIRM CHECK-IN</button>
+      <button onclick="this.style.background='#00775f';this.style.color='white';this.textContent='⏳ Checking in...';this.disabled=true;kioskConfirm(${idx})" style="width:100%;background:#f0c917;color:#0a3d1f;border:none;border-radius:12px;padding:16px;font-family:'barlow-semi-condensed',sans-serif;font-size:24px;font-weight:700;letter-spacing:2px;cursor:pointer;">✅ CONFIRM CHECK-IN</button>
     </div>`;
 }
 
