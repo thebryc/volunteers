@@ -574,6 +574,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
       <div id="court-1-players" style="font-size:13px;color:var(--muted);margin-bottom:12px;min-height:36px">Waiting for players…</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-green btn-sm" id="court-1-call-btn" onclick="callNextGroup(1)">📣 Call Next</button>
+        <button class="btn btn-gold btn-sm" id="court-1-fill-btn" onclick="fillCourt(1)" style="display:none">➕ Add Players</button>
         <button class="btn btn-ghost btn-sm" id="court-1-done-btn" onclick="courtDone(1)" style="display:none">✅ Court Open</button>
       </div>
       <div id="court-1-timer" style="font-size:11px;color:var(--muted);margin-top:8px"></div>
@@ -586,6 +587,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
       <div id="court-2-players" style="font-size:13px;color:var(--muted);margin-bottom:12px;min-height:36px">Waiting for players…</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-green btn-sm" id="court-2-call-btn" onclick="callNextGroup(2)">📣 Call Next</button>
+        <button class="btn btn-gold btn-sm" id="court-2-fill-btn" onclick="fillCourt(2)" style="display:none">➕ Add Players</button>
         <button class="btn btn-ghost btn-sm" id="court-2-done-btn" onclick="courtDone(2)" style="display:none">✅ Court Open</button>
       </div>
       <div id="court-2-timer" style="font-size:11px;color:var(--muted);margin-top:8px"></div>
