@@ -1907,7 +1907,8 @@ function showKioskConfirm(fname, raffleEntry, guestName, checkinRecord) {
     : 'You are checked in. Enjoy the event!';
   document.getElementById('kiosk-raffle-badge').style.display = raffleEntry ? 'block' : 'none';
   const hasParty = guestName && guestName.trim();
-  document.getElementById('kiosk-pickle-party-btn').style.display = hasParty ? '' : 'none';
+  const partyBtn = document.getElementById('kiosk-pickle-party-btn');
+  if (partyBtn) partyBtn.style.display = hasParty ? '' : 'none';
   document.getElementById('kiosk-pickle-joined').style.display = 'none';
   document.getElementById('kiosk-pickle-prompt').style.display = '';
   document.getElementById('kiosk-confirm-panel').style.display = 'flex';
