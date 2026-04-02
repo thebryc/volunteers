@@ -2098,9 +2098,9 @@ function selectPicklePlayers(n, btn) {
   renderCourtQueue();
   const pos = ev.pickleQueue.filter(e => e.status === 'waiting').length;
   document.getElementById('kiosk-pickle-step2').style.display = 'none';
+  document.getElementById('kiosk-pickle-step1').style.display = 'none';
   document.getElementById('kiosk-pickle-joined').textContent = `✅ You're #${pos} in the queue! We'll call you when a court opens.`;
   document.getElementById('kiosk-pickle-joined').style.display = 'block';
-  document.querySelectorAll('#kiosk-pickle-prompt button').forEach(b => b.disabled = true);
 }
 
 function renderCourtQueue() {
