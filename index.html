@@ -2433,10 +2433,12 @@ function filterTable(tbodyId, q) {
 // ══ RENDER ALL ═══════════════════════════════════
 function renderAll() {
   renderDashboard();
+  renderProspects();
   renderEventCards();
-  populateDropdowns();
-  const apDate = document.getElementById('ap-date');
-  if (apDate) apDate.value = new Date().toISOString().split('T')[0];
+  renderFormResponses();
+  renderSettings();
+  populateSheetSettings();
+  try { refreshEventDetail(); } catch(e) {}
 }
 
 // ══ RSVP SHEET SYNC ══════════════════════════════
