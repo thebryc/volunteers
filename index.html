@@ -795,7 +795,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
     </div>
     <button onclick="kioskWalkinSubmit()" style="width:100%;background:var(--gold);color:var(--forest-dark);border:none;border-radius:12px;padding:15px;font-family:'barlow-semi-condensed',sans-serif;font-size:22px;letter-spacing:2px;cursor:pointer;margin-top:8px">✅ CHECK ME IN</button>
   </div>
-<div id="kiosk-confirm-panel" style="display:none;position:absolute;inset:0;background:var(--forest-dark);align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px;overflow-y:auto">
+<div id="kiosk-confirm-panel" style="display:none;position:fixed;inset:0;z-index:1000;background:#00775f;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px;overflow-y:auto">
   <div style="font-size:64px;margin-bottom:12px">🎉</div>
   <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:48px;color:var(--gold);letter-spacing:3px;margin-bottom:8px" id="kiosk-confirm-name">You're In!</div>
   <div style="font-size:15px;color:var(--soft);margin-bottom:8px" id="kiosk-confirm-msg"></div>
