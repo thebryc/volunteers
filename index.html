@@ -1877,6 +1877,24 @@ function kioskCheckIn(idx) {
     </div>`;
 }
 
+  function kioskGuestCheckIn(guestName, guestContact) {
+  const ev = DB.events.find(e=>e.id===currentEventId);
+  if (!ev.checkins) ev.checkins = [];
+  const ciRecord = {
+    name: guestName,
+    contact: guestContact,
+    role: 'BRYC Community',
+    guestName: '',
+    walkIn: false,
+    isGuest: true,
+    time: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
+  };
+  ev.checkins.push(ciRecord);
+  saveDB();
+  showKioskConfirm(guestName.split(' ')[0], false, '', ciRecord);
+  try { refreshEventDetail(); } catch(e) {}
+}
+
 function kioskConfirm(idx) {
   const ev = DB.events.find(e=>e.id===currentEventId);
   const r = ev.rsvps[idx];
