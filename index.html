@@ -1887,7 +1887,7 @@ matches.forEach(r => {
         <div style="font-size:18px;font-weight:700;color:#1a1a1a;">${r.name}</div>
         <div style="font-size:12px;color:#666;">${r.role||'BRYC Community'} ${r.guests?.length?'· '+r.guests.length+' guest(s)':''}</div>
       </div>
-      ${alreadyIn?'<span style="color:#00775f;font-size:13px;font-weight:700">✅ Checked In</span>':`<button onclick="kioskCheckIn(${idx})" style="background:#f0c917;color:#1a1a1a;border:none;border-radius:10px;padding:11px 22px;font-family:'barlow-semi-condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;cursor:pointer">CHECK IN →</button>`}
+      ${alreadyIn?`<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">   <span style="color:#00775f;font-size:13px;font-weight:700">✅ Checked In</span>   <button onclick="rejoinPickleQueue('${r.name}','${r.fname}')" style="background:#0a7c5c;color:white;border:none;border-radius:8px;padding:7px 14px;font-family:'barlow-semi-condensed',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">🏓 Join Queue</button> </div>`:`<button onclick="kioskCheckIn(${idx})" style="background:#f0c917;color:#1a1a1a;border:none;border-radius:10px;padding:11px 22px;font-family:'barlow-semi-condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;cursor:pointer">CHECK IN →</button>`}
     </div>`);
   }
 });
@@ -2055,6 +2055,25 @@ function joinPickleQueue(mode) {
 function skipPickleQueue() {
   document.getElementById('kiosk-pickle-prompt').style.display = 'none';
 }
+
+ function rejoinPickleQueue(name, fname) {
+  window._lastCheckinRecord = { name, fname };
+  document.getElementById('kiosk-pickle-step1').style.display = '';
+  document.getElementById('kiosk-pickle-step2').style.display = 'none';
+  document.getElementById('kiosk-pickle-joined').style.display = 'none';
+  document.querySelectorAll('.pickle-num-btn').forEach(b => {
+    b.style.background = 'rgba(255,255,255,0.15)';
+    b.style.borderColor = 'rgba(255,255,255,0.3)';
+    b.style.color = 'white';
+    b.disabled = false;
+  });
+  window._picklePlayerCount = null;
+  document.getElementById('kiosk-confirm-panel').style.display = 'flex';
+  document.getElementById('kiosk-pickle-prompt').style.display = '';
+  document.getElementById('kiosk-confirm-name').textContent = `Hey, ${fname}!`;
+  document.getElementById('kiosk-confirm-msg').textContent = 'Want to join the pickleball queue?';
+  document.getElementById('kiosk-raffle-badge').style.display = 'none';
+} 
 
 function selectPicklePlayers(n, btn) {
   window._picklePlayerCount = n;
