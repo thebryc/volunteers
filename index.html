@@ -2574,10 +2574,11 @@ async function syncRSVPSheet() {
       if (!name) return;
       if (email && existingEmails.has(email)) return;
 
-      const statusRaw = g(iStatus).toLowerCase();
+    const statusRaw = g(iStatus).toLowerCase().trim();
       let attending = 'no';
-      if (statusRaw.includes('yes') || statusRaw.includes('attending') || statusRaw.includes('ready')) attending = 'yes';
-      else if (statusRaw.includes('maybe')) attending = 'maybe';
+      if (statusRaw === 'not attending') attending = 'no';
+      else if (statusRaw === 'maybe') attending = 'maybe';
+      else if (statusRaw === 'attending' || statusRaw.includes('yes')) attending = 'yes';
 
       const guests = [];
       [[iG1name,iG1con],[iG2name,iG2con],[iG3name,iG3con]].forEach(([ni,ci]) => {
