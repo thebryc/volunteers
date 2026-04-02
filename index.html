@@ -2376,9 +2376,8 @@ async function syncRSVPSheet() {
     });
 
     saveDB();
-    refreshEventDetail();
+    try { refreshEventDetail(); } catch(e) { console.warn('refresh error:', e); }
     alert(`✅ RSVP sheet synced — ${added} new responses loaded (${ev.rsvps.length} total)`);
-  } catch(err) {
     alert('Sync failed: ' + err.message);
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '🔄 Sync RSVP Sheet'; }
