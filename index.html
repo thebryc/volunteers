@@ -2174,7 +2174,7 @@ function renderCourtQueue() {
       statusEl.className = 'badge b-red';
       cardEl.style.borderColor = 'rgba(231,76,60,0.4)';
       cardEl.style.background  = 'rgba(231,76,60,0.05)';
-      playersEl.innerHTML = `<strong style="color:var(--ink)">${court.players}</strong>`;
+      playersEl.innerHTML = `<strong style="color:var(--ink)">${court.players}</strong><div style="font-size:11px;color:var(--muted);margin-top:4px;">${court.playerCount || 0} of 4 players</div>`;
       callBtn.style.display = 'none';
       doneBtn.style.display = '';
       const spotsLeft = 4 - (court.playerCount || 0);
@@ -2242,6 +2242,31 @@ function courtDone(courtNum) {
   const playing = (ev.pickleQueue||[]).find(e => e.status === 'playing' && e.courtNum === courtNum);
   if (playing) playing.status = 'done';
   ev.courts[courtNum-1] = {id: courtNum, status: 'open', players: '', calledAt: null};
+  saveDB();
+  renderCourtQueue();
+}
+  function fillCourt(courtNum) {
+  const ev = DB.events.find(e => e.id === currentEventId);
+  if (!ev || !ev.pickleQueue || !ev.courts) return;
+  const court = ev.courts[courtNum-1];
+  const spotsLeft = 4 - (court.playerCount || 0);
+  if (spotsLeft <= 0) { alert('Court is already full!'); return; }
+
+  const eligible = ev.pickleQueue.filter(e => e.status === 'waiting' && e.partySize <= spotsLeft);
+  if (!eligible.length) { alert(`No groups in queue that fit — need ${spotsLeft} or fewer players.`); return; }
+
+  const options = eligible.map((e, i) => `${i+1}. ${e.name} (Party of ${e.partySize})`).join('\n');
+  const choice = prompt(`${spotsLeft} spot(s) left on Court ${courtNum}.\n\nChoose a group to fill in:\n\n${options}\n\nEnter number:`);
+  if (!choice) return;
+
+  const idx = parseInt(choice) - 1;
+  if (isNaN(idx) || idx < 0 || idx >= eligible.length) { alert('Invalid choice.'); return; }
+
+  const selected = eligible[idx];
+  selected.status = 'playing';
+  selected.courtNum = courtNum;
+  court.players = court.players + ' + ' + selected.name;
+  court.playerCount = (court.playerCount || 0) + selected.partySize;
   saveDB();
   renderCourtQueue();
 }
