@@ -2575,10 +2575,10 @@ async function syncRSVPSheet() {
       if (email && existingEmails.has(email)) return;
 
     const statusRaw = g(iStatus).toLowerCase().trim();
-      let attending = 'no';
-      if (statusRaw === 'not attending') attending = 'no';
-      else if (statusRaw === 'maybe') attending = 'maybe';
-      else if (statusRaw === 'attending' || statusRaw.includes('yes')) attending = 'yes';
+      let attending = 'No';
+      if (statusRaw === 'Not attending') attending = 'no';
+      else if (statusRaw === 'Maybe') attending = 'maybe';
+      else if (statusRaw === 'Attending' || statusRaw.includes('yes')) attending = 'yes';
 
       const guests = [];
       [[iG1name,iG1con],[iG2name,iG2con],[iG3name,iG3con]].forEach(([ni,ci]) => {
