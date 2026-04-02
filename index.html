@@ -1963,6 +1963,19 @@ function resetKiosk() {
   ['kw-commit-self','kw-commit-guest'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
   document.querySelectorAll('input[name="kw-guest"]').forEach(r=>r.checked=r.value==='no');
   document.getElementById('kw-guest-block').style.display='none';
+  document.getElementById('kiosk-pickle-step1').style.display = '';
+document.getElementById('kiosk-pickle-step2').style.display = 'none';
+document.getElementById('kiosk-pickle-joined').style.display = 'none';
+document.getElementById('kiosk-pickle-prompt').style.display = '';
+const phoneEl = document.getElementById('pickle-phone');
+if (phoneEl) phoneEl.value = '';
+document.querySelectorAll('.pickle-num-btn').forEach(b => {
+  b.style.background = 'rgba(255,255,255,0.15)';
+  b.style.borderColor = 'rgba(255,255,255,0.3)';
+  b.style.color = 'white';
+  b.disabled = false;
+});
+window._picklePlayerCount = null;
 }
 
 function joinPickleQueue(mode) {
