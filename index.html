@@ -505,29 +505,37 @@ select.g-empty{background:var(--card);color:var(--ink);}
   </div>
 
   <div class="block">
-    <div class="block-hdr">
+    <div class="block-hdr" onclick="toggleBlock('rsvp-block')" style="cursor:pointer;">
       <div class="block-title">📋 RSVP List <span class="cnt" id="ev-rsvp-badge">0</span></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input class="tbl-search" placeholder="🔍 Search…" oninput="filterTable('ev-rsvp-tbody',this.value)">
-        <button class="btn btn-green btn-sm" onclick="emailEventAll('attending')">✉ Email Attending</button>
-        <button class="btn btn-ghost btn-sm" onclick="emailEventAll('all')">✉ Email All</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input class="tbl-search" placeholder="🔍 Search…" oninput="filterTable('ev-rsvp-tbody',this.value)" onclick="event.stopPropagation()">
+        <button class="btn btn-green btn-sm" onclick="event.stopPropagation();emailEventAll('attending')">✉ Email Attending</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();emailEventAll('all')">✉ Email All</button>
+        <span id="rsvp-block-toggle" style="color:var(--muted);font-size:18px;">▼</span>
       </div>
     </div>
-    <div class="tbl-wrap">
-      <table>
-        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Guests</th><th>Dietary</th><th>Date</th><th></th></tr></thead>
-        <tbody id="ev-rsvp-tbody"><tr><td colspan="8"><div class="empty"><div class="ei">📭</div><p>No RSVPs imported yet.</p></div></td></tr></tbody>
-      </table>
+    <div id="rsvp-block" style="display:none;">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Guests</th><th>Dietary</th><th>Date</th><th></th></tr></thead>
+          <tbody id="ev-rsvp-tbody"><tr><td colspan="8"><div class="empty"><div class="ei">📭</div><p>No RSVPs imported yet.</p></div></td></tr></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <div class="block">
-    <div class="block-hdr"><div class="block-title">👥 Guest Breakdown</div></div>
-    <div class="tbl-wrap">
-      <table>
-        <thead><tr><th>Guest Name</th><th>Contact</th><th>Brought By</th></tr></thead>
-        <tbody id="ev-guests-tbody"><tr><td colspan="3"><div class="empty"><div class="ei">👥</div><p>Guest info will appear here.</p></div></td></tr></tbody>
-      </table>
+    <div class="block-hdr" onclick="toggleBlock('guest-block')" style="cursor:pointer;">
+      <div class="block-title">👥 Guest Breakdown</div>
+      <span id="guest-block-toggle" style="color:var(--muted);font-size:18px;">▼</span>
+    </div>
+    <div id="guest-block" style="display:none;">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Guest Name</th><th>Contact</th><th>Brought By</th></tr></thead>
+          <tbody id="ev-guests-tbody"><tr><td colspan="3"><div class="empty"><div class="ei">👥</div><p>Guest info will appear here.</p></div></td></tr></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
