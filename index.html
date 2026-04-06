@@ -1723,7 +1723,7 @@ roleGrid.innerHTML = roleEntries.length ? `<div style="display:grid;grid-templat
     <td style="text-align:center">${(c.commitSelf&&c.commitGuest)?'✅':'—'}</td>
     <td style="text-align:center">${c.raffleEntry?'<span class="badge b-gold">🏆 Entered</span>':'—'}</td>
     <td style="font-size:11px;color:var(--muted)">${c.time||'—'}</td>
-  </tr>`).join('') : `<tr><td colspan="7"><div class="empty"><div class="ei">🚪</div><p>No check-ins yet.</p></div></td></tr>`;
+  </tr>`).join('') : `<tr><td colspan="7"><div class="empty"><div class="ei"></div><p>No check-ins yet.</p></div></td></tr>`;
 }
 
 // ══ IMPORT RSVPs ══════════════════════════════════
