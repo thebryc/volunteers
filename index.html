@@ -2484,6 +2484,7 @@ function renderAll() {
   populateSheetSettings();
   renderCourtQueue();
   try { refreshEventDetail(); } catch(e) {}
+  try { renderCourtQueue(); } catch(e) {}
 }
 
 // ══ RSVP SHEET SYNC ══════════════════════════════
@@ -2543,7 +2544,9 @@ async function syncRSVPSheet() {
     const rows = json.values || [];
     if (rows.length < 2) { alert('Sheet has no data rows.'); return; }
 
-    const ev = DB.events.find(e => e.id === currentEventId) || DB.events[0];
+  function renderCourtQueue() {
+    if (!document.getElementById('cq-list')) return;
+    const ev = DB.events.find(e => e.id === currentEventId);
     if (!ev) return;
 
     const h = rows[0].map(x => x.toLowerCase().trim());
