@@ -1163,6 +1163,16 @@ function setSyncStatus(state) {
 }
 
 async function loadFromFirebase() {
+  try {
+    const cached = localStorage.getItem('bryc-py27-cache');
+    if (cached) {
+      DB = JSON.parse(cached);
+      renderAll();
+      try { refreshEventDetail(); } catch(e) {}
+      try { renderCourtQueue(); } catch(e) {}
+      populateDropdowns();
+    }
+  } catch(e) {}
   if (!window._fb) return;
   try {
     const snap = await window._fb.getDoc(window._fb.DB_DOC);
