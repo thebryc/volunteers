@@ -1174,6 +1174,8 @@ async function loadFromFirebase() {
       await window._fb.setDoc(window._fb.DB_DOC, DB);
     }
     renderAll();
+    try { refreshEventDetail(); } catch(e) {}
+    try { renderCourtQueue(); } catch(e) {}
     populateDropdowns();
   } catch(e) { console.warn('Firebase load failed, using cache:', e); }
 }
