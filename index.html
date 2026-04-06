@@ -2147,6 +2147,7 @@ function selectPicklePlayers(n, btn) {
 }
 
 function renderCourtQueue() {
+  if (!document.getElementById('cq-list')) return;
   const ev = DB.events.find(e => e.id === currentEventId);
   if (!ev) return;
   if (!ev.pickleQueue) ev.pickleQueue = [];
@@ -2482,8 +2483,8 @@ function renderAll() {
   renderFormResponses();
   renderSettings();
   populateSheetSettings();
-  renderCourtQueue();
   try { refreshEventDetail(); } catch(e) {}
+  try { renderCourtQueue(); } catch(e) {}
 }
 
 // ══ RSVP SHEET SYNC ══════════════════════════════
