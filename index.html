@@ -1178,6 +1178,7 @@ async function loadFromFirebase() {
     const snap = await window._fb.getDoc(window._fb.DB_DOC);
     if (snap.exists()) {
       DB = snap.data();
+      if (!currentEventId && DB.events?.length) currentEventId = DB.events[0].id;
       if (!DB.formUrls) DB.formUrls = { interest: '', intake: '' };
       try { localStorage.setItem('bryc-py27-cache', JSON.stringify(DB)); } catch(e) {}
     } else {
