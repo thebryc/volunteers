@@ -1714,7 +1714,8 @@ roleGrid.innerHTML = roleEntries.length ? `<div style="display:grid;grid-templat
     : `<div class="empty"><div class="ei">🥗</div><p>No dietary data yet.</p></div>`;
 
   const citb = document.getElementById('ev-ci-tbody');
-  citb.innerHTML = checkins.length ? checkins.map(c => `<tr>
+  citb.innerHTML = checkins.length ? checkins.map((c, i) => `<tr>
+    <td><strong style="color:var(--gold);font-family:'barlow-semi-condensed',sans-serif;font-size:18px;">#${i+1}</strong> ${c.name}</td>
     <td><strong>${c.name}</strong></td>
     <td>${c.walkIn?'<span class="badge b-blue">Walk-In</span>':'<span class="badge b-green">RSVP</span>'}</td>
     <td>${c.role?`<span class="badge b-teal">${c.role}</span>`:'—'}</td>
