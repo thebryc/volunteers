@@ -1826,7 +1826,7 @@ function emailEventAll(filter) {
   if (filter === 'attending') list = list.filter(r => r.attending==='yes'||r.attending==='maybe');
   const emails = list.map(r => r.email).filter(Boolean);
   if (!emails.length) { alert('No email addresses found.'); return; }
-  window.location.href = `mailto:?bcc=${emails.join(',')}&subject=${encodeURIComponent(ev.name)}`;
+  window.open(`https://mail.google.com/mail/?view=cm&bcc=${encodeURIComponent(emails.join(','))}&su=${encodeURIComponent(ev.name)}`, '_blank');
 }
 
 // ══ FORM RESPONSES ═══════════════════════════════
