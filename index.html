@@ -551,7 +551,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
     </div>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th style="width:40px;">#</th><th>Name</th><th>Type</th><th>Role</th><th>Guest</th><th>Both Commit</th><th>Raffle</th><th>Time</th></tr></thead>
+        <thead><tr><th style="width:40px;">#</th><th>Name</th><th>Type</th><th>Role</th><th>Contact</th><th>Guest</th><th>Both Commit</th><th>Raffle</th><th>Time</th></tr></thead>
         <tbody id="ev-ci-tbody"><tr><td colspan="7" style="text-align:center"><div class="empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;padding:3rem 0"><div class="ei"></div><p>No check-ins yet.</p></div></td></tr></tbody>
       </table>
     </div>
@@ -1732,11 +1732,12 @@ roleGrid.innerHTML = roleEntries.length ? `<div style="display:grid;grid-templat
     <td><strong>${c.name}</strong></td>
     <td>${c.walkIn?'<span class="badge b-blue">Walk-In</span>':'<span class="badge b-green">RSVP</span>'}</td>
     <td>${c.role?`<span class="badge b-teal">${c.role}</span>`:'—'}</td>
+    <td style="font-size:12px;">${c.contact||'—'}</td>
     <td>${c.guestName||'—'}</td>
     <td style="text-align:center">${(c.commitSelf&&c.commitGuest)?'✅':'—'}</td>
     <td style="text-align:center">${c.raffleEntry?'<span class="badge b-gold">🏆 Entered</span>':'—'}</td>
     <td style="font-size:11px;color:var(--muted)">${c.time||'—'}</td>
-  </tr>`).join('') : `<tr><td colspan="7"><div class="empty"><div class="ei"></div><p>No check-ins yet.</p></div></td></tr>`;
+  </tr>`).join('') : `<tr><td colspan="8"><div class="empty"><div class="ei"></div><p>No check-ins yet.</p></div></td></tr>`;
 }
 
 // ══ IMPORT RSVPs ══════════════════════════════════
@@ -2049,6 +2050,7 @@ document.querySelectorAll('.pickle-num-btn').forEach(b => {
   b.style.color = 'white';
   b.disabled = false;
 });
+document.getElementById('kw-role').value = '';
 window._picklePlayerCount = null;
 }
 
