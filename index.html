@@ -3082,17 +3082,11 @@ async function syncReturnerSheet() {
   }
 
   // Re-use existing OAuth token from Google Sheets Sync
-  if (!window.gapi_token && !window._fbUser) {
-    if (statusEl) statusEl.textContent = '⚠ Sign in to Google first via Prospects → Sync Sheet.';
-    alert('Please use the Prospects page Sync Sheet button to sign in to Google first.');
-    return;
-  }
-
-  const token = window.gapi_token;
-  if (!token) {
-    if (statusEl) statusEl.textContent = '⚠ No Google token. Sign in via Prospects sheet sync first.';
-    return;
-  }
+const token = gsGetToken();
+if (!token) {
+  if (statusEl) statusEl.textContent = '⚠ No Google token. Sign in via Prospects → Sync Sheet first.';
+  return;
+}
 
   if (statusEl) statusEl.textContent = '⏳ Syncing…';
 
