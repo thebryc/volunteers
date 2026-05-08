@@ -350,8 +350,10 @@ select.g-empty{background:var(--card);color:var(--ink);}
     <button class="sb-item active" onclick="goPage('dashboard',this)"><span class="icon">📊</span> Dashboard</button>
     <button class="sb-item" onclick="goPage('prospects',this)"><span class="icon">🎯</span> Prospects <span class="badge" id="sb-prospect-cnt">0</span></button>
 
-    <div class="sb-section">Volunteers</div>
+  <div class="sb-section">Volunteers</div>
     <button class="sb-item" onclick="goPage('events',this)"><span class="icon">📅</span> Events</button>
+    <button class="sb-item" onclick="goPage('returners',this)"><span class="icon">🔄</span> Returning Mentors <span class="badge" id="sb-returner-cnt">0</span></button>
+    <button class="sb-item" onclick="goPage('onboarding',this)"><span class="icon">🚀</span> Onboarding</button>
 
     <div class="sb-section" id="admin-section">Admin</div>
     <button class="sb-item" id="settings-btn" onclick="goPage('settings',this)"><span class="icon">⚙️</span> Settings</button>
@@ -599,6 +601,128 @@ select.g-empty{background:var(--card);color:var(--ink);}
 </div>
 </div>
 
+<!-- ══ RETURNING MENTORS ══════════════════════════ -->
+<div class="page" id="page-returners">
+  <div class="page-hdr">
+    <div>
+      <div class="page-title">Returning Mentors</div>
+      <div class="page-sub">PY26 mentors responding to next-year survey · <span id="returner-total-label">0</span> total</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sheets" onclick="syncReturnerSheet()">🔄 Sync Sheet</button>
+      <button class="btn btn-ghost" onclick="exportCSV('returners')">⬇ Export CSV</button>
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center">
+    <input class="tbl-search" id="returner-search" placeholder="🔍 Search name…" oninput="renderReturners()">
+    <select id="f-return-status" onchange="renderReturners()" style="width:auto;padding:8px 12px;font-size:12px">
+      <option value="">All Responses</option>
+      <option value="Yes!">✅ Yes — Returning</option>
+      <option value="I'd like to, but I'm not sure.">🤔 Maybe / Unsure</option>
+      <option value="No — I won't be in Baton Rouge next year.">🚫 No — Moving</option>
+      <option value="No — I have scheduling conflicts next year.">🚫 No — Scheduling</option>
+      <option value="No — I'm not interested in volunteering again.">🚫 No — Not Interested</option>
+    </select>
+    <select id="f-return-campus" onchange="renderReturners()" style="width:auto;padding:8px 12px;font-size:12px">
+      <option value="">All Campuses</option>
+      <option value="Downtown (460 N 11th St)">Downtown</option>
+      <option value="Airline (14141 Airline Hwy, Suite B)">Airline</option>
+      <option value="Either Downtown or Airline">Either</option>
+      <option value="N/A — I want to be a tutor.">N/A — Tutor</option>
+    </select>
+    <button class="btn btn-ghost btn-sm" onclick="clearReturnerFilters()">✕ Clear</button>
+  </div>
+
+  <!-- Stats row -->
+  <div class="stats-grid" style="margin-bottom:20px">
+    <div class="stat"><div class="stat-lbl">Total Responses</div><div class="stat-num gold" id="ret-total">0</div><div class="stat-detail">survey responses</div></div>
+    <div class="stat"><div class="stat-lbl">Confirmed Yes</div><div class="stat-num green" id="ret-yes">0</div><div class="stat-detail">returning next year</div></div>
+    <div class="stat"><div class="stat-lbl">Maybe / Unsure</div><div class="stat-num white" id="ret-maybe">0</div><div class="stat-detail">need follow-up</div></div>
+    <div class="stat"><div class="stat-lbl">Not Returning</div><div class="stat-num white" id="ret-no">0</div><div class="stat-detail">all no responses</div></div>
+  </div>
+
+  <!-- Card grid -->
+  <div id="returner-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">
+    <div class="empty" style="grid-column:1/-1"><div class="ei">🔄</div><p>No returner data yet. Configure the sheet in Settings and click Sync Sheet.</p></div>
+  </div>
+</div>
+
+<!-- ══ ONBOARDING ═════════════════════════════════ -->
+<div class="page" id="page-onboarding">
+  <div class="page-hdr">
+    <div>
+      <div class="page-title">Onboarding</div>
+      <div class="page-sub">Unified board — Prospects + Returning Mentors</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="exportCSV('onboarding')">⬇ Export CSV</button>
+    </div>
+  </div>
+
+  <!-- Onboarding stats -->
+  <div class="stats-grid" style="margin-bottom:24px">
+    <div class="stat"><div class="stat-lbl">Total in Onboarding</div><div class="stat-num gold" id="ob-total">0</div><div class="stat-detail">across all columns</div></div>
+    <div class="stat"><div class="stat-lbl">Need BG Check</div><div class="stat-num green" id="ob-bg">0</div><div class="stat-detail">background check pending</div></div>
+    <div class="stat"><div class="stat-lbl">Committed</div><div class="stat-num white" id="ob-committed">0</div><div class="stat-detail">fully confirmed</div></div>
+    <div class="stat"><div class="stat-lbl">Maybe / Unsure</div><div class="stat-num white" id="ob-maybe">0</div><div class="stat-detail">need follow-up</div></div>
+  </div>
+
+  <!-- Kanban board -->
+  <div id="onboarding-board" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start;">
+
+    <!-- Col 1: Maybe -->
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 14px;background:rgba(240,201,23,0.08);border:1px solid rgba(240,201,23,0.2);border-radius:10px;">
+        <span style="font-size:18px">🤔</span>
+        <div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold)">Maybe / Unsure</div>
+          <div style="font-size:11px;color:var(--muted)" id="ob-col-maybe-cnt">0 people</div>
+        </div>
+      </div>
+      <div id="ob-col-maybe" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+    </div>
+
+    <!-- Col 2: Need BG Check -->
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 14px;background:rgba(100,220,200,0.08);border:1px solid rgba(100,220,200,0.2);border-radius:10px;">
+        <span style="font-size:18px">🔍</span>
+        <div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#88ded0">Need BG Check</div>
+          <div style="font-size:11px;color:var(--muted)" id="ob-col-bg-cnt">0 people</div>
+        </div>
+      </div>
+      <div id="ob-col-bg" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+    </div>
+
+    <!-- Col 3: Committed -->
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 14px;background:rgba(74,158,110,0.1);border:1px solid rgba(74,158,110,0.25);border-radius:10px;">
+        <span style="font-size:18px">✅</span>
+        <div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#2ecc71">Committed</div>
+          <div style="font-size:11px;color:var(--muted)" id="ob-col-committed-cnt">0 people</div>
+        </div>
+      </div>
+      <div id="ob-col-committed" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+    </div>
+
+    <!-- Col 4: Returning Yes -->
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 14px;background:rgba(100,149,255,0.08);border:1px solid rgba(100,149,255,0.2);border-radius:10px;">
+        <span style="font-size:18px">🔄</span>
+        <div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#88c4ff">Returning — Yes</div>
+          <div style="font-size:11px;color:var(--muted)" id="ob-col-returning-cnt">0 people</div>
+        </div>
+      </div>
+      <div id="ob-col-returning" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+    </div>
+
+  </div>
+</div>
+  
 <!-- ══ SETTINGS ═══════════════════════════════════ -->
 <div class="page" id="page-settings">
   <div class="page-hdr">
@@ -675,6 +799,32 @@ select.g-empty{background:var(--card);color:var(--ink);}
     <button class="btn btn-gold btn-sm" onclick="saveRsvpSheetConfig()">💾 Save</button>
     <button class="btn btn-sheets btn-sm" onclick="syncRSVPSheet()">🔄 Test Sync</button>
     <span id="rsvp-sheet-status" style="font-size:12px;color:var(--muted)"></span>
+  </div>
+</div>
+
+<!-- Returning Mentors Sheet -->
+<div class="settings-card" style="grid-column:1/-1">
+  <div class="settings-card-title">🔄 Returning Mentors Google Sheet</div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">
+    Connect the PY26 Returner Survey Google Sheet. The importer expects columns:
+    <strong>First Name, Last Name, Will you volunteer at BRYC next year?, Which volunteer role interests you?, Which campus do you prefer?, Which days are you available?</strong>
+  </p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    <div class="fg">
+      <label class="fl">Returner Sheet ID</label>
+      <input type="text" id="ret-sheet-id" placeholder="1BxiMVs0XRA5…" style="font-size:12px;font-family:monospace">
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">From your sheet URL: /spreadsheets/d/<strong>THIS_PART</strong>/edit</div>
+    </div>
+    <div class="fg">
+      <label class="fl">Tab Name</label>
+      <input type="text" id="ret-sheet-tab" placeholder="Table1" style="font-size:12px">
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Exact tab name (e.g. Table1, Form Responses 1)</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <button class="btn btn-gold btn-sm" onclick="saveReturnerSheetConfig()">💾 Save</button>
+    <button class="btn btn-sheets btn-sm" onclick="syncReturnerSheet()">🔄 Test Sync</button>
+    <span id="ret-sheet-status" style="font-size:12px;color:var(--muted)"></span>
   </div>
 </div>
     
@@ -2789,6 +2939,374 @@ document.addEventListener('DOMContentLoaded', function() {
     o.addEventListener('click',e=>{if(e.target===o && !o.id.includes('login'))o.classList.remove('open');});
   });
 });
+</script>
+    <script>
+// ══════════════════════════════════════════
+// RETURNING MENTORS
+// ══════════════════════════════════════════
+
+// Column name constants matching your Google Sheet headers
+const RET_COLS = {
+  firstName:  'First Name',
+  lastName:   'Last Name',
+  willReturn: 'Will you volunteer at BRYC next year?',
+  roles:      'Which volunteer role interests you? (check all that apply)',
+  campus:     'Which campus do you prefer?',
+  days:       'Which days are you available? (check all that apply)'
+};
+
+// Make sure DB has returner data structure
+function ensureReturners() {
+  if (!DB.returners) DB.returners = [];
+  if (!DB.returnerSheetConfig) DB.returnerSheetConfig = { sheetId: '', tab: 'Table1' };
+}
+
+// ── Render returner profile cards ──────────
+function renderReturners() {
+  ensureReturners();
+  const search = (document.getElementById('returner-search')?.value || '').toLowerCase();
+  const fStatus = document.getElementById('f-return-status')?.value || '';
+  const fCampus = document.getElementById('f-return-campus')?.value || '';
+
+  let list = DB.returners.filter(r => {
+    const name = ((r.firstName || '') + ' ' + (r.lastName || '')).toLowerCase();
+    if (search && !name.includes(search)) return false;
+    if (fStatus && r.willReturn !== fStatus) return false;
+    if (fCampus && r.campus !== fCampus) return false;
+    return true;
+  });
+
+  // Stats
+  const all = DB.returners;
+  document.getElementById('ret-total').textContent = all.length;
+  document.getElementById('ret-yes').textContent   = all.filter(r => r.willReturn === 'Yes!').length;
+  document.getElementById('ret-maybe').textContent = all.filter(r => r.willReturn === "I'd like to, but I'm not sure.").length;
+  document.getElementById('ret-no').textContent    = all.filter(r => r.willReturn && r.willReturn.startsWith('No')).length;
+  document.getElementById('returner-total-label').textContent = all.length;
+  document.getElementById('sb-returner-cnt').textContent = all.length;
+
+  const grid = document.getElementById('returner-cards-grid');
+  if (!grid) return;
+
+  if (list.length === 0) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="ei">🔄</div><p>No matching returners.</p></div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(r => {
+    const name = `${r.firstName || ''} ${r.lastName || ''}`.trim();
+    const statusColor = returnerStatusColor(r.willReturn);
+    const statusLabel = r.willReturn || '—';
+    const roles = r.roles ? r.roles.split(',').map(s => s.trim()).filter(Boolean) : [];
+    const days  = r.days  ? r.days.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+    return `
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:transform .2s;" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''">
+        <div style="height:4px;background:${statusColor};"></div>
+        <div style="padding:16px 18px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+            <div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--ink);">${name || '(No Name)'}</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">${r.campus || '—'}</div>
+            </div>
+            <span style="display:inline-block;padding:3px 9px;border-radius:50px;font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;background:${statusColor}22;color:${statusColor};white-space:nowrap;max-width:120px;text-align:center;line-height:1.4;">${shortReturnStatus(statusLabel)}</span>
+          </div>
+
+          ${roles.length ? `
+          <div style="margin-bottom:10px;">
+            <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:6px;">Roles Interested In</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;">
+              ${roles.map(role => `<span style="background:rgba(240,201,23,.12);color:var(--gold);padding:2px 8px;border-radius:50px;font-size:10px;font-weight:600;">${shortRoleName(role)}</span>`).join('')}
+            </div>
+          </div>` : ''}
+
+          ${days.length ? `
+          <div>
+            <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:6px;">Available Days</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;">
+              ${days.map(d => `<span style="background:rgba(255,255,255,.07);color:var(--soft);padding:2px 8px;border-radius:50px;font-size:10px;">${d}</span>`).join('')}
+            </div>
+          </div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function returnerStatusColor(status) {
+  if (!status) return 'rgba(255,255,255,0.2)';
+  if (status === 'Yes!') return '#2ecc71';
+  if (status.includes("not sure")) return '#f0c917';
+  if (status.startsWith('No')) return '#e74c3c';
+  return 'rgba(255,255,255,0.2)';
+}
+
+function shortReturnStatus(status) {
+  if (!status) return '—';
+  if (status === 'Yes!') return '✅ Yes!';
+  if (status.includes("not sure")) return '🤔 Maybe';
+  if (status.includes("Baton Rouge")) return '🚫 Moving';
+  if (status.includes("scheduling")) return '🚫 Scheduling';
+  if (status.includes("not interested")) return '🚫 Not Interested';
+  return status.slice(0, 22);
+}
+
+function shortRoleName(role) {
+  if (role.includes('follow my Fellows')) return 'Follow Fellows';
+  if (role.includes('Research Mentor'))   return 'Research Mentor';
+  if (role.includes('Underclassmen'))     return 'Underclassmen LM';
+  if (role.includes('Upperclassmen'))     return 'Upperclassmen LM';
+  if (role.includes('Senior Mentor'))     return 'Senior Mentor';
+  if (role.includes('Tutor'))             return 'Tutor';
+  return role.slice(0, 20);
+}
+
+function clearReturnerFilters() {
+  document.getElementById('returner-search').value = '';
+  document.getElementById('f-return-status').value = '';
+  document.getElementById('f-return-campus').value = '';
+  renderReturners();
+}
+
+// ── Sync Returner Sheet (Google Sheets API) ─
+async function syncReturnerSheet() {
+  ensureReturners();
+  const cfg = DB.returnerSheetConfig;
+  const statusEl = document.getElementById('ret-sheet-status');
+
+  if (!cfg.sheetId || !cfg.tab) {
+    if (statusEl) statusEl.textContent = '⚠ Configure sheet ID and tab first.';
+    alert('Please save a Returning Mentors Sheet ID and tab name in Settings first.');
+    return;
+  }
+
+  // Re-use existing OAuth token from Google Sheets Sync
+  if (!window.gapi_token && !window._fbUser) {
+    if (statusEl) statusEl.textContent = '⚠ Sign in to Google first via Prospects → Sync Sheet.';
+    alert('Please use the Prospects page Sync Sheet button to sign in to Google first.');
+    return;
+  }
+
+  const token = window.gapi_token;
+  if (!token) {
+    if (statusEl) statusEl.textContent = '⚠ No Google token. Sign in via Prospects sheet sync first.';
+    return;
+  }
+
+  if (statusEl) statusEl.textContent = '⏳ Syncing…';
+
+  try {
+    const range = encodeURIComponent(`${cfg.tab}!A1:Z1000`);
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${range}`;
+    const resp = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    const rows = data.values || [];
+    if (rows.length < 2) { if (statusEl) statusEl.textContent = '⚠ Sheet empty or no data rows.'; return; }
+
+    const headers = rows[0];
+    const findCol = (label) => headers.findIndex(h => h.trim().toLowerCase().includes(label.toLowerCase()));
+
+    const iFirst    = findCol('First Name');
+    const iLast     = findCol('Last Name');
+    const iReturn   = findCol('volunteer at BRYC');
+    const iRoles    = findCol('volunteer role');
+    const iCampus   = findCol('campus');
+    const iDays     = findCol('days');
+
+    DB.returners = rows.slice(1).filter(r => r.length > 0 && (r[iFirst] || r[iLast])).map(r => ({
+      firstName:  iFirst  >= 0 ? (r[iFirst]  || '').trim() : '',
+      lastName:   iLast   >= 0 ? (r[iLast]   || '').trim() : '',
+      willReturn: iReturn >= 0 ? (r[iReturn] || '').trim() : '',
+      roles:      iRoles  >= 0 ? (r[iRoles]  || '').trim() : '',
+      campus:     iCampus >= 0 ? (r[iCampus] || '').trim() : '',
+      days:       iDays   >= 0 ? (r[iDays]   || '').trim() : '',
+    }));
+
+    await saveDB();
+    if (statusEl) statusEl.textContent = `✅ Synced ${DB.returners.length} returners.`;
+    renderReturners();
+    renderOnboarding();
+  } catch (err) {
+    console.error(err);
+    if (statusEl) statusEl.textContent = `❌ Error: ${err.message}`;
+  }
+}
+
+// ── Save returner sheet config ──────────────
+async function saveReturnerSheetConfig() {
+  ensureReturners();
+  DB.returnerSheetConfig = {
+    sheetId: document.getElementById('ret-sheet-id')?.value?.trim() || '',
+    tab: document.getElementById('ret-sheet-tab')?.value?.trim() || 'Table1',
+  };
+  await saveDB();
+  document.getElementById('ret-sheet-status').textContent = '✅ Saved.';
+  setTimeout(() => { const el = document.getElementById('ret-sheet-status'); if(el) el.textContent=''; }, 2500);
+}
+
+// Load saved returner config into Settings UI
+function loadReturnerSheetConfigUI() {
+  ensureReturners();
+  const cfg = DB.returnerSheetConfig || {};
+  const idEl = document.getElementById('ret-sheet-id');
+  const tabEl = document.getElementById('ret-sheet-tab');
+  if (idEl) idEl.value = cfg.sheetId || '';
+  if (tabEl) tabEl.value = cfg.tab || 'Table1';
+}
+
+
+// ══════════════════════════════════════════
+// ONBOARDING KANBAN
+// ══════════════════════════════════════════
+
+// Statuses from Prospects that belong in Onboarding
+const OB_PROSPECT_STATUSES = [
+  'Onboarding - Need BG Check',
+  'Committed',
+];
+
+function renderOnboarding() {
+  ensureReturners();
+
+  // Gather prospects in onboarding statuses
+  const prospects = (DB.prospects || []).filter(p =>
+    OB_PROSPECT_STATUSES.some(s => (p.status || '').toLowerCase() === s.toLowerCase())
+  );
+
+  // Returners
+  const returningYes   = (DB.returners || []).filter(r => r.willReturn === 'Yes!');
+  const returningMaybe = (DB.returners || []).filter(r => r.willReturn === "I'd like to, but I'm not sure.");
+
+  // Also include prospects with "maybe" returner phrasing in their status (if you import them as prospects)
+  const prospectMaybe = (DB.prospects || []).filter(p =>
+    (p.status || '').toLowerCase().includes("i'd like to") ||
+    (p.status || '').toLowerCase().includes("not sure")
+  );
+
+  const bgCheck   = prospects.filter(p => p.status?.toLowerCase().includes('bg check') || p.status?.toLowerCase().includes('onboarding'));
+  const committed = prospects.filter(p => p.status?.toLowerCase() === 'committed');
+  const allMaybe  = [...returningMaybe, ...prospectMaybe];
+  const allYes    = returningYes;
+
+  // Stats
+  const total = bgCheck.length + committed.length + allMaybe.length + allYes.length;
+  document.getElementById('ob-total').textContent     = total;
+  document.getElementById('ob-bg').textContent        = bgCheck.length;
+  document.getElementById('ob-committed').textContent = committed.length;
+  document.getElementById('ob-maybe').textContent     = allMaybe.length;
+
+  document.getElementById('ob-col-maybe-cnt').textContent     = `${allMaybe.length} people`;
+  document.getElementById('ob-col-bg-cnt').textContent        = `${bgCheck.length} people`;
+  document.getElementById('ob-col-committed-cnt').textContent = `${committed.length} people`;
+  document.getElementById('ob-col-returning-cnt').textContent = `${allYes.length} people`;
+
+  // Render each column
+  renderObColumn('ob-col-maybe',     allMaybe,  'maybe');
+  renderObColumn('ob-col-bg',        bgCheck,   'prospect');
+  renderObColumn('ob-col-committed', committed, 'prospect');
+  renderObColumn('ob-col-returning', allYes,    'returner');
+}
+
+function renderObColumn(colId, people, type) {
+  const col = document.getElementById(colId);
+  if (!col) return;
+
+  if (people.length === 0) {
+    col.innerHTML = `<div style="text-align:center;padding:20px 12px;color:rgba(255,255,255,.18);font-size:12px;border:1px dashed rgba(255,255,255,.08);border-radius:10px;">Empty</div>`;
+    return;
+  }
+
+  col.innerHTML = people.map(p => {
+    if (type === 'returner' || (p.willReturn !== undefined)) {
+      return obReturnerCard(p);
+    }
+    return obProspectCard(p);
+  }).join('');
+}
+
+function obProspectCard(p) {
+  const name = `${p.firstName || p.first || ''} ${p.lastName || p.last || ''}`.trim() || p.name || '(No Name)';
+  const email = p.email || '';
+  const phone = p.phone || '';
+  const category = p.category || '';
+  const status = p.status || '';
+
+  return `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;"
+         onmouseenter="this.style.background='var(--card-h)'" onmouseleave="this.style.background='var(--card)'">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+        <div style="font-weight:700;font-size:13px;color:var(--ink);">${name}</div>
+        <span style="font-size:9px;background:rgba(100,220,200,.12);color:#88ded0;padding:2px 7px;border-radius:50px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;">Prospect</span>
+      </div>
+      ${category ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">${category}</div>` : ''}
+      ${email ? `<div style="font-size:11px;color:var(--muted);">✉ ${email}</div>` : ''}
+      ${phone ? `<div style="font-size:11px;color:var(--muted);">📞 ${phone}</div>` : ''}
+    </div>`;
+}
+
+function obReturnerCard(r) {
+  const name = `${r.firstName || ''} ${r.lastName || ''}`.trim() || '(No Name)';
+  const roles = r.roles ? r.roles.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const campus = r.campus || '';
+  const days   = r.days ? r.days.split(',').map(s => s.trim()).filter(Boolean).slice(0,3) : [];
+
+  return `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;"
+         onmouseenter="this.style.background='var(--card-h)'" onmouseleave="this.style.background='var(--card)'">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+        <div style="font-weight:700;font-size:13px;color:var(--ink);">${name}</div>
+        <span style="font-size:9px;background:rgba(100,149,255,.12);color:#88c4ff;padding:2px 7px;border-radius:50px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;">Returner</span>
+      </div>
+      ${campus ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">📍 ${campus}</div>` : ''}
+      ${roles.length ? `
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px;">
+          ${roles.slice(0,3).map(role => `<span style="background:rgba(240,201,23,.1);color:var(--gold);padding:1px 6px;border-radius:50px;font-size:9px;font-weight:600;">${shortRoleName(role)}</span>`).join('')}
+        </div>` : ''}
+      ${days.length ? `<div style="font-size:11px;color:var(--muted);">📅 ${days.join(', ')}</div>` : ''}
+    </div>`;
+}
+
+
+// ══════════════════════════════════════════
+// HOOK INTO EXISTING goPage() FOR RENDER CALLS
+// ══════════════════════════════════════════
+
+// Patch the existing goPage function to trigger renders for new pages
+const _origGoPage = window.goPage;
+window.goPage = function(page, el) {
+  if (typeof _origGoPage === 'function') _origGoPage(page, el);
+
+  if (page === 'returners') {
+    loadReturnerSheetConfigUI();
+    renderReturners();
+  }
+  if (page === 'onboarding') {
+    renderOnboarding();
+  }
+  if (page === 'settings') {
+    loadReturnerSheetConfigUI();
+  }
+};
+
+// Also re-render onboarding whenever DB saves (prospects change)
+const _origSaveDB = window.saveDB;
+window.saveDB = async function() {
+  const result = typeof _origSaveDB === 'function' ? await _origSaveDB() : null;
+  // Refresh badge counts
+  const cnt = (DB.returners || []).length;
+  const badge = document.getElementById('sb-returner-cnt');
+  if (badge) badge.textContent = cnt;
+  return result;
+};
+
+// Expose functions globally
+window.syncReturnerSheet      = syncReturnerSheet;
+window.saveReturnerSheetConfig = saveReturnerSheetConfig;
+window.renderReturners        = renderReturners;
+window.renderOnboarding       = renderOnboarding;
+window.clearReturnerFilters   = clearReturnerFilters;
+
 </script>
 </body>
 </html>
