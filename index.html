@@ -2718,6 +2718,12 @@ function populateSheetSettings() {
   const sob = document.getElementById('gs-signout-btn');
   if (sob) sob.style.display = gsGetToken() ? '' : 'none';
   populateRsvpSheetSettings();
+  // --------Returner Sheet_____________
+  const retCfg = DB.returnerSheetConfig || {};
+  const ri = document.getElementById('ret-sheet-id');
+  const rt = document.getElementById('ret-sheet-tab');
+  if (ri && retCfg.sheetId) ri.value = retCfg.sheetId;
+  if (rt && retCfg.tab)     rt.value = retCfg.tab;
 }
 
 let _gsToken = null;
@@ -3082,10 +3088,21 @@ async function syncReturnerSheet() {
   }
 
   // Re-use existing OAuth token from Google Sheets Sync
-const token = gsGetToken();
+let token = gsGetToken();
 if (!token) {
-  if (statusEl) statusEl.textContent = '⚠ No Google token. Sign in via Prospects → Sync Sheet first.';
-  return;
+  const cfg2 = getSheetConfig();
+  if (!cfg2.clientId) {
+    if (statusEl) statusEl.textContent = '⚠ No OAuth Client ID. Add it in Settings → Google Sheets Sync first.';
+    return;
+  }
+  try {
+    if (statusEl) statusEl.textContent = '⏳ Signing in to Google…';
+    token = await gsRequestToken(cfg2.clientId);
+    gsSetToken(token);
+  } catch(e) {
+    if (statusEl) statusEl.textContent = '❌ Google sign-in failed. Try again.';
+    return;
+  }
 }
 
   if (statusEl) statusEl.textContent = '⏳ Syncing…';
@@ -3094,7 +3111,12 @@ if (!token) {
     const range = encodeURIComponent(`${cfg.tab}!A1:Z1000`);
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${range}`;
     const resp = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    if (resp.status === 401) {
+  gsClearToken();
+  if (statusEl) statusEl.textContent = '⚠ Session expired — click Sync again to re-authenticate.';
+  return;
+}
+if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const data = await resp.json();
     const rows = data.values || [];
     if (rows.length < 2) { if (statusEl) statusEl.textContent = '⚠ Sheet empty or no data rows.'; return; }
