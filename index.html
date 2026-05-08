@@ -2727,6 +2727,7 @@ function gsClearToken() { _gsToken = null; sessionStorage.removeItem('gs-token')
 
 function gsSignOut() {
   const token = gsGetToken();
+  window.gapi_token = token;
   if (token) { fetch('https://oauth2.googleapis.com/revoke?token=' + token, { method: 'POST' }).catch(() => {}); }
   gsClearToken();
   gsSetStatus('Signed out of Google.', '');
