@@ -352,7 +352,6 @@ select.g-empty{background:var(--card);color:var(--ink);}
 
     <div class="sb-section">Volunteers</div>
     <button class="sb-item" onclick="goPage('events',this)"><span class="icon">📅</span> Events</button>
-    <button class="sb-item" onclick="goPage('forms-hub',this)"><span class="icon">📋</span> Forms &amp; Responses</button>
 
     <div class="sb-section" id="admin-section">Admin</div>
     <button class="sb-item" id="settings-btn" onclick="goPage('settings',this)"><span class="icon">⚙️</span> Settings</button>
@@ -600,42 +599,6 @@ select.g-empty{background:var(--card);color:var(--ink);}
 </div>
 </div>
 
-<!-- ══ FORMS HUB ══════════════════════════════ -->
-<div class="page" id="page-forms-hub">
-  <div class="page-hdr">
-    <div><div class="page-title">Forms &amp; Responses</div><div class="page-sub">Import CSV responses from Google Forms</div></div>
-    <div class="btn-row">
-      <button class="btn btn-green" onclick="openModal('import-form-modal')">⬆ Import Form CSV</button>
-    </div>
-  </div>
-
-  <div class="info-box" style="margin-bottom:20px">
-    <div class="info-box-title">📋 How to import form responses</div>
-    <p>In Google Sheets (linked to your form): File → Download → CSV (.csv, current sheet). Then click Import Form CSV above. Form URLs are saved in Settings.</p>
-  </div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
-    <div class="block" style="margin-bottom:0">
-      <div class="block-hdr"><div class="block-title">🙋 Volunteer Interest Responses <span class="cnt" id="interest-count">0</span></div></div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Interest</th><th>Date</th><th></th></tr></thead>
-          <tbody id="interest-tbody"><tr><td colspan="6"><div class="empty"><div class="ei">🙋</div><p>No responses yet.</p></div></td></tr></tbody>
-        </table>
-      </div>
-    </div>
-    <div class="block" style="margin-bottom:0">
-      <div class="block-hdr"><div class="block-title">📝 Mentor/Tutor Applications <span class="cnt" id="app-count">0</span></div></div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Name</th><th>Email</th><th>Role Applied</th><th>Date</th><th></th></tr></thead>
-          <tbody id="app-tbody"><tr><td colspan="5"><div class="empty"><div class="ei">📝</div><p>No applications yet.</p></div></td></tr></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ══ SETTINGS ═══════════════════════════════════ -->
 <div class="page" id="page-settings">
   <div class="page-hdr">
@@ -689,29 +652,6 @@ select.g-empty{background:var(--card);color:var(--ink);}
       <div class="tag-add-row">
         <input type="text" id="comms-add-input" placeholder="Add comms type…">
         <button class="btn btn-green btn-sm" onclick="addComms()">Add</button>
-      </div>
-    </div>
-
-    <!-- Google Forms Links -->
-    <div class="settings-card">
-      <div class="settings-card-title">📋 Google Forms</div>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">Store your form links here for easy reference. Share these with prospects and import responses via CSV.</p>
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;word-break:break-word;overflow-wrap:break-word;hyphens:auto;color:var(--muted);margin-bottom:5px">Interest Form URL</div>
-          <input type="text" id="set-interest-form-url" placeholder="https://forms.gle/…" style="font-size:12px;font-family:monospace">
-          <div style="font-size:11px;color:var(--muted);margin-top:4px">For general volunteer interest inquiries.</div>
-        </div>
-        <div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Intake / Application Form URL</div>
-          <input type="text" id="set-intake-form-url" placeholder="https://forms.gle/…" style="font-size:12px;font-family:monospace">
-          <div style="font-size:11px;color:var(--muted);margin-top:4px">For volunteers ready to commit as mentor/tutor.</div>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-gold btn-sm" onclick="saveFormUrls()">💾 Save URLs</button>
-          <button class="btn btn-ghost btn-sm" id="open-interest-btn" onclick="if(DB.formUrls&&DB.formUrls.interest)window.open(DB.formUrls.interest,'_blank')" style="display:none">↗ Open Interest Form</button>
-          <button class="btn btn-ghost btn-sm" id="open-intake-btn" onclick="if(DB.formUrls&&DB.formUrls.intake)window.open(DB.formUrls.intake,'_blank')" style="display:none">↗ Open Intake Form</button>
-        </div>
       </div>
     </div>
 
@@ -1007,25 +947,6 @@ select.g-empty{background:var(--card);color:var(--ink);}
   </div>
 </div>
 
-<!-- Import Form Responses -->
-<div class="overlay" id="import-form-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('import-form-modal')">✕</button>
-    <div class="modal-title">Import Form Responses</div>
-    <div class="fg"><label class="fl">Form Type</label>
-      <select id="import-form-type">
-        <option value="interest">Volunteer Interest</option>
-        <option value="application">Mentor/Tutor Application</option>
-      </select>
-    </div>
-    <div class="fg"><label class="fl">Upload CSV File *</label><input type="file" id="form-csv-file" accept=".csv" style="padding:10px;font-size:13px"></div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('import-form-modal')">Cancel</button>
-      <button class="btn btn-gold" onclick="importFormCSV()">Import</button>
-    </div>
-  </div>
-</div>
-
 <!-- Create Event -->
 <div class="overlay" id="create-event-modal">
   <div class="modal">
@@ -1294,7 +1215,6 @@ function goPage(id, btn) {
   if (id === 'dashboard') renderDashboard();
   if (id === 'prospects') renderProspects();
   if (id === 'events') renderEventCards();
-  if (id === 'forms-hub') renderFormResponses();
   if (id === 'settings') { renderSettings(); setTimeout(populateSheetSettings, 50); }
   window.scrollTo(0, 0);
 }
@@ -1828,54 +1748,6 @@ function emailEventAll(filter) {
   const emails = list.map(r => r.email).filter(Boolean);
   if (!emails.length) { alert('No email addresses found.'); return; }
   window.open(`https://mail.google.com/mail/?view=cm&bcc=${encodeURIComponent(emails.join(','))}&su=${encodeURIComponent(ev.name)}`, '_blank');
-}
-
-// ══ FORM RESPONSES ═══════════════════════════════
-function renderFormResponses() {
-  document.getElementById('interest-count').textContent = DB.formResponses.interest.length;
-  document.getElementById('app-count').textContent = DB.formResponses.applications.length;
-
-  const itb = document.getElementById('interest-tbody');
-  const atb = document.getElementById('app-tbody');
-
-  itb.innerHTML = DB.formResponses.interest.length ? DB.formResponses.interest.map(r => `<tr>
-    <td><strong>${r.name}</strong></td><td style="font-size:12px">${r.email}</td><td>${r.phone||'—'}</td>
-    <td style="font-size:12px;color:var(--muted)">${r.how||'—'}</td><td>${r.date}</td>
-    <td>${r.email?`<a href="mailto:${r.email}" class="btn btn-ghost btn-xs" style="text-decoration:none">✉</a>`:''}</td></tr>`).join('')
-    : `<tr><td colspan="6"><div class="empty"><div class="ei">🙋</div><p>No responses yet.</p></div></td></tr>`;
-
-  atb.innerHTML = DB.formResponses.applications.length ? DB.formResponses.applications.map(r => `<tr>
-    <td><strong>${r.name}</strong></td><td style="font-size:12px">${r.email}</td>
-    <td>${r.roleApplied?`<span class="badge b-gold">${r.roleApplied}</span>`:'—'}</td>
-    <td>${r.date}</td>
-    <td>${r.email?`<a href="mailto:${r.email}" class="btn btn-ghost btn-xs" style="text-decoration:none">✉</a>`:''}</td></tr>`).join('')
-    : `<tr><td colspan="5"><div class="empty"><div class="ei">📝</div><p>No applications yet.</p></div></td></tr>`;
-}
-
-function importFormCSV() {
-  const file = document.getElementById('form-csv-file').files[0];
-  const type = document.getElementById('import-form-type').value;
-  if (!file) { alert('Please select a file.'); return; }
-  const reader = new FileReader();
-  reader.onload = e => {
-    const rows = parseCSV(e.target.result);
-    if (rows.length < 2) { alert('No data.'); return; }
-    const h = rows[0].map(x=>x.toLowerCase().trim());
-    const ci = k => h.findIndex(x=>x.includes(k));
-    const iFirst=ci('first'); const iLast=ci('last'); const iEmail=ci('email'); const iPhone=ci('phone'); const iTs=ci('timestamp');
-    let count=0;
-    rows.slice(1).forEach(cols => {
-      const g=i=>i>=0?(cols[i]||'').trim():'';
-      const name=[g(iFirst),g(iLast)].filter(Boolean).join(' ')||'Unknown';
-      if(type==='interest') DB.formResponses.interest.push({name,email:g(iEmail),phone:g(iPhone),date:g(iTs)||new Date().toLocaleDateString()});
-      else DB.formResponses.applications.push({name,email:g(iEmail),phone:g(iPhone),date:g(iTs)||new Date().toLocaleDateString()});
-      count++;
-    });
-    saveDB(); closeModal('import-form-modal');
-    alert(`✅ ${count} responses imported`);
-    renderFormResponses();
-  };
-  reader.readAsText(file);
 }
 
 // ══ KIOSK ════════════════════════════════════════
@@ -2496,7 +2368,6 @@ function renderAll() {
   renderDashboard();
   renderProspects();
   renderEventCards();
-  renderFormResponses();
   renderSettings();
   populateSheetSettings();
   try { refreshEventDetail(); } catch(e) {}
