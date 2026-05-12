@@ -426,15 +426,85 @@ select.g-empty{background:var(--card);color:var(--ink);}
   </div>
 
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center">
+    <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;flex-shrink:0;">
+      <button id="prospect-view-table" class="btn btn-sm" onclick="setProspectView('table')" style="border-radius:0;border:none;background:var(--forest-light);color:white;">☰ Table</button>
+      <button id="prospect-view-kanban" class="btn btn-sm" onclick="setProspectView('kanban')" style="border-radius:0;border:none;background:transparent;color:var(--muted);">⊞ Kanban</button>
+    </div>
     <input class="tbl-search" id="prospect-search" placeholder="🔍 Search name, email, org…" oninput="renderProspects()">
     <select id="f-category" onchange="renderProspects()" style="width:auto;padding:8px 12px;font-size:12px"><option value="">All Categories</option></select>
     <select id="f-status" onchange="renderProspects()" style="width:auto;padding:8px 12px;font-size:12px"><option value="">All Statuses</option></select>
-    <select id="f-good" onchange="renderProspects()" style="width:auto;padding:8px 12px;font-size:12px">
+    <select id="f-good" onchange="()" style="width:auto;padding:8px 12px;font-size:12px">
       <option value="">All</option><option value="yes">⭐ Good Prospects</option><option value="no">Others</option>
     </select>
     <button class="btn btn-ghost btn-sm" onclick="clearFilters()">✕ Clear</button>
   </div>
 
+  <div id="prospect-kanban" style="display:none;">
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;align-items:start;">
+
+    <!-- Col 1: Exploring -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;">
+        <div style="flex:1;padding:10px 14px;background:rgba(240,201,23,0.08);border:1px solid rgba(240,201,23,0.2);border-radius:10px;">
+          <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold)">Exploring</div>
+          <div style="font-size:11px;color:var(--muted)" id="pk-col-exploring-cnt">0 people</div>
+        </div>
+        <button class="btn btn-ghost btn-xs" onclick="emailPkColumn('pk-col-exploring')">✉ All</button>
+      </div>
+      <div id="pk-col-exploring" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+    </div>
+
+    <!-- Col 2: In Outreach -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;">
+        <div style="flex:1;padding:10px 14px;background:rgba(100,180,255,0.08);border:1px solid rgba(100,180,255,0.2);border-radius:10px;">
+          <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#88c4ff">In Outreach</div>
+          <div style="font-size:11px;color:var(--muted)" id="pk-col-outreach-cnt">0 people</div>
+        </div>
+        <button class="btn btn-ghost btn-xs" onclick="emailPkColumn('pk-col-outreach')">✉ All</button>
+      </div>
+      <div id="pk-col-outreach" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+    </div>
+
+    <!-- Col 3: Onboarding -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;">
+        <div style="flex:1;padding:10px 14px;background:rgba(74,158,110,0.1);border:1px solid rgba(74,158,110,0.25);border-radius:10px;">
+          <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#2ecc71">Onboarding</div>
+          <div style="font-size:11px;color:var(--muted)" id="pk-col-onboarding-cnt">0 people</div>
+        </div>
+        <button class="btn btn-ghost btn-xs" onclick="emailPkColumn('pk-col-onboarding')">✉ All</button>
+      </div>
+      <div id="pk-col-onboarding" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+    </div>
+
+    <!-- Col 4: On Hold -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;">
+        <div style="flex:1;padding:10px 14px;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:10px;">
+          <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#e74c3c">On Hold</div>
+          <div style="font-size:11px;color:var(--muted)" id="pk-col-onhold-cnt">0 people</div>
+        </div>
+        <button class="btn btn-ghost btn-xs" onclick="emailPkColumn('pk-col-onhold')">✉ All</button>
+      </div>
+      <div id="pk-col-onhold" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+    </div>
+
+    <!-- Col 5: Not Yet Contacted -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;">
+        <div style="flex:1;padding:10px 14px;background:rgba(160,160,160,0.08);border:1px solid rgba(160,160,160,0.2);border-radius:10px;">
+          <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#aaa">Not Yet Contacted</div>
+          <div style="font-size:11px;color:var(--muted)" id="pk-col-new-cnt">0 people</div>
+        </div>
+        <button class="btn btn-ghost btn-xs" onclick="emailPkColumn('pk-col-new')">✉ All</button>
+      </div>
+      <div id="pk-col-new" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+    </div>
+
+  </div>
+</div>
+  
   <div class="block">
     <div class="block-hdr">
       <div class="block-title">🎯 Prospect List <span class="cnt" id="prospect-count-badge">0</span></div>
@@ -1313,6 +1383,7 @@ const DEFAULT = {
 let DB = loadDB();
 let currentRole = null;
 let currentEventId = null;
+let prospectView = 'table'; // 'table' or 'kanban'
 
 function loadDB() {
   try {
@@ -1564,6 +1635,79 @@ function inlineUpdateProspect(realIdx, field, value) {
   gsWriteProspectToSheet(updated, 'update').catch(() => {});
 }
 
+const PK_COLUMNS = {
+  exploring:  ['Interested!','Zoom interest!','Zoom attended','Convos in Progress','Attended Bingo - Convos in Progress'],
+  outreach:   ['Invited to Friendraiser','Friendraiser RSVP','Friendraiser Guest','Final Email Sent','Final Text Sent','RSVPed to Training','RSVP July Bingo','Late Intake - ask again','Reask'],
+  onboarding: ['Onboarding - Need BG Check','Committed'],
+  onhold:     ['Unavailable'],
+};
+
+function getProspectColumn(status) {
+  if (!status) return 'new';
+  for (const [col, statuses] of Object.entries(PK_COLUMNS)) {
+    if (statuses.includes(status)) return col;
+  }
+  return 'new';
+}
+
+function setProspectView(view) {
+  prospectView = view;
+  const tableBlock = document.querySelector('#page-prospects .block');
+  const kanban = document.getElementById('prospect-kanban');
+  const tableBtn  = document.getElementById('prospect-view-table');
+  const kanbanBtn = document.getElementById('prospect-view-kanban');
+  if (view === 'kanban') {
+    if (tableBlock) tableBlock.style.display = 'none';
+    if (kanban) kanban.style.display = '';
+    if (tableBtn)  { tableBtn.style.background = 'transparent'; tableBtn.style.color = 'var(--muted)'; }
+    if (kanbanBtn) { kanbanBtn.style.background = 'var(--forest-light)'; kanbanBtn.style.color = 'white'; }
+  } else {
+    if (tableBlock) tableBlock.style.display = '';
+    if (kanban) kanban.style.display = 'none';
+    if (tableBtn)  { tableBtn.style.background = 'var(--forest-light)'; tableBtn.style.color = 'white'; }
+    if (kanbanBtn) { kanbanBtn.style.background = 'transparent'; kanbanBtn.style.color = 'var(--muted)'; }
+  }
+  renderProspects();
+}
+
+function emailPkColumn(colId) {
+  const col = document.getElementById(colId);
+  if (!col) return;
+  const emails = [...col.querySelectorAll('[data-email]')]
+    .map(el => el.dataset.email)
+    .filter(e => e && e.includes('@'));
+  if (!emails.length) { alert('No email addresses found in this column.'); return; }
+  window.open(`https://mail.google.com/mail/?view=cm&to=angela@thebryc.org&bcc=${encodeURIComponent(emails.join(','))}`);
+}
+
+function pkProspectCard(p, idx) {
+  const name  = p.name || `${p.fname||''} ${p.lname||''}`.trim() || '(No Name)';
+  const email = p.email || '';
+  const phone = p.phone || '';
+  const campus = p.campus || '';
+  const days  = p.days ? p.days.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const roles = [p.role1, p.role2].filter(Boolean);
+  const shortRole = r => r.replace('Research Mentor','Research LM').replace('Learning Mentor','Learning LM').replace('Upperclassmen Mentor','Upperclassmen LM').replace('Senior Mentor','Senior LM').replace('Not comfortable with any other role','No 2nd choice');
+  return `
+    <div data-email="${email}" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;"
+         onmouseenter="this.style.background='var(--card-h)'" onmouseleave="this.style.background='var(--card)'"
+         onclick="openEditProspect(${idx})">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+        <div style="font-weight:700;font-size:13px;color:var(--ink);">${name}</div>
+        ${email ? `<a href="https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(email)}" target="_blank" class="btn btn-ghost btn-xs" onclick="event.stopPropagation()" title="${email}">✉</a>` : ''}
+      </div>
+      ${p.category ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">${p.category}</div>` : ''}
+      ${campus ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">📍 ${campus}</div>` : ''}
+      ${roles.length ? `
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px;">
+          ${roles.map(r => `<span style="background:rgba(240,201,23,.1);color:var(--gold);padding:1px 6px;border-radius:50px;font-size:9px;font-weight:600;">${shortRole(r)}</span>`).join('')}
+        </div>` : ''}
+      ${days.length ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">📅 ${days.join(', ')}</div>` : ''}
+      ${email ? `<div style="font-size:11px;color:var(--muted);">✉ ${email}</div>` : ''}
+      ${phone ? `<div style="font-size:11px;color:var(--muted);">📞 ${phone}</div>` : ''}
+    </div>`;
+}
+  
 function renderProspects() {
   const q = document.getElementById('prospect-search')?.value.toLowerCase() || '';
   const fCat = document.getElementById('f-category')?.value || '';
@@ -1623,6 +1767,25 @@ function renderProspects() {
       </td>
     </tr>`;
   }).join('');
+  // Kanban view
+  if (prospectView === 'kanban') {
+    const cols = { exploring: [], outreach: [], onboarding: [], onhold: [], new: [] };
+    list.forEach(p => {
+      const col = getProspectColumn(p.status);
+      cols[col].push(p);
+    });
+    ['exploring','outreach','onboarding','onhold','new'].forEach(col => {
+      const el = document.getElementById(`pk-col-${col}`);
+      const cnt = document.getElementById(`pk-col-${col}-cnt`);
+      if (cnt) cnt.textContent = `${cols[col].length} people`;
+      if (!el) return;
+      if (cols[col].length === 0) {
+        el.innerHTML = `<div style="text-align:center;padding:20px 12px;color:rgba(0,0,0,.2);font-size:12px;border:1px dashed rgba(0,0,0,.1);border-radius:10px;">Empty</div>`;
+        return;
+      }
+      el.innerHTML = cols[col].map(p => pkProspectCard(p, DB.prospects.indexOf(p))).join('');
+    });
+  }
 }
 
 function clearFilters() {
@@ -3157,23 +3320,50 @@ function renderReturners() {
               <div style="font-size:11px;color:var(--muted);margin-top:2px;">${r.campus || '—'}</div>
             </div>
             <span style="display:inline-block;padding:3px 9px;border-radius:50px;font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;background:${statusColor}22;color:${statusColor};white-space:nowrap;max-width:120px;text-align:center;line-height:1.4;">${shortReturnStatus(statusLabel)}</span>
+ grid.innerHTML = list.map((r, i) => {
+    const idx = DB.returners.indexOf(r);
+    const name = `${r.firstName || ''} ${r.lastName || ''}`.trim();
+    const statusColor = returnerStatusColor(r.willReturn);
+    const statusLabel = r.willReturn || '—';
+    const roles = r.roles ? r.roles.split(',').map(s => s.trim()).filter(Boolean) : [];
+    const days  = r.days  ? r.days.split(',').map(s => s.trim()).filter(Boolean) : [];
+    const email = r.email || '';
+    const phone = r.phone || '';
+    return `
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:transform .2s;" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''">
+        <div style="height:4px;background:${statusColor};"></div>
+        <div style="padding:16px 18px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+            <div>
+              <div style="font-family:'proxima-nova',sans-serif;font-size:16px;font-weight:700;color:var(--ink);">${name || '(No Name)'}</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">${r.campus || '—'}</div>
+            </div>
+            <span style="display:inline-block;padding:3px 9px;border-radius:50px;font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;background:${statusColor}22;color:${statusColor};white-space:nowrap;max-width:120px;text-align:center;line-height:1.4;">${shortReturnStatus(statusLabel)}</span>
           </div>
-
           ${roles.length ? `
           <div style="margin-bottom:10px;">
-            <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:6px;">Roles Interested In</div>
+            <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Roles Interested In</div>
             <div style="display:flex;flex-wrap:wrap;gap:5px;">
               ${roles.map(role => `<span style="background:rgba(240,201,23,.12);color:var(--gold);padding:2px 8px;border-radius:50px;font-size:10px;font-weight:600;">${shortRoleName(role)}</span>`).join('')}
             </div>
           </div>` : ''}
-
           ${days.length ? `
-          <div>
-            <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:6px;">Available Days</div>
+          <div style="margin-bottom:10px;">
+            <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Available Days</div>
             <div style="display:flex;flex-wrap:wrap;gap:5px;">
-              ${days.map(d => `<span style="background:rgba(255,255,255,.07);color:var(--soft);padding:2px 8px;border-radius:50px;font-size:10px;">${d}</span>`).join('')}
+              ${days.map(d => `<span style="background:rgba(240,201,23,.08);color:var(--soft);padding:2px 8px;border-radius:50px;font-size:10px;">${d}</span>`).join('')}
             </div>
           </div>` : ''}
+          <div style="border-top:1px solid var(--border);margin-top:10px;padding-top:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <div style="font-size:11px;color:var(--muted);">
+              ${email ? `<div>✉ ${email}</div>` : '<div style="color:rgba(0,0,0,.3);">No email yet</div>'}
+              ${phone ? `<div>📞 ${phone}</div>` : ''}
+            </div>
+            <div style="display:flex;gap:6px;">
+              ${email ? `<a href="https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(email)}" target="_blank" class="btn btn-ghost btn-xs" title="Email ${name}">✉</a>` : ''}
+              <button class="btn btn-gold btn-xs" onclick="openEditReturner(${idx})">✏ Edit</button>
+            </div>
+          </div>
         </div>
       </div>
     `;
