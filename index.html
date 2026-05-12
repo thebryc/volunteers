@@ -3243,7 +3243,29 @@ function gsImportRows(rows, cfg) {
     if (!name) return;
     const goodRaw = get('good').toLowerCase();
     const good = ['yes','y','true','1','✓','x'].includes(goodRaw) ? 'yes' : goodRaw ? 'no' : '';
-    sheetProspects.push({ name, fname, lname, email: get('email'), phone: get('phone'), category: get('category'), status: get('status'), teamRef: get('teamRef'), mentorRef: get('mentorRef'), good, comms: get('comms'), notes: get('notes'), customMsg: get('customMsg'), dateAdded: get('dateAdded') || new Date().toLocaleDateString() });
+    const existing = DB.prospects.find(p => 
+  (p.email && get('email') && p.email.toLowerCase() === get('email').toLowerCase()) ||
+  (p.name && name && p.name.toLowerCase() === name.toLowerCase())
+);
+sheetProspects.push({ 
+  ...(existing || {}),
+  name, fname, lname, 
+  email: get('email'), 
+  phone: get('phone'), 
+  category: get('category'), 
+  status: get('status'), 
+  teamRef: get('teamRef'), 
+  mentorRef: get('mentorRef'), 
+  good, 
+  comms: get('comms'), 
+  notes: get('notes'), 
+  customMsg: get('customMsg'), 
+  dateAdded: get('dateAdded') || new Date().toLocaleDateString(),
+  campus: get('campus') || existing?.campus || '',
+  days: get('days') || existing?.days || '',
+  role1: get('role1') || existing?.role1 || '',
+  role2: get('role2') || existing?.role2 || ''
+});
   });
   const sheetEmails = new Set(sheetProspects.map(p => p.email?.toLowerCase()).filter(Boolean));
   const sheetNames  = new Set(sheetProspects.map(p => p.name?.toLowerCase()).filter(Boolean));
