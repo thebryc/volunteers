@@ -3316,24 +3316,7 @@ function renderReturners() {
     grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="ei">🔄</div><p>No matching returners.</p></div>';
     return;
   }
-
-  grid.innerHTML = list.map(r => {
-    const name = `${r.firstName || ''} ${r.lastName || ''}`.trim();
-    const statusColor = returnerStatusColor(r.willReturn);
-    const statusLabel = r.willReturn || '—';
-    const roles = r.roles ? r.roles.split(',').map(s => s.trim()).filter(Boolean) : [];
-    const days  = r.days  ? r.days.split(',').map(s => s.trim()).filter(Boolean) : [];
-
-    return `
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:transform .2s;" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''">
-        <div style="height:4px;background:${statusColor};"></div>
-        <div style="padding:16px 18px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
-            <div>
-              <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--ink);">${name || '(No Name)'}</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:2px;">${r.campus || '—'}</div>
-            </div>
-            <span style="display:inline-block;padding:3px 9px;border-radius:50px;font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;background:${statusColor}22;color:${statusColor};white-space:nowrap;max-width:120px;text-align:center;line-height:1.4;">${shortReturnStatus(statusLabel)}</span>
+	
  grid.innerHTML = list.map((r, i) => {
     const idx = DB.returners.indexOf(r);
     const name = `${r.firstName || ''} ${r.lastName || ''}`.trim();
