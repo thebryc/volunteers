@@ -3100,7 +3100,7 @@ function renderReturners() {
   const all = DB.returners;
   document.getElementById('ret-total').textContent = all.length;
   document.getElementById('ret-yes').textContent   = all.filter(r => r.willReturn === 'Yes!').length;
-  document.getElementById('ret-maybe').textContent = all.filter(r => r.willReturn === "I'd like to, but I'm not sure.").length;
+  document.getElementById('ret-maybe').textContent = all.filter(r => r.willReturn === "I\u2019d like to, but I\u2019m not sure.").length;
   document.getElementById('ret-no').textContent    = all.filter(r => r.willReturn && r.willReturn.startsWith('No')).length;
   document.getElementById('returner-total-label').textContent = all.length;
   document.getElementById('sb-returner-cnt').textContent = all.length;
@@ -3306,11 +3306,10 @@ function renderOnboarding() {
 
   // Returners
   const returningYes   = (DB.returners || []).filter(r => r.willReturn === 'Yes!');
-  const returningMaybe = (DB.returners || []).filter(r => r.willReturn === "I'd like to, but I'm not sure.");
+  const returningMaybe = (DB.returners || []).filter(r => r.willReturn === "I\u2019d like to, but I\u2019m not sure.");
 
   // Also include prospects with "maybe" returner phrasing in their status (if you import them as prospects)
   const prospectMaybe = (DB.prospects || []).filter(p =>
-    (p.status || '').toLowerCase().includes("i'd like to") ||
     (p.status || '').toLowerCase().includes("not sure")
   );
 
