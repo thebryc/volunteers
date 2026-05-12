@@ -3091,7 +3091,7 @@ function renderReturners() {
   let list = DB.returners.filter(r => {
     const name = ((r.firstName || '') + ' ' + (r.lastName || '')).toLowerCase();
     if (search && !name.includes(search)) return false;
-    if (fStatus && r.willReturn !== fStatus) return false;
+    if (fStatus && r.willReturn.replace(/[\u2018\u2019]/g, "'") !== fStatus.replace(/[\u2018\u2019]/g, "'")) return false;
     if (fCampus && r.campus !== fCampus) return false;
     return true;
   });
