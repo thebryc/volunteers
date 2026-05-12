@@ -670,58 +670,68 @@ select.g-empty{background:var(--card);color:var(--ink);}
   </div>
 
   <!-- Kanban board -->
-  <div id="onboarding-board" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start;">
+<div id="onboarding-board" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start;">
 
-    <!-- Col 1: Maybe -->
-    <div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 14px;background:rgba(240,201,23,0.08);border:1px solid rgba(240,201,23,0.2);border-radius:10px;">
+  <!-- Col 1: Maybe -->
+  <div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+      <div style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(240,201,23,0.08);border:1px solid rgba(240,201,23,0.2);border-radius:10px;">
         <span style="font-size:18px">🤔</span>
         <div>
           <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold)">Maybe / Unsure</div>
           <div style="font-size:11px;color:var(--muted)" id="ob-col-maybe-cnt">0 people</div>
-          <button class="btn btn-ghost btn-xs" onclick="emailObColumn('ob-col-maybe')" style="margin-top:4px;">✉ Email All</button>
         </div>
       </div>
-      <div id="ob-col-maybe" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+      <button class="btn btn-ghost btn-xs" onclick="emailObColumn('ob-col-maybe')" title="Email all in this column">✉ All</button>
     </div>
+    <div id="ob-col-maybe" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+  </div>
 
-    <!-- Col 2: Need BG Check -->
-    <div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 14px;background:rgba(100,220,200,0.08);border:1px solid rgba(100,220,200,0.2);border-radius:10px;">
+  <!-- Col 2: Need BG Check -->
+  <div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+      <div style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(100,220,200,0.08);border:1px solid rgba(100,220,200,0.2);border-radius:10px;">
         <span style="font-size:18px">🔍</span>
         <div>
           <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#88ded0">Need BG Check</div>
           <div style="font-size:11px;color:var(--muted)" id="ob-col-bg-cnt">0 people</div>
         </div>
       </div>
-      <div id="ob-col-bg" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+      <button class="btn btn-ghost btn-xs" onclick="emailObColumn('ob-col-bg')" title="Email all in this column">✉ All</button>
     </div>
+    <div id="ob-col-bg" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+  </div>
 
-    <!-- Col 3: Committed -->
-    <div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 14px;background:rgba(74,158,110,0.1);border:1px solid rgba(74,158,110,0.25);border-radius:10px;">
+  <!-- Col 3: Committed -->
+  <div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+      <div style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(74,158,110,0.1);border:1px solid rgba(74,158,110,0.25);border-radius:10px;">
         <span style="font-size:18px">✅</span>
         <div>
           <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#2ecc71">Committed</div>
           <div style="font-size:11px;color:var(--muted)" id="ob-col-committed-cnt">0 people</div>
         </div>
       </div>
-      <div id="ob-col-committed" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+      <button class="btn btn-ghost btn-xs" onclick="emailObColumn('ob-col-committed')" title="Email all in this column">✉ All</button>
     </div>
+    <div id="ob-col-committed" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+  </div>
 
-    <!-- Col 4: Returning Yes -->
-    <div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 14px;background:rgba(100,149,255,0.08);border:1px solid rgba(100,149,255,0.2);border-radius:10px;">
+  <!-- Col 4: Returning Yes -->
+  <div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+      <div style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(100,149,255,0.08);border:1px solid rgba(100,149,255,0.2);border-radius:10px;">
         <span style="font-size:18px">🔄</span>
         <div>
           <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#88c4ff">Returning — Yes</div>
           <div style="font-size:11px;color:var(--muted)" id="ob-col-returning-cnt">0 people</div>
         </div>
       </div>
-      <div id="ob-col-returning" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
+      <button class="btn btn-ghost btn-xs" onclick="emailObColumn('ob-col-returning')" title="Email all in this column">✉ All</button>
     </div>
-
+    <div id="ob-col-returning" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
   </div>
+
 </div>
   
 <!-- ══ SETTINGS ═══════════════════════════════════ -->
@@ -3385,7 +3395,7 @@ function obProspectCard(p) {
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
   <div style="font-weight:700;font-size:13px;color:var(--ink);">${name}</div>
   <div style="display:flex;gap:6px;align-items:center;">
-    ${email ? `<a href="https://mail.google.com/mail/?view=cm&to=angela@thebryc.org&bcc=${encodeURIComponent(email)}" target="_blank" class="btn btn-ghost btn-xs" onclick="event.stopPropagation()" title="${email}">✉</a>` : ''}
+    ${email ? `<a href="https://mail.google.com/mail/?view=cm&to${encodeURIComponent(email)}" target="_blank" class="btn btn-ghost btn-xs" onclick="event.stopPropagation()" title="${email}">✉</a>` : ''}
     <span style="font-size:9px;background:rgba(100,220,200,.12);color:#88ded0;padding:2px 7px;border-radius:50px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;">Prospect</span>
   </div>
 </div>
@@ -3440,7 +3450,7 @@ function obReturnerCard(r, idx) {
   const email  = r.email || '';
   const phone  = r.phone || '';
   const emailBtn = email
-    ? `<a href="https://mail.google.com/mail/?view=cm&to=angela@thebryc.org&bcc=${encodeURIComponent(email)}" target="_blank" class="btn btn-ghost btn-xs" onclick="event.stopPropagation()" title="${email}">✉</a>`
+    ? `<a href="https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(email)}" target="_blank" class="btn btn-ghost btn-xs" onclick="event.stopPropagation()" title="${email}">✉</a>`
     : `<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openEditReturner(${idx})" title="Add email">✉ Add</button>`;
   return `
     <div data-email="${email}" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;"
