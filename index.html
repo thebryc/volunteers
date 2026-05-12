@@ -679,6 +679,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
         <div>
           <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold)">Maybe / Unsure</div>
           <div style="font-size:11px;color:var(--muted)" id="ob-col-maybe-cnt">0 people</div>
+          <button class="btn btn-ghost btn-xs" onclick="emailObColumn('ob-col-maybe')" style="margin-top:4px;">✉ Email All</button>
         </div>
       </div>
       <div id="ob-col-maybe" style="display:flex;flex-direction:column;gap:10px;min-height:80px;"></div>
@@ -1211,6 +1212,22 @@ select.g-empty{background:var(--card);color:var(--ink);}
   </div>
 </div>
 
+<!-- Edit Returner -->
+<div class="overlay" id="edit-returner-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('edit-returner-modal')">✕</button>
+    <div class="modal-title" id="edit-returner-name">Returner</div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Email</label><input type="email" id="er-email" placeholder="email@example.com"></div>
+      <div class="fg"><label class="fl">Phone</label><input type="tel" id="er-phone" placeholder="(225) 555-0100"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('edit-returner-modal')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveReturnerContact()">Save</button>
+    </div>
+  </div>
+</div>
+  
 <!-- Restore Backup -->
 <div class="overlay" id="restore-modal">
   <div class="modal">
@@ -3340,15 +3357,14 @@ function renderOnboarding() {
 function renderObColumn(colId, people, type) {
   const col = document.getElementById(colId);
   if (!col) return;
-
   if (people.length === 0) {
     col.innerHTML = `<div style="text-align:center;padding:20px 12px;color:rgba(255,255,255,.18);font-size:12px;border:1px dashed rgba(255,255,255,.08);border-radius:10px;">Empty</div>`;
     return;
   }
-
   col.innerHTML = people.map(p => {
     if (type === 'returner' || (p.willReturn !== undefined)) {
-      return obReturnerCard(p);
+      const idx = DB.returners.indexOf(p);
+      return obReturnerCard(p, idx);
     }
     return obProspectCard(p);
   }).join('');
@@ -3367,9 +3383,12 @@ function obProspectCard(p) {
     <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;"
          onmouseenter="this.style.background='var(--card-h)'" onmouseleave="this.style.background='var(--card)'">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
-        <div style="font-weight:700;font-size:13px;color:var(--ink);">${name}</div>
-        <span style="font-size:9px;background:rgba(100,220,200,.12);color:#88ded0;padding:2px 7px;border-radius:50px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;">Prospect</span>
-      </div>
+  <div style="font-weight:700;font-size:13px;color:var(--ink);">${name}</div>
+  <div style="display:flex;gap:6px;align-items:center;">
+    ${email ? `<a href="https://mail.google.com/mail/?view=cm&to=angela@thebryc.org&bcc=${encodeURIComponent(email)}" target="_blank" class="btn btn-ghost btn-xs" onclick="event.stopPropagation()" title="${email}">✉</a>` : ''}
+    <span style="font-size:9px;background:rgba(100,220,200,.12);color:#88ded0;padding:2px 7px;border-radius:50px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;">Prospect</span>
+  </div>
+</div>
       ${category ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">${category}</div>` : ''}
       ${campus ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">📍 ${campus}</div>` : ''}
       ${roles.length ? `
@@ -3382,25 +3401,66 @@ function obProspectCard(p) {
     </div>`;
 }
 
-function obReturnerCard(r) {
-  const name = `${r.firstName || ''} ${r.lastName || ''}`.trim() || '(No Name)';
-  const roles = r.roles ? r.roles.split(',').map(s => s.trim()).filter(Boolean) : [];
+function openEditReturner(idx) {
+  const r = DB.returners[idx];
+  if (!r) return;
+  document.getElementById('edit-returner-name').textContent = `${r.firstName || ''} ${r.lastName || ''}`.trim();
+  document.getElementById('er-email').value = r.email || '';
+  document.getElementById('er-phone').value = r.phone || '';
+  document.getElementById('edit-returner-modal').dataset.idx = idx;
+  openModal('edit-returner-modal');
+}
+
+function saveReturnerContact() {
+  const idx = parseInt(document.getElementById('edit-returner-modal').dataset.idx);
+  if (isNaN(idx)) return;
+  DB.returners[idx].email = document.getElementById('er-email').value.trim();
+  DB.returners[idx].phone = document.getElementById('er-phone').value.trim();
+  saveDB();
+  closeModal('edit-returner-modal');
+  renderReturners();
+  renderOnboarding();
+}
+
+function emailObColumn(colId) {
+  const col = document.getElementById(colId);
+  if (!col) return;
+  const emails = [...col.querySelectorAll('[data-email]')]
+    .map(el => el.dataset.email)
+    .filter(e => e && e.includes('@'));
+  if (!emails.length) { alert('No email addresses found in this column.'); return; }
+  window.open(`https://mail.google.com/mail/?view=cm&to=angela@thebryc.org&bcc=${encodeURIComponent(emails.join(','))}`);
+}
+      
+function obReturnerCard(r, idx) {
+  const name   = `${r.firstName || ''} ${r.lastName || ''}`.trim() || '(No Name)';
+  const roles  = r.roles ? r.roles.split(',').map(s => s.trim()).filter(Boolean) : [];
   const campus = r.campus || '';
   const days   = r.days ? r.days.split(',').map(s => s.trim()).filter(Boolean).slice(0,3) : [];
-
+  const email  = r.email || '';
+  const phone  = r.phone || '';
+  const emailBtn = email
+    ? `<a href="https://mail.google.com/mail/?view=cm&to=angela@thebryc.org&bcc=${encodeURIComponent(email)}" target="_blank" class="btn btn-ghost btn-xs" onclick="event.stopPropagation()" title="${email}">✉</a>`
+    : `<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openEditReturner(${idx})" title="Add email">✉ Add</button>`;
   return `
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;"
-         onmouseenter="this.style.background='var(--card-h)'" onmouseleave="this.style.background='var(--card)'">
+    <div data-email="${email}" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;"
+         onmouseenter="this.style.background='var(--card-h)'" onmouseleave="this.style.background='var(--card)'"
+         onclick="openEditReturner(${idx})">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
         <div style="font-weight:700;font-size:13px;color:var(--ink);">${name}</div>
-        <span style="font-size:9px;background:rgba(100,149,255,.12);color:#88c4ff;padding:2px 7px;border-radius:50px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;">Returner</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          ${emailBtn}
+          <span style="font-size:9px;background:rgba(100,149,255,.12);color:#88c4ff;padding:2px 7px;border-radius:50px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;">Returner</span>
+        </div>
       </div>
       ${campus ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">📍 ${campus}</div>` : ''}
       ${roles.length ? `
         <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px;">
           ${roles.slice(0,3).map(role => `<span style="background:rgba(240,201,23,.1);color:var(--gold);padding:1px 6px;border-radius:50px;font-size:9px;font-weight:600;">${shortRoleName(role)}</span>`).join('')}
         </div>` : ''}
-      ${days.length ? `<div style="font-size:11px;color:var(--muted);">📅 ${days.join(', ')}</div>` : ''}
+      ${days.length ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">📅 ${days.join(', ')}</div>` : ''}
+      ${email ? `<div style="font-size:11px;color:var(--muted);">✉ ${email}</div>` : ''}
+      ${phone ? `<div style="font-size:11px;color:var(--muted);">📞 ${phone}</div>` : ''}
     </div>`;
 }
 
