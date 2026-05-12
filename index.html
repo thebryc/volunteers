@@ -1814,7 +1814,12 @@ function saveProspect() {
     customMsg: document.getElementById('ap-message').value.trim(),
     role1: document.getElementById('ap-role1').value,
     role2: document.getElementById('ap-role2').value,
-    campus: ['downtown','airline','unsure','gmeets'].filter(c => document.getElementById(`ap-campus-${c}`)?.checked).join(', '),
+    campus: [
+      document.getElementById('ap-campus-downtown')?.checked ? 'Downtown' : null,
+      document.getElementById('ap-campus-airline')?.checked ? 'Airline' : null,
+      document.getElementById('ap-campus-unsure')?.checked ? 'Unsure' : null,
+      document.getElementById('ap-campus-gmeets')?.checked ? 'Google Meets (Tutors)' : null,
+    ].filter(Boolean).join(', '),
     days: ['mon','tue','wed','thu','na'].filter(d => document.getElementById(`ap-day-${d}`)?.checked).map(d => ({mon:'Monday',tue:'Tuesday',wed:'Wednesday',thu:'Thursday',na:'N/A — Tutor'}[d])).join(', ')
   };
   DB.prospects.push(newP);
@@ -1871,7 +1876,12 @@ function updateProspect() {
     customMsg: document.getElementById('ep-message').value.trim(),
     role1: document.getElementById('ep-role1').value,
     role2: document.getElementById('ep-role2').value,
-    campus: ['downtown','airline','unsure','gmeets'].filter(c => document.getElementById(`ep-campus-${c}`)?.checked).join(', '),
+    campus: [
+      document.getElementById('ap-campus-downtown')?.checked ? 'Downtown' : null,
+      document.getElementById('ap-campus-airline')?.checked ? 'Airline' : null,
+      document.getElementById('ap-campus-unsure')?.checked ? 'Unsure' : null,
+      document.getElementById('ap-campus-gmeets')?.checked ? 'Google Meets (Tutors)' : null,
+    ].filter(Boolean).join(', '),
     days: ['mon','tue','wed','thu','na'].filter(d => document.getElementById(`ep-day-${d}`)?.checked).map(d => ({mon:'Monday',tue:'Tuesday',wed:'Wednesday',thu:'Thursday',na:'N/A — Tutor'}[d])).join(', ')
   };
   const updated = DB.prospects[idx];
@@ -3133,14 +3143,18 @@ async function gsWriteProspectToSheet(prospect, action = 'add') {
     const headers = data[0];
     const colMap = cfg.columnMap;
     function prospectToRow(p) {
-      return headers.map(h => {
-        const field = Object.entries(colMap).find(([k, v]) => v === h);
-        if (!field) return '';
-        const key = field[0];
-        if (key === 'good') return p[key] === 'yes' ? 'Yes' : p[key] === 'no' ? 'No' : '';
-        return p[key] || '';
-      });
-    }
+  return headers.map(h => {
+    const field = Object.entries(colMap).find(([k, v]) => v === h);
+    if (!field) return '';
+    const key = field[0];
+    if (key === 'good') return p[key] === 'yes' ? 'Yes' : p[key] === 'no' ? 'No' : '';
+    if (key === 'campus') return p.campus || '';
+    if (key === 'days') return p.days || '';
+    if (key === 'role1') return p.role1 || '';
+    if (key === 'role2') return p.role2 || '';
+    return p[key] || '';
+  });
+}
     const sheetName = cfg.sheetName || 'Sheet1';
     const headerRowNum = cfg.headerRow || 1;
     if (action === 'add') {
