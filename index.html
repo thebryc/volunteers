@@ -1010,6 +1010,53 @@ select.g-empty{background:var(--card);color:var(--ink);}
     </div>
     <div class="fg"><label class="fl">Date of Comms / Notes</label><textarea id="ap-notes" rows="2"></textarea></div>
     <div class="fg"><label class="fl">Customizable Message</label><textarea id="ap-message" rows="2"></textarea></div>
+    <div style="border-top:1px solid var(--border);margin:14px 0 10px;padding-top:14px;">
+  <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">📋 Intake Preferences</div>
+  <div class="frow">
+    <div class="fg">
+      <label class="fl">Role — 1st Choice</label>
+      <select id="ap-role1">
+        <option value="">Select…</option>
+        <option>Research Mentor</option>
+        <option>Learning Mentor</option>
+        <option>Upperclassmen Mentor</option>
+        <option>Senior Mentor</option>
+        <option>Tutor</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="fl">Role — 2nd Choice</label>
+      <select id="ap-role2">
+        <option value="">Select…</option>
+        <option>Research Mentor</option>
+        <option>Learning Mentor</option>
+        <option>Upperclassmen Mentor</option>
+        <option>Senior Mentor</option>
+        <option>Tutor</option>
+        <option>Not comfortable with any other role</option>
+      </select>
+    </div>
+  </div>
+  <div class="fg">
+    <label class="fl">Campus Preference</label>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
+      <label class="ci"><input type="checkbox" id="ap-campus-downtown"> Downtown</label>
+      <label class="ci"><input type="checkbox" id="ap-campus-airline"> Airline</label>
+      <label class="ci"><input type="checkbox" id="ap-campus-unsure"> Unsure</label>
+      <label class="ci"><input type="checkbox" id="ap-campus-gmeets"> Google Meets (Tutors)</label>
+    </div>
+  </div>
+  <div class="fg">
+    <label class="fl">Days Available</label>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
+      <label class="ci"><input type="checkbox" id="ap-day-mon"> Monday</label>
+      <label class="ci"><input type="checkbox" id="ap-day-tue"> Tuesday</label>
+      <label class="ci"><input type="checkbox" id="ap-day-wed"> Wednesday</label>
+      <label class="ci"><input type="checkbox" id="ap-day-thu"> Thursday</label>
+      <label class="ci"><input type="checkbox" id="ap-day-na"> N/A — Tutor</label>
+    </div>
+  </div>
+</div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('add-prospect-modal')">Cancel</button>
       <button class="btn btn-gold" onclick="saveProspect()">Save Prospect</button>
@@ -1047,6 +1094,53 @@ select.g-empty{background:var(--card);color:var(--ink);}
     </div>
     <div class="fg"><label class="fl">Date of Comms / Notes</label><textarea id="ep-notes" rows="2"></textarea></div>
     <div class="fg"><label class="fl">Customizable Message</label><textarea id="ep-message" rows="2"></textarea></div>
+    <div style="border-top:1px solid var(--border);margin:14px 0 10px;padding-top:14px;">
+  <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">📋 Intake Preferences</div>
+  <div class="frow">
+    <div class="fg">
+      <label class="fl">Role — 1st Choice</label>
+      <select id="ep-role1">
+        <option value="">Select…</option>
+        <option>Research Mentor</option>
+        <option>Learning Mentor</option>
+        <option>Upperclassmen Mentor</option>
+        <option>Senior Mentor</option>
+        <option>Tutor</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="fl">Role — 2nd Choice</label>
+      <select id="ep-role2">
+        <option value="">Select…</option>
+        <option>Research Mentor</option>
+        <option>Learning Mentor</option>
+        <option>Upperclassmen Mentor</option>
+        <option>Senior Mentor</option>
+        <option>Tutor</option>
+        <option>Not comfortable with any other role</option>
+      </select>
+    </div>
+  </div>
+  <div class="fg">
+    <label class="fl">Campus Preference</label>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
+      <label class="ci"><input type="checkbox" id="ep-campus-downtown"> Downtown</label>
+      <label class="ci"><input type="checkbox" id="ep-campus-airline"> Airline</label>
+      <label class="ci"><input type="checkbox" id="ep-campus-unsure"> Unsure</label>
+      <label class="ci"><input type="checkbox" id="ep-campus-gmeets"> Google Meets (Tutors)</label>
+    </div>
+  </div>
+  <div class="fg">
+    <label class="fl">Days Available</label>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
+      <label class="ci"><input type="checkbox" id="ep-day-mon"> Monday</label>
+      <label class="ci"><input type="checkbox" id="ep-day-tue"> Tuesday</label>
+      <label class="ci"><input type="checkbox" id="ep-day-wed"> Wednesday</label>
+      <label class="ci"><input type="checkbox" id="ep-day-thu"> Thursday</label>
+      <label class="ci"><input type="checkbox" id="ep-day-na"> N/A — Tutor</label>
+    </div>
+  </div>
+</div>
     <div class="modal-footer">
       <button class="btn btn-danger" onclick="deleteProspect()">Delete</button>
       <button class="btn btn-ghost" onclick="closeModal('edit-prospect-modal')">Cancel</button>
@@ -1527,7 +1621,11 @@ function saveProspect() {
     good: document.getElementById('ap-good').value,
     dateAdded: document.getElementById('ap-date').value || new Date().toLocaleDateString(),
     notes: document.getElementById('ap-notes').value.trim(),
-    customMsg: document.getElementById('ap-message').value.trim()
+    customMsg: document.getElementById('ap-message').value.trim(),
+    role1: document.getElementById('ap-role1').value,
+    role2: document.getElementById('ap-role2').value,
+    campus: ['downtown','airline','unsure','gmeets'].filter(c => document.getElementById(`ap-campus-${c}`)?.checked).join(', '),
+    days: ['mon','tue','wed','thu','na'].filter(d => document.getElementById(`ap-day-${d}`)?.checked).map(d => ({mon:'Monday',tue:'Tuesday',wed:'Wednesday',thu:'Thursday',na:'N/A — Tutor'}[d])).join(', ')
   };
   DB.prospects.push(newP);
   saveDB(); closeModal('add-prospect-modal');
@@ -1551,6 +1649,17 @@ function openEditProspect(idx) {
   document.getElementById('ep-date').value = p.dateAdded || '';
   document.getElementById('ep-notes').value = p.notes || '';
   document.getElementById('ep-message').value = p.customMsg || '';
+  document.getElementById('ep-role1').value = p.role1 || '';
+  document.getElementById('ep-role2').value = p.role2 || '';
+  ['downtown','airline','unsure','gmeets'].forEach(c => {
+    const el = document.getElementById(`ep-campus-${c}`);
+    if (el) el.checked = (p.campus || '').toLowerCase().includes(c);
+  });
+  ['mon','tue','wed','thu','na'].forEach(d => {
+    const map = {mon:'monday',tue:'tuesday',wed:'wednesday',thu:'thursday',na:'n/a'};
+    const el = document.getElementById(`ep-day-${d}`);
+    if (el) el.checked = (p.days || '').toLowerCase().includes(map[d]);
+    });
   openModal('edit-prospect-modal');
 }
 
@@ -1569,7 +1678,11 @@ function updateProspect() {
     good: document.getElementById('ep-good').value,
     dateAdded: document.getElementById('ep-date').value,
     notes: document.getElementById('ep-notes').value.trim(),
-    customMsg: document.getElementById('ep-message').value.trim()
+    customMsg: document.getElementById('ep-message').value.trim(),
+    role1: document.getElementById('ep-role1').value,
+    role2: document.getElementById('ep-role2').value,
+    campus: ['downtown','airline','unsure','gmeets'].filter(c => document.getElementById(`ep-campus-${c}`)?.checked).join(', '),
+    days: ['mon','tue','wed','thu','na'].filter(d => document.getElementById(`ep-day-${d}`)?.checked).map(d => ({mon:'Monday',tue:'Tuesday',wed:'Wednesday',thu:'Thursday',na:'N/A — Tutor'}[d])).join(', ')
   };
   const updated = DB.prospects[idx];
   saveDB(); closeModal('edit-prospect-modal'); renderProspects(); renderDashboard();
@@ -3243,12 +3356,14 @@ function renderObColumn(colId, people, type) {
 }
 
 function obProspectCard(p) {
-  const name = `${p.firstName || p.first || ''} ${p.lastName || p.last || ''}`.trim() || p.name || '(No Name)';
-  const email = p.email || '';
-  const phone = p.phone || '';
+  const name = `${p.firstName || p.fname || p.first || ''} ${p.lastName || p.lname || p.last || ''}`.trim() || p.name || '(No Name)';
+  const email    = p.email || '';
+  const phone    = p.phone || '';
   const category = p.category || '';
-  const status = p.status || '';
-
+  const campus   = p.campus || '';
+  const days     = p.days ? p.days.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const roles    = [p.role1, p.role2].filter(Boolean);
+  const shortRole = r => r.replace('Research Mentor','Research LM').replace('Learning Mentor','Learning LM').replace('Upperclassmen Mentor','Upperclassmen LM').replace('Senior Mentor','Senior LM').replace('Not comfortable with any other role','No 2nd choice');
   return `
     <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;"
          onmouseenter="this.style.background='var(--card-h)'" onmouseleave="this.style.background='var(--card)'">
@@ -3257,6 +3372,12 @@ function obProspectCard(p) {
         <span style="font-size:9px;background:rgba(100,220,200,.12);color:#88ded0;padding:2px 7px;border-radius:50px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;">Prospect</span>
       </div>
       ${category ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">${category}</div>` : ''}
+      ${campus ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">📍 ${campus}</div>` : ''}
+      ${roles.length ? `
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px;">
+          ${roles.map(r => `<span style="background:rgba(240,201,23,.1);color:var(--gold);padding:1px 6px;border-radius:50px;font-size:9px;font-weight:600;">${shortRole(r)}</span>`).join('')}
+        </div>` : ''}
+      ${days.length ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">📅 ${days.join(', ')}</div>` : ''}
       ${email ? `<div style="font-size:11px;color:var(--muted);">✉ ${email}</div>` : ''}
       ${phone ? `<div style="font-size:11px;color:var(--muted);">📞 ${phone}</div>` : ''}
     </div>`;
