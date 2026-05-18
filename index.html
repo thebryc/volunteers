@@ -3482,14 +3482,25 @@ if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const iCampus   = findCol('campus');
     const iDays     = findCol('days');
 
-    DB.returners = rows.slice(1).filter(r => r.length > 0 && (r[iFirst] || r[iLast])).map(r => ({
-      firstName:  iFirst  >= 0 ? (r[iFirst]  || '').trim() : '',
-      lastName:   iLast   >= 0 ? (r[iLast]   || '').trim() : '',
-      willReturn: iReturn >= 0 ? (r[iReturn] || '').trim() : '',
-      roles:      iRoles  >= 0 ? (r[iRoles]  || '').trim() : '',
-      campus:     iCampus >= 0 ? (r[iCampus] || '').trim() : '',
-      days:       iDays   >= 0 ? (r[iDays]   || '').trim() : '',
-    }));
+DB.returners = rows.slice(1).filter(r => r.length > 0 && (r[iFirst] || r[iLast])).map(r => {
+  const firstName  = iFirst  >= 0 ? (r[iFirst]  || '').trim() : '';
+  const lastName   = iLast   >= 0 ? (r[iLast]   || '').trim() : '';
+  const existing = (DB.returners || []).find(e => 
+    e.firstName?.toLowerCase() === firstName.toLowerCase() && 
+    e.lastName?.toLowerCase() === lastName.toLowerCase()
+  );
+  return {
+    ...(existing || {}),
+    firstName,
+    lastName,
+    willReturn: iReturn >= 0 ? (r[iReturn] || '').trim() : '',
+    roles:      iRoles  >= 0 ? (r[iRoles]  || '').trim() : '',
+    campus:     iCampus >= 0 ? (r[iCampus] || '').trim() : '',
+    days:       iDays   >= 0 ? (r[iDays]   || '').trim() : '',
+    email:      existing?.email || '',
+    phone:      existing?.phone || '',
+  };
+});
 
     await saveDB();
     if (statusEl) statusEl.textContent = `✅ Synced ${DB.returners.length} returners.`;
