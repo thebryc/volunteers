@@ -3669,21 +3669,93 @@ function obProspectCard(p) {
     </div>`;
 }
 
+function openAddReturner() {
+  document.getElementById('edit-returner-modal').dataset.idx = '-1';
+  document.getElementById('edit-returner-name').textContent = 'Add Returner';
+  document.getElementById('er-fname').value = '';
+  document.getElementById('er-lname').value = '';
+  document.getElementById('er-email').value = '';
+  document.getElementById('er-phone').value = '';
+  document.getElementById('er-will-return').value = 'Survey Pending';
+  ['downtown','airline','unsure','gmeets'].forEach(c => {
+    const el = document.getElementById(`er-campus-${c}`);
+    if (el) el.checked = false;
+  });
+  ['mon','tue','wed','thu','na'].forEach(d => {
+    const el = document.getElementById(`er-day-${d}`);
+    if (el) el.checked = false;
+  });
+  openModal('edit-returner-modal');
+}
+
 function openEditReturner(idx) {
   const r = DB.returners[idx];
   if (!r) return;
-  document.getElementById('edit-returner-name').textContent = `${r.firstName || ''} ${r.lastName || ''}`.trim();
+  document.getElementById('edit-returner-modal').dataset.idx = idx;
+  document.getElementById('edit-returner-name').textContent = `${r.firstName || ''} ${r.lastName || ''}`.trim() || 'Edit Returner';
+  document.getElementById('er-fname').value = r.firstName || '';
+  document.getElementById('er-lname').value = r.lastName || '';
   document.getElementById('er-email').value = r.email || '';
   document.getElementById('er-phone').value = r.phone || '';
-  document.getElementById('edit-returner-modal').dataset.idx = idx;
+  document.getElementById('er-will-return').value = r.willReturn || 'Survey Pending';
+  ['downtown','airline','unsure','gmeets'].forEach(c => {
+    const el = document.getElementById(`er-campus-${c}`);
+    if (el) el.checked = (r.campus || '').toLowerCase().includes(c);
+  });
+  ['mon','tue','wed','thu','na'].forEach(d => {
+    const map = {mon:'monday',tue:'tuesday',wed:'wednesday',thu:'thursday',na:'n/a'};
+    const el = document.getElementById(`er-day-${d}`);
+    if (el) el.checked = (r.days || '').toLowerCase().includes(map[d]);
+  });
   openModal('edit-returner-modal');
 }
 
 function saveReturnerContact() {
   const idx = parseInt(document.getElementById('edit-returner-modal').dataset.idx);
-  if (isNaN(idx)) return;
-  DB.returners[idx].email = document.getElementById('er-email').value.trim();
-  DB.returners[idx].phone = document.getElementById('er-phone').value.trim();
+  const fname = document.getElementById('er-fname').value.trim();
+  const lname = document.getElementById('er-lname').value.trim();
+  if (!fname) { alert('Please enter a first name.'); return; }
+  const campus = [
+    document.getElementById('er-campus-downtown')?.checked ? 'Downtown' : null,
+    document.getElementById('er-campus-airline')?.checked ? 'Airline' : null,
+    document.getElementById('er-campus-unsure')?.checked ? 'Unsure' : null,
+    document.getElementById('er-campus-gmeets')?.checked ? 'Google Meets (Tutors)' : null,
+  ].filter(Boolean).join(', ');
+  const days = [
+    document.getElementById('er-day-mon')?.checked ? 'Monday' : null,
+    document.getElementById('er-day-tue')?.checked ? 'Tuesday' : null,
+    document.getElementById('er-day-wed')?.checked ? 'Wednesday' : null,
+    document.getElementById('er-day-thu')?.checked ? 'Thursday' : null,
+    document.getElementById('er-day-na')?.checked ? 'N/A — Tutor' : null,
+  ].filter(Boolean).join(', ');
+  const record = {
+    firstName: fname,
+    lastName: lname,
+    email: document.getElementById('er-email').value.trim(),
+    phone: document.getElementById('er-phone').value.trim(),
+    willReturn: document.getElementById('er-will-return').value,
+    campus,
+    days,
+    roles: idx >= 0 ? (DB.returners[idx]?.roles || '') : '',
+  };
+  if (isNaN(idx) || idx === -1) {
+    if (!DB.returners) DB.returners = [];
+    DB.returners.push(record);
+  } else {
+    DB.returners[idx] = { ...DB.returners[idx], ...record };
+  }
+  saveDB();
+  closeModal('edit-returner-modal');
+  renderReturners();
+  renderOnboarding();
+}
+
+function deleteReturner() {
+  const idx = parseInt(document.getElementById('edit-returner-modal').dataset.idx);
+  if (isNaN(idx) || idx === -1) return;
+  const r = DB.returners[idx];
+  if (!confirm(`Delete ${r.firstName} ${r.lastName}?`)) return;
+  DB.returners.splice(idx, 1);
   saveDB();
   closeModal('edit-returner-modal');
   renderReturners();
