@@ -1300,10 +1300,45 @@ select.g-empty{background:var(--card);color:var(--ink);}
     <button class="modal-close" onclick="closeModal('edit-returner-modal')">✕</button>
     <div class="modal-title" id="edit-returner-name">Returner</div>
     <div class="frow">
+      <div class="fg"><label class="fl">First Name</label><input type="text" id="er-fname"></div>
+      <div class="fg"><label class="fl">Last Name</label><input type="text" id="er-lname"></div>
+    </div>
+    <div class="frow">
       <div class="fg"><label class="fl">Email</label><input type="email" id="er-email" placeholder="email@example.com"></div>
       <div class="fg"><label class="fl">Phone</label><input type="tel" id="er-phone" placeholder="(225) 555-0100"></div>
     </div>
+    <div class="fg">
+      <label class="fl">Will Return?</label>
+      <select id="er-will-return">
+        <option value="Survey Pending">Survey Pending</option>
+        <option value="Yes!">Yes — Returning</option>
+        <option value="I\u2019d like to, but I\u2019m not sure.">Maybe / Unsure</option>
+        <option value="No — I won't be in Baton Rouge next year.">No — Moving</option>
+        <option value="No — I have scheduling conflicts next year.">No — Scheduling</option>
+        <option value="No — I'm not interested in volunteering again.">No — Not Interested</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="fl">Campus Preference</label>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
+        <label class="ci"><input type="checkbox" id="er-campus-downtown"> Downtown</label>
+        <label class="ci"><input type="checkbox" id="er-campus-airline"> Airline</label>
+        <label class="ci"><input type="checkbox" id="er-campus-unsure"> Unsure</label>
+        <label class="ci"><input type="checkbox" id="er-campus-gmeets"> Google Meets (Tutors)</label>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fl">Days Available</label>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
+        <label class="ci"><input type="checkbox" id="er-day-mon"> Monday</label>
+        <label class="ci"><input type="checkbox" id="er-day-tue"> Tuesday</label>
+        <label class="ci"><input type="checkbox" id="er-day-wed"> Wednesday</label>
+        <label class="ci"><input type="checkbox" id="er-day-thu"> Thursday</label>
+        <label class="ci"><input type="checkbox" id="er-day-na"> N/A — Tutor</label>
+      </div>
+    </div>
     <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" onclick="deleteReturner()">Delete</button>
       <button class="btn btn-ghost" onclick="closeModal('edit-returner-modal')">Cancel</button>
       <button class="btn btn-gold" onclick="saveReturnerContact()">Save</button>
     </div>
