@@ -695,7 +695,8 @@ select.g-empty{background:var(--card);color:var(--ink);}
       <option value="No — I won't be in Baton Rouge next year.">🚫 No — Moving</option>
       <option value="No — I have scheduling conflicts next year.">🚫 No — Scheduling</option>
       <option value="No — I'm not interested in volunteering again.">🚫 No — Not Interested</option>
-    </select>
+  	  <option value="Survey Pending">⏳ Survey Pending</option>
+	</select>
     <select id="f-return-campus" onchange="renderReturners()" style="width:auto;padding:8px 12px;font-size:12px">
       <option value="">All Campuses</option>
       <option value="Downtown (460 N 11th St)">Downtown</option>
@@ -712,6 +713,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
     <div class="stat"><div class="stat-lbl">Confirmed Yes</div><div class="stat-num green" id="ret-yes">0</div><div class="stat-detail">returning next year</div></div>
     <div class="stat"><div class="stat-lbl">Maybe / Unsure</div><div class="stat-num white" id="ret-maybe">0</div><div class="stat-detail">need follow-up</div></div>
     <div class="stat"><div class="stat-lbl">Not Returning</div><div class="stat-num white" id="ret-no">0</div><div class="stat-detail">all no responses</div></div>
+ 	<div class="stat"><div class="stat-lbl">Survey Pending</div><div class="stat-num white" id="ret-pending">0</div><div class="stat-detail">not yet surveyed</div></div>
   </div>
 
   <!-- Card grid -->
@@ -3368,6 +3370,7 @@ function renderReturners() {
   document.getElementById('ret-no').textContent    = all.filter(r => r.willReturn && r.willReturn.startsWith('No')).length;
   document.getElementById('returner-total-label').textContent = all.length;
   document.getElementById('sb-returner-cnt').textContent = all.length;
+document.getElementById('ret-pending').textContent = all.filter(r => r.willReturn === 'Survey Pending').length;	
 
   const grid = document.getElementById('returner-cards-grid');
   if (!grid) return;
