@@ -3594,7 +3594,11 @@ function renderOnboarding() {
 
   // Returners
   const returningYes   = (DB.returners || []).filter(r => r.willReturn === 'Yes!');
-  const returningMaybe = (DB.returners || []).filter(r => r.willReturn === "I\u2019d like to, but I\u2019m not sure.");
+  const returningMaybe = (DB.returners || []).filter(r => 
+  r.willReturn === "I\u2019d like to, but I\u2019m not sure." ||
+  r.willReturn === 'Survey Pending' ||
+  !r.willReturn
+);
 
   // Also include prospects with "maybe" returner phrasing in their status (if you import them as prospects)
   const prospectMaybe = (DB.prospects || []).filter(p =>
