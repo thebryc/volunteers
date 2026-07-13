@@ -1321,6 +1321,17 @@ select.g-empty{background:var(--card);color:var(--ink);}
         <option value="No — I'm not interested in volunteering again.">No — Not Interested</option>
       </select>
     </div>
+	  <div class="fg">
+  <label class="fl">Roles Interested In</label>
+  <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
+    <label class="ci"><input type="checkbox" id="er-role-follow"> Follow my Fellows</label>
+    <label class="ci"><input type="checkbox" id="er-role-research"> Research Mentor</label>
+    <label class="ci"><input type="checkbox" id="er-role-under"> Underclassmen LM</label>
+    <label class="ci"><input type="checkbox" id="er-role-upper"> Upperclassmen LM</label>
+    <label class="ci"><input type="checkbox" id="er-role-senior"> Senior Mentor</label>
+    <label class="ci"><input type="checkbox" id="er-role-tutor"> Tutor</label>
+  </div>
+</div>
     <div class="fg">
       <label class="fl">Campus Preference</label>
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
@@ -3533,7 +3544,7 @@ DB.returners = rows.slice(1).filter(r => r.length > 0 && (r[iFirst] || r[iLast])
     firstName,
     lastName,
     willReturn: iReturn >= 0 ? (r[iReturn] || '').trim() : '',
-    roles:      iRoles  >= 0 ? (r[iRoles]  || '').trim() : '',
+    roles:      (iRoles >= 0 && (r[iRoles] || '').trim()) ? r[iRoles].trim() : (existing?.roles || ''),
     campus:     iCampus >= 0 ? (r[iCampus] || '').trim() : '',
     days:       iDays   >= 0 ? (r[iDays]   || '').trim() : '',
     email:      existing?.email || '',
@@ -3684,6 +3695,10 @@ function openAddReturner() {
   document.getElementById('er-email').value = '';
   document.getElementById('er-phone').value = '';
   document.getElementById('er-will-return').value = 'Survey Pending';
+	['follow','research','under','upper','senior','tutor'].forEach(x => {
+  const el = document.getElementById(`er-role-${x}`);
+  if (el) el.checked = false;
+});
   ['downtown','airline','unsure','gmeets'].forEach(c => {
     const el = document.getElementById(`er-campus-${c}`);
     if (el) el.checked = false;
@@ -3705,6 +3720,13 @@ function openEditReturner(idx) {
   document.getElementById('er-email').value = r.email || '';
   document.getElementById('er-phone').value = r.phone || '';
   document.getElementById('er-will-return').value = r.willReturn || 'Survey Pending';
+	const rl = (r.roles || '').toLowerCase();
+document.getElementById('er-role-follow').checked   = rl.includes('follow');
+document.getElementById('er-role-research').checked = rl.includes('research');
+document.getElementById('er-role-under').checked    = rl.includes('underclassmen');
+document.getElementById('er-role-upper').checked    = rl.includes('upperclassmen');
+document.getElementById('er-role-senior').checked   = rl.includes('senior');
+document.getElementById('er-role-tutor').checked    = rl.includes('tutor');
   ['downtown','airline','unsure','gmeets'].forEach(c => {
     const el = document.getElementById(`er-campus-${c}`);
     if (el) el.checked = (r.campus || '').toLowerCase().includes(c);
@@ -3743,7 +3765,14 @@ function saveReturnerContact() {
     willReturn: document.getElementById('er-will-return').value,
     campus,
     days,
-    roles: idx >= 0 ? (DB.returners[idx]?.roles || '') : '',
+    roles: [
+  document.getElementById('er-role-follow')?.checked ? "I'd like to follow my Fellows" : null,
+  document.getElementById('er-role-research')?.checked ? 'Research Mentor' : null,
+  document.getElementById('er-role-under')?.checked ? 'Underclassmen Learning Mentor' : null,
+  document.getElementById('er-role-upper')?.checked ? 'Upperclassmen Learning Mentor' : null,
+  document.getElementById('er-role-senior')?.checked ? 'Senior Mentor' : null,
+  document.getElementById('er-role-tutor')?.checked ? 'Tutor' : null,
+].filter(Boolean).join(', '),
   };
   if (isNaN(idx) || idx === -1) {
     if (!DB.returners) DB.returners = [];
