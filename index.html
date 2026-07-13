@@ -730,7 +730,8 @@ select.g-empty{background:var(--card);color:var(--ink);}
       <div class="page-sub">Unified board — Prospects + Returning Mentors</div>
     </div>
     <div class="btn-row">
-      <button class="btn btn-ghost" onclick="exportCSV('onboarding')">⬇ Export CSV</button>
+      	<button class="btn btn-sheets" id="ob-sync-btn" onclick="syncOnboarding()">🔄 Sync All</button>
+		<button class="btn btn-ghost" onclick="exportCSV('onboarding')">⬇ Export CSV</button>
     </div>
   </div>
 
@@ -1680,6 +1681,7 @@ function statusSelectClass(s) {
 
 function inlineUpdateProspect(realIdx, field, value) {
   DB.prospects[realIdx][field] = value;
+	if (field === 'status' && typeof syncProspectToReturner === 'function') syncProspectToReturner(DB.prospects[realIdx]);
   const updated = DB.prospects[realIdx];
   saveDB();
   renderProspects();
@@ -3780,9 +3782,33 @@ function saveReturnerContact() {
   } else {
     DB.returners[idx] = { ...DB.returners[idx], ...record };
   }
+	// Mirror "Will Return?" to matching prospect record, if one exists
+const rName = `${fname} ${lname}`.trim().toLowerCase();
+const rEmail = (record.email || '').toLowerCase();
+const pMatches = (DB.prospects || []).filter(p =>
+  (rEmail && p.email && p.email.toLowerCase() === rEmail) ||
+  (p.name && p.name.trim().toLowerCase() === rName)
+);
+pMatches.forEach(pMatch => {
+  if (record.willReturn === 'Yes!') pMatch.status = 'Committed';
+  else if ((record.willReturn || '').startsWith('No')) pMatch.status = 'Unavailable';
+  if (record.email) pMatch.email = record.email;
+  if (record.phone) pMatch.phone = record.phone;
+});
+	(rEmail && p.email && p.email.toLowerCase() === rEmail) ||
+  (p.name && p.name.trim().toLowerCase() === rName)
+);
+if (pMatch) {
+  if (record.willReturn === 'Yes!') pMatch.status = 'Committed';
+  else if ((record.willReturn || '').startsWith('No')) pMatch.status = 'Unavailable';
+  if (record.email) pMatch.email = record.email;
+  if (record.phone) pMatch.phone = record.phone;
+}
   saveDB();
   closeModal('edit-returner-modal');
   renderReturners();
+	renderProspects();
+	renderDashboard();
   renderOnboarding();
 }
 
@@ -3807,7 +3833,27 @@ function emailObColumn(colId) {
   if (!emails.length) { alert('No email addresses found in this column.'); return; }
   window.open(`https://mail.google.com/mail/?view=cm&to=angela@thebryc.org&bcc=${encodeURIComponent(emails.join(','))}`);
 }
-      
+
+function syncProspectToReturner(p) {
+  if (!DB.returners || !p) return;
+  const pName = (p.name || '').trim().toLowerCase();
+  const pEmail = (p.email || '').toLowerCase();
+const matches = DB.returners.filter(r => {
+    const rn = `${r.firstName || ''} ${r.lastName || ''}`.trim().toLowerCase();
+    return (pEmail && r.email && r.email.toLowerCase() === pEmail) || (pName && rn === pName);
+  });
+  if (!matches.length) return;
+  matches.forEach(match => {
+    if (p.status === 'Committed') match.willReturn = 'Yes!';
+    else if (p.status === 'Unavailable') match.willReturn = "I\u2019d like to, but I\u2019m not sure.";
+  });
+  if (!match) return;
+  if (p.status === 'Committed') match.willReturn = 'Yes!';
+  else if (p.status === 'Unavailable') match.willReturn = "I\u2019d like to, but I\u2019m not sure.";
+  try { renderReturners(); renderOnboarding(); } catch(e) {}
+}
+window.syncProspectToReturner = syncProspectToReturner;		
+		
 function obReturnerCard(r, idx) {
   const name   = `${r.firstName || ''} ${r.lastName || ''}`.trim() || '(No Name)';
   const roles  = r.roles ? r.roles.split(',').map(s => s.trim()).filter(Boolean) : [];
@@ -3878,6 +3924,18 @@ window.syncReturnerSheet      = syncReturnerSheet;
 window.saveReturnerSheetConfig = saveReturnerSheetConfig;
 window.renderReturners        = renderReturners;
 window.renderOnboarding       = renderOnboarding;
+async function syncOnboarding() {
+  const btn = document.getElementById('ob-sync-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Syncing…'; }
+  try {
+    await handleSheetsSync();      // prospects sheet
+    await syncReturnerSheet();     // returner survey sheet
+    renderOnboarding();
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🔄 Sync All'; }
+  }
+}
+window.syncOnboarding = syncOnboarding;		
 window.clearReturnerFilters   = clearReturnerFilters;
 
 </script>
