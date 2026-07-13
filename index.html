@@ -1293,7 +1293,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
     <div class="fg"><label class="fl">Google Form RSVP URL</label><input type="text" id="ce-form-url" placeholder="https://docs.google.com/forms/d/…/viewform"></div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('create-event-modal')">Cancel</button>
-      <button class="btn btn-gold" onclick="createEvent()">Create Event</button>
+   <button class="btn btn-gold" onclick="createNewEvent()">Create Event</button>
     </div>
   </div>
 </div>
@@ -2034,7 +2034,7 @@ function renderEventCards() {
     </div>`;
 }
 
-function createEvent() {
+function createNewEvent() {
   const name = document.getElementById('ce-name').value.trim();
   if (!name) { alert('Please enter an event name.'); return; }
   const id = 'event-' + Date.now();
