@@ -730,8 +730,7 @@ select.g-empty{background:var(--card);color:var(--ink);}
       <div class="page-sub">Unified board — Prospects + Returning Mentors</div>
     </div>
     <div class="btn-row">
-      	<button class="btn btn-sheets" id="ob-sync-btn" onclick="syncOnboarding()">🔄 Sync All</button>
-		<button class="btn btn-ghost" onclick="exportCSV('onboarding')">⬇ Export CSV</button>
+      <button class="btn btn-ghost" onclick="exportCSV('onboarding')">⬇ Export CSV</button>
     </div>
   </div>
 
@@ -1322,17 +1321,6 @@ select.g-empty{background:var(--card);color:var(--ink);}
         <option value="No — I'm not interested in volunteering again.">No — Not Interested</option>
       </select>
     </div>
-	  <div class="fg">
-  <label class="fl">Role Preference</label>
-  <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
-    <label class="ci"><input type="checkbox" id="er-role-follow"> Follow my Fellows</label>
-    <label class="ci"><input type="checkbox" id="er-role-research"> Research Mentor</label>
-    <label class="ci"><input type="checkbox" id="er-role-under"> Underclassmen LM</label>
-    <label class="ci"><input type="checkbox" id="er-role-upper"> Upperclassmen LM</label>
-    <label class="ci"><input type="checkbox" id="er-role-senior"> Senior Mentor</label>
-    <label class="ci"><input type="checkbox" id="er-role-tutor"> Tutor</label>
-  </div>
-</div>
     <div class="fg">
       <label class="fl">Campus Preference</label>
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;">
@@ -1681,7 +1669,6 @@ function statusSelectClass(s) {
 
 function inlineUpdateProspect(realIdx, field, value) {
   DB.prospects[realIdx][field] = value;
-	if (field === 'status' && typeof syncProspectToReturner === 'function') syncProspectToReturner(DB.prospects[realIdx]);
   const updated = DB.prospects[realIdx];
   saveDB();
   renderProspects();
@@ -3546,7 +3533,7 @@ DB.returners = rows.slice(1).filter(r => r.length > 0 && (r[iFirst] || r[iLast])
     firstName,
     lastName,
     willReturn: iReturn >= 0 ? (r[iReturn] || '').trim() : '',
-    roles:      (iRoles >= 0 && (r[iRoles] || '').trim()) ? r[iRoles].trim() : (existing?.roles || ''),
+    roles:      iRoles  >= 0 ? (r[iRoles]  || '').trim() : '',
     campus:     iCampus >= 0 ? (r[iCampus] || '').trim() : '',
     days:       iDays   >= 0 ? (r[iDays]   || '').trim() : '',
     email:      existing?.email || '',
@@ -3697,10 +3684,6 @@ function openAddReturner() {
   document.getElementById('er-email').value = '';
   document.getElementById('er-phone').value = '';
   document.getElementById('er-will-return').value = 'Survey Pending';
-	['follow','research','under','upper','senior','tutor'].forEach(x => {
-  const el = document.getElementById(`er-role-${x}`);
-  if (el) el.checked = false;
-});
   ['downtown','airline','unsure','gmeets'].forEach(c => {
     const el = document.getElementById(`er-campus-${c}`);
     if (el) el.checked = false;
@@ -3722,13 +3705,6 @@ function openEditReturner(idx) {
   document.getElementById('er-email').value = r.email || '';
   document.getElementById('er-phone').value = r.phone || '';
   document.getElementById('er-will-return').value = r.willReturn || 'Survey Pending';
-	const rl = (r.roles || '').toLowerCase();
-document.getElementById('er-role-follow').checked   = rl.includes('follow');
-document.getElementById('er-role-research').checked = rl.includes('research');
-document.getElementById('er-role-under').checked    = rl.includes('underclassmen');
-document.getElementById('er-role-upper').checked    = rl.includes('upperclassmen');
-document.getElementById('er-role-senior').checked   = rl.includes('senior');
-document.getElementById('er-role-tutor').checked    = rl.includes('tutor');
   ['downtown','airline','unsure','gmeets'].forEach(c => {
     const el = document.getElementById(`er-campus-${c}`);
     if (el) el.checked = (r.campus || '').toLowerCase().includes(c);
@@ -3767,14 +3743,7 @@ function saveReturnerContact() {
     willReturn: document.getElementById('er-will-return').value,
     campus,
     days,
-    roles: [
-  document.getElementById('er-role-follow')?.checked ? "I'd like to follow my Fellows" : null,
-  document.getElementById('er-role-research')?.checked ? 'Research Mentor' : null,
-  document.getElementById('er-role-under')?.checked ? 'Underclassmen Learning Mentor' : null,
-  document.getElementById('er-role-upper')?.checked ? 'Upperclassmen Learning Mentor' : null,
-  document.getElementById('er-role-senior')?.checked ? 'Senior Mentor' : null,
-  document.getElementById('er-role-tutor')?.checked ? 'Tutor' : null,
-].filter(Boolean).join(', '),
+    roles: idx >= 0 ? (DB.returners[idx]?.roles || '') : '',
   };
   if (isNaN(idx) || idx === -1) {
     if (!DB.returners) DB.returners = [];
@@ -3782,33 +3751,9 @@ function saveReturnerContact() {
   } else {
     DB.returners[idx] = { ...DB.returners[idx], ...record };
   }
-	// Mirror "Will Return?" to matching prospect record, if one exists
-const rName = `${fname} ${lname}`.trim().toLowerCase();
-const rEmail = (record.email || '').toLowerCase();
-const pMatches = (DB.prospects || []).filter(p =>
-  (rEmail && p.email && p.email.toLowerCase() === rEmail) ||
-  (p.name && p.name.trim().toLowerCase() === rName)
-);
-pMatches.forEach(pMatch => {
-  if (record.willReturn === 'Yes!') pMatch.status = 'Committed';
-  else if ((record.willReturn || '').startsWith('No')) pMatch.status = 'Unavailable';
-  if (record.email) pMatch.email = record.email;
-  if (record.phone) pMatch.phone = record.phone;
-});
-	(rEmail && p.email && p.email.toLowerCase() === rEmail) ||
-  (p.name && p.name.trim().toLowerCase() === rName)
-);
-if (pMatch) {
-  if (record.willReturn === 'Yes!') pMatch.status = 'Committed';
-  else if ((record.willReturn || '').startsWith('No')) pMatch.status = 'Unavailable';
-  if (record.email) pMatch.email = record.email;
-  if (record.phone) pMatch.phone = record.phone;
-}
   saveDB();
   closeModal('edit-returner-modal');
   renderReturners();
-	renderProspects();
-	renderDashboard();
   renderOnboarding();
 }
 
@@ -3833,27 +3778,7 @@ function emailObColumn(colId) {
   if (!emails.length) { alert('No email addresses found in this column.'); return; }
   window.open(`https://mail.google.com/mail/?view=cm&to=angela@thebryc.org&bcc=${encodeURIComponent(emails.join(','))}`);
 }
-
-function syncProspectToReturner(p) {
-  if (!DB.returners || !p) return;
-  const pName = (p.name || '').trim().toLowerCase();
-  const pEmail = (p.email || '').toLowerCase();
-const matches = DB.returners.filter(r => {
-    const rn = `${r.firstName || ''} ${r.lastName || ''}`.trim().toLowerCase();
-    return (pEmail && r.email && r.email.toLowerCase() === pEmail) || (pName && rn === pName);
-  });
-  if (!matches.length) return;
-  matches.forEach(match => {
-    if (p.status === 'Committed') match.willReturn = 'Yes!';
-    else if (p.status === 'Unavailable') match.willReturn = "I\u2019d like to, but I\u2019m not sure.";
-  });
-  if (!match) return;
-  if (p.status === 'Committed') match.willReturn = 'Yes!';
-  else if (p.status === 'Unavailable') match.willReturn = "I\u2019d like to, but I\u2019m not sure.";
-  try { renderReturners(); renderOnboarding(); } catch(e) {}
-}
-window.syncProspectToReturner = syncProspectToReturner;		
-		
+      
 function obReturnerCard(r, idx) {
   const name   = `${r.firstName || ''} ${r.lastName || ''}`.trim() || '(No Name)';
   const roles  = r.roles ? r.roles.split(',').map(s => s.trim()).filter(Boolean) : [];
@@ -3924,18 +3849,6 @@ window.syncReturnerSheet      = syncReturnerSheet;
 window.saveReturnerSheetConfig = saveReturnerSheetConfig;
 window.renderReturners        = renderReturners;
 window.renderOnboarding       = renderOnboarding;
-async function syncOnboarding() {
-  const btn = document.getElementById('ob-sync-btn');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Syncing…'; }
-  try {
-    await handleSheetsSync();      // prospects sheet
-    await syncReturnerSheet();     // returner survey sheet
-    renderOnboarding();
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '🔄 Sync All'; }
-  }
-}
-window.syncOnboarding = syncOnboarding;		
 window.clearReturnerFilters   = clearReturnerFilters;
 
 </script>
