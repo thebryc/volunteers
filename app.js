@@ -984,14 +984,14 @@ overlay.querySelectorAll('div').forEach(d => {
 const walkinPanel = document.getElementById('kiosk-walkin-panel');
 if (walkinPanel && !isCC) {
   walkinPanel.innerHTML = `
-    <button onclick="hideKioskWalkin()" style="background:none;border:none;color:rgba(255,255,255,0.6);font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;margin-bottom:18px">← Back</button>
-    <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:28px;color:#f0c917;letter-spacing:2px;margin-bottom:18px">Welcome! Let's check you in.</div>
+    <button onclick="hideKioskWalkin()" style="background:none;border:none;color:rgba(0,0,0,0.5);font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;margin-bottom:18px">← Back</button>
+    <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:28px;color:#00775f;letter-spacing:2px;margin-bottom:18px">Welcome! Let's check you in.</div>
     <div class="frow" style="margin-bottom:12px">
-      <div class="fg"><label class="fl" style="color:white">First Name *</label><input type="text" id="kw-fname" style="font-size:16px;padding:13px"></div>
-      <div class="fg"><label class="fl" style="color:white">Last Name *</label><input type="text" id="kw-lname" style="font-size:16px;padding:13px"></div>
+      <div class="fg"><label class="fl" style="color:#1a1a1a">First Name *</label><input type="text" id="kw-fname" style="font-size:16px;padding:13px"></div>
+      <div class="fg"><label class="fl" style="color:#1a1a1a">Last Name *</label><input type="text" id="kw-lname" style="font-size:16px;padding:13px"></div>
     </div>
     <div class="fg" style="margin-bottom:12px">
-      <label class="fl" style="color:white">I am a…</label>
+      <label class="fl" style="color:#1a1a1a">I am a…</label>
       <select id="kw-role" style="font-size:15px">
         <option value="">Select…</option>
         <option>Interested in Mentoring</option>
@@ -1000,11 +1000,11 @@ if (walkinPanel && !isCC) {
       </select>
     </div>
     <div class="frow" style="margin-bottom:12px">
-      <div class="fg"><label class="fl" style="color:white">Phone</label><input type="tel" id="kw-phone" style="font-size:15px"></div>
-      <div class="fg"><label class="fl" style="color:white">Email</label><input type="email" id="kw-email" style="font-size:15px"></div>
+      <div class="fg"><label class="fl" style="color:#1a1a1a">Phone</label><input type="tel" id="kw-phone" style="font-size:15px"></div>
+      <div class="fg"><label class="fl" style="color:#1a1a1a">Email</label><input type="email" id="kw-email" style="font-size:15px"></div>
     </div>
-	    <div class="fg" style="margin-bottom:12px">
-      <label class="fl" style="color:white">Did you come with someone? Add their first and last name</label>
+    <div class="fg" style="margin-bottom:12px">
+      <label class="fl" style="color:#1a1a1a">Did you come with someone? Add their first and last name</label>
       <input type="text" id="kw-companion" placeholder="Optional" style="font-size:15px">
     </div>
     <button onclick="kioskWalkinSubmitSimple()" style="width:100%;background:#f0c917;color:#0a3d1f;border:none;border-radius:12px;padding:15px;font-family:'barlow-semi-condensed',sans-serif;font-size:22px;letter-spacing:2px;cursor:pointer;margin-top:8px">✅ CHECK ME IN</button>
