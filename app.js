@@ -710,7 +710,10 @@ function openEventDetail(eventId) {
 
 function refreshEventDetail() {
   const isCC = currentEventId === 'court-connections';
-  document.getElementById('page-event-detail').className = isCC ? 'page active cc-theme' : 'page active';
+  const evPage = document.getElementById('page-event-detail');
+	const wasActive = evPage.classList.contains('active');
+	evPage.className = isCC ? 'page cc-theme' : 'page';
+	if (wasActive) evPage.classList.add('active');
   const ev = DB.events.find(e => e.id === currentEventId);
   if (!ev) return;
   const rsvps = ev.rsvps || [];
