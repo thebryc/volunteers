@@ -1144,12 +1144,10 @@ select.g-empty{background:var(--card);color:var(--ink);}
     </div>
   </div>
 </div>
-    <div class="modal-footer" style="justify-content:space-between;">
-  <span id="ee-delete-link" onclick="requestDeleteEvent()" style="font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline;align-self:center;">Delete this event</span>
-  <div style="display:flex;gap:10px;">
-    <button class="btn btn-ghost" onclick="closeModal('edit-event-modal')">Cancel</button>
-    <button class="btn btn-gold" onclick="updateEvent()">Save Changes</button>
-  </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('add-prospect-modal')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveProspect()">Save Prospect</button>
+    </div>
 </div>
   </div>
 </div>
@@ -1314,12 +1312,15 @@ select.g-empty{background:var(--card);color:var(--ink);}
     </div>
     <div class="fg"><label class="fl">Location</label><input type="text" id="ee-location"></div>
     <div class="fg"><label class="fl">Description</label><textarea id="ee-desc" rows="2"></textarea></div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('edit-event-modal')">Cancel</button>
-      <button class="btn btn-gold" onclick="updateEvent()">Save Changes</button>
+    <div class="modal-footer" style="justify-content:space-between;">
+      <span id="ee-delete-link" onclick="requestDeleteEvent()" style="font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline;align-self:center;">Delete this event</span>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" onclick="closeModal('edit-event-modal')">Cancel</button>
+        <button class="btn btn-gold" onclick="updateEvent()">Save Changes</button>
+      </div>
+    </div>
     </div>
   </div>
-</div>
 	
 <!-- Edit Returner -->
 <div class="overlay" id="edit-returner-modal">
