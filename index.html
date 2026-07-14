@@ -1329,6 +1329,21 @@ select.g-empty{background:var(--card);color:var(--ink);}
   <div class="fg"><label class="fl">RSVP Sheet ID</label><input type="text" id="ee-sheet-id" placeholder="1BxiMVs0XRA5…" style="font-family:monospace;font-size:12px"></div>
   <div class="fg"><label class="fl">Tab Name</label><input type="text" id="ee-sheet-tab" placeholder="Form Responses 1" style="font-size:13px"></div>
 </div>
+
+<div class="fg">
+  <label class="fl">Banner Image URL</label>
+  <input type="text" id="ee-banner-url" placeholder="https://thebryc.github.io/volunteers/hh_banner.png" style="font-size:12px">
+  <div style="font-size:11px;color:var(--muted);margin-top:4px">The image shown at the top of the check-in kiosk.</div>
+</div>
+<div class="fg">
+  <label class="fl">Kiosk Background Color</label>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <input type="text" id="ee-kiosk-bg" placeholder="#00775f" style="font-family:monospace;font-size:12px;flex:1;" oninput="document.getElementById('ee-kiosk-bg-swatch').style.background=this.value">
+    <div id="ee-kiosk-bg-swatch" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border);background:transparent;flex-shrink:0;"></div>
+  </div>
+  <div style="font-size:11px;color:var(--muted);margin-top:4px">Hex code (e.g. #00775f). Leave blank for default green.</div>
+</div>
+	  
 <div class="fg">
   <label class="fl">Form Template</label>
   <select id="ee-form-template">
