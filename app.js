@@ -1927,3 +1927,538 @@ document.addEventListener('DOMContentLoaded', function() {
     o.addEventListener('click',e=>{if(e.target===o && !o.id.includes('login'))o.classList.remove('open');});
   });
 });
+// ══════════════════════════════════════════
+// RETURNING MENTORS
+// ══════════════════════════════════════════
+
+// Column name constants matching your Google Sheet headers
+const RET_COLS = {
+  firstName:  'First Name',
+  lastName:   'Last Name',
+  willReturn: 'Will you volunteer at BRYC next year?',
+  roles:      'Which volunteer role interests you? (check all that apply)',
+  campus:     'Which campus do you prefer?',
+  days:       'Which days are you available? (check all that apply)'
+};
+
+// Make sure DB has returner data structure
+function ensureReturners() {
+  if (!DB.returners) DB.returners = [];
+  if (!DB.returnerSheetConfig) DB.returnerSheetConfig = { sheetId: '', tab: 'Table1' };
+}
+
+// ── Render returner profile cards ──────────
+function renderReturners() {
+  ensureReturners();
+  const search = (document.getElementById('returner-search')?.value || '').toLowerCase();
+  const fStatus = document.getElementById('f-return-status')?.value || '';
+  const fCampus = document.getElementById('f-return-campus')?.value || '';
+
+  let list = DB.returners.filter(r => {
+    const name = ((r.firstName || '') + ' ' + (r.lastName || '')).toLowerCase();
+    if (search && !name.includes(search)) return false;
+    if (fStatus && r.willReturn.replace(/[\u2018\u2019]/g, "'") !== fStatus.replace(/[\u2018\u2019]/g, "'")) return false;
+    if (fCampus && r.campus !== fCampus) return false;
+    return true;
+  });
+
+  // Stats
+  const all = DB.returners;
+  document.getElementById('ret-total').textContent = all.length;
+  document.getElementById('ret-yes').textContent   = all.filter(r => r.willReturn === 'Yes!').length;
+  document.getElementById('ret-maybe').textContent = all.filter(r => r.willReturn === "I\u2019d like to, but I\u2019m not sure.").length;
+  document.getElementById('ret-no').textContent    = all.filter(r => r.willReturn && r.willReturn.startsWith('No')).length;
+  document.getElementById('returner-total-label').textContent = all.length;
+  document.getElementById('sb-returner-cnt').textContent = all.length;
+document.getElementById('ret-pending').textContent = all.filter(r => r.willReturn === 'Survey Pending').length;	
+
+  const grid = document.getElementById('returner-cards-grid');
+  if (!grid) return;
+
+  if (list.length === 0) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="ei">🔄</div><p>No matching returners.</p></div>';
+    return;
+  }
+	
+ grid.innerHTML = list.map((r, i) => {
+    const idx = DB.returners.indexOf(r);
+    const name = `${r.firstName || ''} ${r.lastName || ''}`.trim();
+    const statusColor = returnerStatusColor(r.willReturn);
+    const statusLabel = r.willReturn || '—';
+    const roles = r.roles ? r.roles.split(',').map(s => s.trim()).filter(Boolean) : [];
+    const days  = r.days  ? r.days.split(',').map(s => s.trim()).filter(Boolean) : [];
+    const email = r.email || '';
+    const phone = r.phone || '';
+    return `
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:transform .2s;" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''">
+        <div style="height:4px;background:${statusColor};"></div>
+        <div style="padding:16px 18px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+            <div>
+              <div style="font-family:'proxima-nova',sans-serif;font-size:16px;font-weight:700;color:var(--ink);">${name || '(No Name)'}</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">${r.campus || '—'}</div>
+            </div>
+            <span style="display:inline-block;padding:3px 9px;border-radius:50px;font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;background:${statusColor}22;color:${statusColor};white-space:nowrap;max-width:120px;text-align:center;line-height:1.4;">${shortReturnStatus(statusLabel)}</span>
+          </div>
+          ${roles.length ? `
+          <div style="margin-bottom:10px;">
+            <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Roles Interested In</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;">
+              ${roles.map(role => `<span style="background:rgba(240,201,23,.12);color:var(--gold);padding:2px 8px;border-radius:50px;font-size:10px;font-weight:600;">${shortRoleName(role)}</span>`).join('')}
+            </div>
+          </div>` : ''}
+          ${days.length ? `
+          <div style="margin-bottom:10px;">
+            <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Available Days</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;">
+              ${days.map(d => `<span style="background:rgba(240,201,23,.08);color:var(--soft);padding:2px 8px;border-radius:50px;font-size:10px;">${d}</span>`).join('')}
+            </div>
+          </div>` : ''}
+          <div style="border-top:1px solid var(--border);margin-top:10px;padding-top:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <div style="font-size:11px;color:var(--muted);">
+              ${email ? `<div>✉ ${email}</div>` : '<div style="color:rgba(0,0,0,.3);">No email yet</div>'}
+              ${phone ? `<div>📞 ${phone}</div>` : ''}
+            </div>
+            <div style="display:flex;gap:6px;">
+              ${email ? `<a href="https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(email)}" target="_blank" class="btn btn-ghost btn-xs" title="Email ${name}">✉</a>` : ''}
+              <button class="btn btn-gold btn-xs" onclick="openEditReturner(${idx})">✏ Edit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function returnerStatusColor(status) {
+  if (!status) return 'rgba(255,255,255,0.2)';
+  if (status === 'Yes!') return '#2ecc71';
+  if (status.includes("not sure")) return '#f0c917';
+  if (status.startsWith('No')) return '#e74c3c';
+  return 'rgba(255,255,255,0.2)';
+}
+
+function shortReturnStatus(status) {
+  if (!status) return '—';
+  if (status === 'Yes!') return '✅ Yes!';
+  if (status.includes("not sure")) return '🤔 Maybe';
+  if (status.includes("Baton Rouge")) return '🚫 Moving';
+  if (status.includes("scheduling")) return '🚫 Scheduling';
+  if (status.includes("not interested")) return '🚫 Not Interested';
+  return status.slice(0, 22);
+}
+
+function shortRoleName(role) {
+  if (role.includes('follow my Fellows')) return 'Follow Fellows';
+  if (role.includes('Research Mentor'))   return 'Research Mentor';
+  if (role.includes('Underclassmen'))     return 'Underclassmen LM';
+  if (role.includes('Upperclassmen'))     return 'Upperclassmen LM';
+  if (role.includes('Senior Mentor'))     return 'Senior Mentor';
+  if (role.includes('Tutor'))             return 'Tutor';
+  return role.slice(0, 20);
+}
+
+function clearReturnerFilters() {
+  document.getElementById('returner-search').value = '';
+  document.getElementById('f-return-status').value = '';
+  document.getElementById('f-return-campus').value = '';
+  renderReturners();
+}
+
+// ── Sync Returner Sheet (Google Sheets API) ─
+async function syncReturnerSheet() {
+  ensureReturners();
+  const cfg = DB.returnerSheetConfig;
+  const statusEl = document.getElementById('ret-sheet-status');
+
+  if (!cfg.sheetId || !cfg.tab) {
+    if (statusEl) statusEl.textContent = '⚠ Configure sheet ID and tab first.';
+    alert('Please save a Returning Mentors Sheet ID and tab name in Settings first.');
+    return;
+  }
+
+  // Re-use existing OAuth token from Google Sheets Sync
+let token = gsGetToken();
+if (!token) {
+  const cfg2 = getSheetConfig();
+  if (!cfg2.clientId) {
+    if (statusEl) statusEl.textContent = '⚠ No OAuth Client ID. Add it in Settings → Google Sheets Sync first.';
+    return;
+  }
+  try {
+    if (statusEl) statusEl.textContent = '⏳ Signing in to Google…';
+    token = await gsRequestToken(cfg2.clientId);
+    gsSetToken(token);
+  } catch(e) {
+    if (statusEl) statusEl.textContent = '❌ Google sign-in failed. Try again.';
+    return;
+  }
+}
+
+  if (statusEl) statusEl.textContent = '⏳ Syncing…';
+
+  try {
+    const range = encodeURIComponent(`${cfg.tab}!A1:Z1000`);
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/${range}`;
+    const resp = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+    if (resp.status === 401) {
+  gsClearToken();
+  if (statusEl) statusEl.textContent = '⚠ Session expired — click Sync again to re-authenticate.';
+  return;
+}
+if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    const rows = data.values || [];
+    if (rows.length < 2) { if (statusEl) statusEl.textContent = '⚠ Sheet empty or no data rows.'; return; }
+
+    const headers = rows[0];
+    const findCol = (label) => headers.findIndex(h => h.trim().toLowerCase().includes(label.toLowerCase()));
+
+    const iFirst    = findCol('First Name');
+    const iLast     = findCol('Last Name');
+    const iReturn   = findCol('volunteer at BRYC');
+    const iRoles    = findCol('volunteer role');
+    const iCampus   = findCol('campus');
+    const iDays     = findCol('days');
+
+DB.returners = rows.slice(1).filter(r => r.length > 0 && (r[iFirst] || r[iLast])).map(r => {
+  const firstName  = iFirst  >= 0 ? (r[iFirst]  || '').trim() : '';
+  const lastName   = iLast   >= 0 ? (r[iLast]   || '').trim() : '';
+  const existing = (DB.returners || []).find(e => 
+    e.firstName?.toLowerCase() === firstName.toLowerCase() && 
+    e.lastName?.toLowerCase() === lastName.toLowerCase()
+  );
+  return {
+    ...(existing || {}),
+    firstName,
+    lastName,
+    willReturn: iReturn >= 0 ? (r[iReturn] || '').trim() : '',
+    roles:      iRoles  >= 0 ? (r[iRoles]  || '').trim() : '',
+    campus:     iCampus >= 0 ? (r[iCampus] || '').trim() : '',
+    days:       iDays   >= 0 ? (r[iDays]   || '').trim() : '',
+    email:      existing?.email || '',
+    phone:      existing?.phone || '',
+  };
+});
+
+    await saveDB();
+    if (statusEl) statusEl.textContent = `✅ Synced ${DB.returners.length} returners.`;
+    renderReturners();
+    renderOnboarding();
+  } catch (err) {
+    console.error(err);
+    if (statusEl) statusEl.textContent = `❌ Error: ${err.message}`;
+  }
+}
+
+// ── Save returner sheet config ──────────────
+async function saveReturnerSheetConfig() {
+  ensureReturners();
+  DB.returnerSheetConfig = {
+    sheetId: document.getElementById('ret-sheet-id')?.value?.trim() || '',
+    tab: document.getElementById('ret-sheet-tab')?.value?.trim() || 'Table1',
+  };
+  await saveDB();
+  document.getElementById('ret-sheet-status').textContent = '✅ Saved.';
+  setTimeout(() => { const el = document.getElementById('ret-sheet-status'); if(el) el.textContent=''; }, 2500);
+}
+
+// Load saved returner config into Settings UI
+function loadReturnerSheetConfigUI() {
+  ensureReturners();
+  const cfg = DB.returnerSheetConfig || {};
+  const idEl = document.getElementById('ret-sheet-id');
+  const tabEl = document.getElementById('ret-sheet-tab');
+  if (idEl) idEl.value = cfg.sheetId || '';
+  if (tabEl) tabEl.value = cfg.tab || 'Table1';
+}
+
+
+// ══════════════════════════════════════════
+// ONBOARDING KANBAN
+// ══════════════════════════════════════════
+
+// Statuses from Prospects that belong in Onboarding
+const OB_PROSPECT_STATUSES = [
+  'Onboarding - Need BG Check',
+  'Committed',
+];
+
+function renderOnboarding() {
+  ensureReturners();
+
+  // Gather prospects in onboarding statuses
+  const prospects = (DB.prospects || []).filter(p =>
+    OB_PROSPECT_STATUSES.some(s => (p.status || '').toLowerCase() === s.toLowerCase())
+  );
+
+  // Returners
+  const returningYes   = (DB.returners || []).filter(r => r.willReturn === 'Yes!');
+  const returningMaybe = (DB.returners || []).filter(r => 
+  r.willReturn === "I\u2019d like to, but I\u2019m not sure." ||
+  r.willReturn === 'Survey Pending' ||
+  !r.willReturn
+);
+
+  // Also include prospects with "maybe" returner phrasing in their status (if you import them as prospects)
+  const prospectMaybe = (DB.prospects || []).filter(p =>
+    (p.status || '').toLowerCase().includes("not sure")
+  );
+
+  const bgCheck   = prospects.filter(p => p.status?.toLowerCase().includes('bg check') || p.status?.toLowerCase().includes('onboarding'));
+  const committed = prospects.filter(p => p.status?.toLowerCase() === 'committed');
+  const allMaybe  = [...returningMaybe, ...prospectMaybe];
+  const allYes    = returningYes;
+
+  // Stats
+  const total = bgCheck.length + committed.length + allMaybe.length + allYes.length;
+  document.getElementById('ob-total').textContent     = total;
+  document.getElementById('ob-bg').textContent        = bgCheck.length;
+  document.getElementById('ob-committed').textContent = committed.length;
+  document.getElementById('ob-maybe').textContent     = allMaybe.length;
+
+  document.getElementById('ob-col-maybe-cnt').textContent     = `${allMaybe.length} people`;
+  document.getElementById('ob-col-bg-cnt').textContent        = `${bgCheck.length} people`;
+  document.getElementById('ob-col-committed-cnt').textContent = `${committed.length} people`;
+  document.getElementById('ob-col-returning-cnt').textContent = `${allYes.length} people`;
+
+  // Render each column
+  renderObColumn('ob-col-maybe',     allMaybe,  'maybe');
+  renderObColumn('ob-col-bg',        bgCheck,   'prospect');
+  renderObColumn('ob-col-committed', committed, 'prospect');
+  renderObColumn('ob-col-returning', allYes,    'returner');
+}
+
+function renderObColumn(colId, people, type) {
+  const col = document.getElementById(colId);
+  if (!col) return;
+  if (people.length === 0) {
+    col.innerHTML = `<div style="text-align:center;padding:20px 12px;color:rgba(255,255,255,.18);font-size:12px;border:1px dashed rgba(255,255,255,.08);border-radius:10px;">Empty</div>`;
+    return;
+  }
+  col.innerHTML = people.map(p => {
+    if (type === 'returner' || (p.willReturn !== undefined)) {
+      const idx = DB.returners.indexOf(p);
+      return obReturnerCard(p, idx);
+    }
+    return obProspectCard(p);
+  }).join('');
+}
+
+function obProspectCard(p) {
+  const name = `${p.firstName || p.fname || p.first || ''} ${p.lastName || p.lname || p.last || ''}`.trim() || p.name || '(No Name)';
+  const email    = p.email || '';
+  const phone    = p.phone || '';
+  const category = p.category || '';
+  const campus   = p.campus || '';
+  const days     = p.days ? p.days.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const roles    = [p.role1, p.role2].filter(Boolean);
+  const shortRole = r => r.replace('Research Mentor','Research LM').replace('Learning Mentor','Learning LM').replace('Upperclassmen Mentor','Upperclassmen LM').replace('Senior Mentor','Senior LM').replace('Not comfortable with any other role','No 2nd choice');
+  return `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;"
+         onmouseenter="this.style.background='var(--card-h)'" onmouseleave="this.style.background='var(--card)'">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+  <div style="font-weight:700;font-size:13px;color:var(--ink);">${name}</div>
+  <div style="display:flex;gap:6px;align-items:center;">
+    ${email ? `<a href="https://mail.google.com/mail/?view=cm&to${encodeURIComponent(email)}" target="_blank" class="btn btn-ghost btn-xs" onclick="event.stopPropagation()" title="${email}">✉</a>` : ''}
+    <span style="font-size:9px;background:rgba(100,220,200,.12);color:#88ded0;padding:2px 7px;border-radius:50px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;">Prospect</span>
+  </div>
+</div>
+      ${category ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">${category}</div>` : ''}
+      ${campus ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">📍 ${campus}</div>` : ''}
+      ${roles.length ? `
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px;">
+          ${roles.map(r => `<span style="background:rgba(240,201,23,.1);color:var(--gold);padding:1px 6px;border-radius:50px;font-size:9px;font-weight:600;">${shortRole(r)}</span>`).join('')}
+        </div>` : ''}
+      ${days.length ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">📅 ${days.join(', ')}</div>` : ''}
+      ${email ? `<div style="font-size:11px;color:var(--muted);">✉ ${email}</div>` : ''}
+      ${phone ? `<div style="font-size:11px;color:var(--muted);">📞 ${phone}</div>` : ''}
+    </div>`;
+}
+
+function openAddReturner() {
+  document.getElementById('edit-returner-modal').dataset.idx = '-1';
+  document.getElementById('edit-returner-name').textContent = 'Add Returner';
+  document.getElementById('er-fname').value = '';
+  document.getElementById('er-lname').value = '';
+  document.getElementById('er-email').value = '';
+  document.getElementById('er-phone').value = '';
+  document.getElementById('er-will-return').value = 'Survey Pending';
+  ['downtown','airline','unsure','gmeets'].forEach(c => {
+    const el = document.getElementById(`er-campus-${c}`);
+    if (el) el.checked = false;
+  });
+  ['mon','tue','wed','thu','na'].forEach(d => {
+    const el = document.getElementById(`er-day-${d}`);
+    if (el) el.checked = false;
+  });
+  openModal('edit-returner-modal');
+}
+
+function openEditReturner(idx) {
+  const r = DB.returners[idx];
+  if (!r) return;
+  document.getElementById('edit-returner-modal').dataset.idx = idx;
+  document.getElementById('edit-returner-name').textContent = `${r.firstName || ''} ${r.lastName || ''}`.trim() || 'Edit Returner';
+  document.getElementById('er-fname').value = r.firstName || '';
+  document.getElementById('er-lname').value = r.lastName || '';
+  document.getElementById('er-email').value = r.email || '';
+  document.getElementById('er-phone').value = r.phone || '';
+  document.getElementById('er-will-return').value = r.willReturn || 'Survey Pending';
+  ['downtown','airline','unsure','gmeets'].forEach(c => {
+    const el = document.getElementById(`er-campus-${c}`);
+    if (el) el.checked = (r.campus || '').toLowerCase().includes(c);
+  });
+  ['mon','tue','wed','thu','na'].forEach(d => {
+    const map = {mon:'monday',tue:'tuesday',wed:'wednesday',thu:'thursday',na:'n/a'};
+    const el = document.getElementById(`er-day-${d}`);
+    if (el) el.checked = (r.days || '').toLowerCase().includes(map[d]);
+  });
+  openModal('edit-returner-modal');
+}
+
+function saveReturnerContact() {
+  const idx = parseInt(document.getElementById('edit-returner-modal').dataset.idx);
+  const fname = document.getElementById('er-fname').value.trim();
+  const lname = document.getElementById('er-lname').value.trim();
+  if (!fname) { alert('Please enter a first name.'); return; }
+  const campus = [
+    document.getElementById('er-campus-downtown')?.checked ? 'Downtown' : null,
+    document.getElementById('er-campus-airline')?.checked ? 'Airline' : null,
+    document.getElementById('er-campus-unsure')?.checked ? 'Unsure' : null,
+    document.getElementById('er-campus-gmeets')?.checked ? 'Google Meets (Tutors)' : null,
+  ].filter(Boolean).join(', ');
+  const days = [
+    document.getElementById('er-day-mon')?.checked ? 'Monday' : null,
+    document.getElementById('er-day-tue')?.checked ? 'Tuesday' : null,
+    document.getElementById('er-day-wed')?.checked ? 'Wednesday' : null,
+    document.getElementById('er-day-thu')?.checked ? 'Thursday' : null,
+    document.getElementById('er-day-na')?.checked ? 'N/A — Tutor' : null,
+  ].filter(Boolean).join(', ');
+  const record = {
+    firstName: fname,
+    lastName: lname,
+    email: document.getElementById('er-email').value.trim(),
+    phone: document.getElementById('er-phone').value.trim(),
+    willReturn: document.getElementById('er-will-return').value,
+    campus,
+    days,
+    roles: idx >= 0 ? (DB.returners[idx]?.roles || '') : '',
+  };
+  if (isNaN(idx) || idx === -1) {
+    if (!DB.returners) DB.returners = [];
+    DB.returners.push(record);
+  } else {
+    DB.returners[idx] = { ...DB.returners[idx], ...record };
+  }
+  saveDB();
+  closeModal('edit-returner-modal');
+  renderReturners();
+  renderOnboarding();
+}
+
+function deleteReturner() {
+  const idx = parseInt(document.getElementById('edit-returner-modal').dataset.idx);
+  if (isNaN(idx) || idx === -1) return;
+  const r = DB.returners[idx];
+  if (!confirm(`Delete ${r.firstName} ${r.lastName}?`)) return;
+  DB.returners.splice(idx, 1);
+  saveDB();
+  closeModal('edit-returner-modal');
+  renderReturners();
+  renderOnboarding();
+}
+
+function emailObColumn(colId) {
+  const col = document.getElementById(colId);
+  if (!col) return;
+  const emails = [...col.querySelectorAll('[data-email]')]
+    .map(el => el.dataset.email)
+    .filter(e => e && e.includes('@'));
+  if (!emails.length) { alert('No email addresses found in this column.'); return; }
+  window.open(`https://mail.google.com/mail/?view=cm&to=angela@thebryc.org&bcc=${encodeURIComponent(emails.join(','))}`);
+}
+      
+function obReturnerCard(r, idx) {
+  const name   = `${r.firstName || ''} ${r.lastName || ''}`.trim() || '(No Name)';
+  const roles  = r.roles ? r.roles.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const campus = r.campus || '';
+  const days   = r.days ? r.days.split(',').map(s => s.trim()).filter(Boolean).slice(0,3) : [];
+  const email  = r.email || '';
+  const phone  = r.phone || '';
+  const emailBtn = email
+    ? `<a href="https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(email)}" target="_blank" class="btn btn-ghost btn-xs" onclick="event.stopPropagation()" title="${email}">✉</a>`
+    : `<button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openEditReturner(${idx})" title="Add email">✉ Add</button>`;
+  return `
+    <div data-email="${email}" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;"
+         onmouseenter="this.style.background='var(--card-h)'" onmouseleave="this.style.background='var(--card)'"
+         onclick="openEditReturner(${idx})">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+        <div style="font-weight:700;font-size:13px;color:var(--ink);">${name}</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          ${emailBtn}
+          <span style="font-size:9px;background:rgba(100,149,255,.12);color:#88c4ff;padding:2px 7px;border-radius:50px;letter-spacing:.5px;font-weight:700;text-transform:uppercase;">Returner</span>
+        </div>
+      </div>
+      ${campus ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">📍 ${campus}</div>` : ''}
+      ${roles.length ? `
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px;">
+          ${roles.slice(0,3).map(role => `<span style="background:rgba(240,201,23,.1);color:var(--gold);padding:1px 6px;border-radius:50px;font-size:9px;font-weight:600;">${shortRoleName(role)}</span>`).join('')}
+        </div>` : ''}
+      ${days.length ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">📅 ${days.join(', ')}</div>` : ''}
+      ${email ? `<div style="font-size:11px;color:var(--muted);">✉ ${email}</div>` : ''}
+      ${phone ? `<div style="font-size:11px;color:var(--muted);">📞 ${phone}</div>` : ''}
+    </div>`;
+}
+
+
+// ══════════════════════════════════════════
+// HOOK INTO EXISTING goPage() FOR RENDER CALLS
+// ══════════════════════════════════════════
+
+// Patch the existing goPage function to trigger renders for new pages
+const _origGoPage = window.goPage;
+window.goPage = function(page, el) {
+  if (typeof _origGoPage === 'function') _origGoPage(page, el);
+
+  if (page === 'returners') {
+    loadReturnerSheetConfigUI();
+    renderReturners();
+  }
+  if (page === 'onboarding') {
+    renderOnboarding();
+  }
+  if (page === 'settings') {
+    loadReturnerSheetConfigUI();
+  }
+};
+
+// Also re-render onboarding whenever DB saves (prospects change)
+const _origSaveDB = window.saveDB;
+window.saveDB = async function() {
+  const result = typeof _origSaveDB === 'function' ? await _origSaveDB() : null;
+  // Refresh badge counts
+  const cnt = (DB.returners || []).length;
+  const badge = document.getElementById('sb-returner-cnt');
+  if (badge) badge.textContent = cnt;
+  return result;
+};
+
+// Expose functions globally
+window.syncReturnerSheet      = syncReturnerSheet;
+window.saveReturnerSheetConfig = saveReturnerSheetConfig;
+window.renderReturners        = renderReturners;
+window.renderOnboarding       = renderOnboarding;
+async function syncOnboarding() {
+  const btn = document.getElementById('ob-sync-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Syncing…'; }
+  try {
+    await handleSheetsSync();      // prospects sheet
+    await syncReturnerSheet();     // returner survey sheet
+    renderOnboarding();
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🔄 Sync All'; }
+  }
+}
+window.syncOnboarding = syncOnboarding;
+window.clearReturnerFilters   = clearReturnerFilters;
