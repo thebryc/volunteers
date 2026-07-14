@@ -1003,6 +1003,10 @@ if (walkinPanel && !isCC) {
       <div class="fg"><label class="fl" style="color:white">Phone</label><input type="tel" id="kw-phone" style="font-size:15px"></div>
       <div class="fg"><label class="fl" style="color:white">Email</label><input type="email" id="kw-email" style="font-size:15px"></div>
     </div>
+	    <div class="fg" style="margin-bottom:12px">
+      <label class="fl" style="color:white">Did you come with someone? Add their first and last name</label>
+      <input type="text" id="kw-companion" placeholder="Optional" style="font-size:15px">
+    </div>
     <button onclick="kioskWalkinSubmitSimple()" style="width:100%;background:#f0c917;color:#0a3d1f;border:none;border-radius:12px;padding:15px;font-family:'barlow-semi-condensed',sans-serif;font-size:22px;letter-spacing:2px;cursor:pointer;margin-top:8px">✅ CHECK ME IN</button>
   `;
 }
@@ -1163,6 +1167,7 @@ function kioskWalkinSubmitSimple() {
     role: document.getElementById('kw-role').value,
     phone: document.getElementById('kw-phone').value.trim(),
     email: document.getElementById('kw-email').value.trim(),
+    companion: document.getElementById('kw-companion').value.trim(),
     walkIn: true,
     time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
   };
