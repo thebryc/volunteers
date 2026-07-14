@@ -1591,14 +1591,80 @@ function populateRsvpSheetSettings() {
   if (st && cfg.tabName)  st.value = cfg.tabName;
 }
 
+function mapRSVPRow_HappyHourBingo(row, headerIdx) {
+  const g = i => i >= 0 ? (row[i]||'').trim() : '';
+  const fname = g(headerIdx.fname);
+  const lname = g(headerIdx.lname);
+  const name  = [fname, lname].filter(Boolean).join(' ');
+  if (!name) return null;
+
+  const attendRaw = g(headerIdx.attend).toLowerCase();
+  let attending = 'no';
+  if (attendRaw.includes('yes')) attending = 'yes';
+  else if (attendRaw.includes('maybe')) attending = 'maybe';
+
+  const dietRaw = g(headerIdx.diet);
+  const diet = dietRaw && dietRaw.toLowerCase() !== 'none'
+    ? dietRaw.split(',').map(d => d.trim()).filter(Boolean)
+    : [];
+
+  return {
+    id: Date.now() + Math.random(),
+    fname, lname, name,
+    email: g(headerIdx.email).toLowerCase(),
+    role: g(headerIdx.role),
+    attending,
+    guests: [],
+    diet,
+    date: new Date().toLocaleDateString(),
+    fromSheet: true
+  };
+}
+
+function findColumnIndexes(headers, template) {
+  const h = headers.map(x => x.toLowerCase().trim());
+  const find = keyword => h.findIndex(x => x.includes(keyword.toLowerCase()));
+  if (template === 'happy-hour-bingo') {
+    return {
+      email: find('email'),
+      fname: find('first name'),
+      lname: find('last name'),
+      role: find('please choose an option'),
+      attend: find('will you be attending'),
+      diet: find('dietary'),
+    };
+  }
+  // court-connections default
+  return {
+    ts: find('timestamp'),
+    email: find('email'),
+    fname: find('first name'),
+    lname: find('last name'),
+    fullName: find('full name'),
+    role: find('community role'),
+    status: find('rsvp status'),
+    g1n: find('guest 1 name'),
+    g1c: find('guest 1 contact'),
+    g2n: find('guest 2 name'),
+    g2c: find('guest 2 contact'),
+    g3n: find('guest 3 name'),
+    g3c: find('guest 3 contact'),
+    diet: find('dietary restrictions'),
+  };
+}
+
 async function syncRSVPSheet() {
-  const rsvpCfg = getRsvpSheetConfig();
-  const gsCfg   = getSheetConfig();
+  const ev = DB.events.find(e => e.id === currentEventId);
+  if (!ev) { alert('No event selected.'); return; }
+  const gsCfg = getSheetConfig();
   const btn = document.getElementById('rsvp-sheet-sync-btn');
 
-  if (!rsvpCfg.sheetId) {
-    alert('Please set your RSVP Sheet ID in Settings first.');
-    goPage('settings', document.getElementById('settings-btn'));
+  if (!ev.sheetId) {
+    alert('This event does not have an RSVP Sheet ID set.\n\nClick ✏ Edit on this event and add the Sheet ID and Tab Name.');
+    return;
+  }
+  if (!ev.formTemplate) {
+    alert('This event does not have a Form Template selected.\n\nClick ✏ Edit and choose a template (Court Connections or Happy Hour Bingo).');
     return;
   }
   if (!gsCfg.clientId) {
@@ -1613,7 +1679,8 @@ async function syncRSVPSheet() {
     if (!token) token = await gsRequestToken(gsCfg.clientId);
     gsSetToken(token);
 
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${rsvpCfg.sheetId}/values/${encodeURIComponent(rsvpCfg.tabName || 'Form Responses 1')}`;
+    const tab = ev.sheetTab || 'Form Responses 1';
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${ev.sheetId}/values/${encodeURIComponent(tab)}`;
     const res = await fetch(url, { headers: { Authorization: 'Bearer ' + token } });
     if (res.status === 401) { gsClearToken(); throw new Error('Auth expired — please sync again.'); }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -1621,69 +1688,57 @@ async function syncRSVPSheet() {
     const rows = json.values || [];
     if (rows.length < 2) { alert('Sheet has no data rows.'); return; }
 
-    const ev = DB.events.find(e => e.id === currentEventId) || DB.events[0];
-    if (!ev) return;
-
-    const h = rows[0].map(x => x.toLowerCase().trim());
-    const col = k => h.findIndex(x => x === k.toLowerCase());
-    const iTs       = col('timestamp');
-    const iEmail    = col('email');
-    const iFname    = col('first name');
-    const iLname    = col('last name');
-    const iFullName = col('full name');
-    const iRole     = col('community role');
-    const iStatus   = col('rsvp status');
-    const iG1name   = col('guest 1 name');
-    const iG1con    = col('guest 1 contact');
-    const iG2name   = col('guest 2 name');
-    const iG2con    = col('guest 2 contact');
-    const iG3name   = col('guest 3 name');
-    const iG3con    = col('guest 3 contact');
-    const iDiet     = col('dietary restrictions');
-
-    const existingEmails = new Set((ev.rsvps||[]).map(r => r.email?.toLowerCase()).filter(Boolean));
+    const headers = rows[0];
+    const headerIdx = findColumnIndexes(headers, ev.formTemplate);
+    const existingNames = new Set((ev.rsvps || []).map(r => (r.name || '').toLowerCase()).filter(Boolean));
     let added = 0;
 
     rows.slice(1).forEach(cols => {
-      const g = i => i >= 0 ? (cols[i]||'').trim() : '';
-      const fname = g(iFname);
-      const lname  = g(iLname);
-      const name   = g(iFullName) || [fname,lname].filter(Boolean).join(' ');
-      const email  = g(iEmail).toLowerCase();
-      if (!name) return;
-      if (email && existingEmails.has(email)) return;
+      let newRSVP = null;
 
-    const statusRaw = g(iStatus).toLowerCase().trim();
-      let attending = 'No';
-      if (statusRaw.includes('not attending') || statusRaw.includes("can't make") || statusRaw.includes('cannot')) attending = 'no';
-      else if (statusRaw.includes('maybe')) attending = 'maybe';
-      else if (statusRaw === 'attending' || statusRaw.includes('yes')) attending = 'yes';
+      if (ev.formTemplate === 'happy-hour-bingo') {
+        newRSVP = mapRSVPRow_HappyHourBingo(cols, headerIdx);
+      } else {
+        // Court Connections mapping
+        const g = i => i >= 0 ? (cols[i]||'').trim() : '';
+        const fname = g(headerIdx.fname);
+        const lname  = g(headerIdx.lname);
+        const name   = g(headerIdx.fullName) || [fname,lname].filter(Boolean).join(' ');
+        const email  = g(headerIdx.email).toLowerCase();
+        if (!name) return;
+        const statusRaw = g(headerIdx.status).toLowerCase().trim();
+        let attending = 'no';
+        if (statusRaw.includes('not attending') || statusRaw.includes("can't make") || statusRaw.includes('cannot')) attending = 'no';
+        else if (statusRaw.includes('maybe')) attending = 'maybe';
+        else if (statusRaw === 'attending' || statusRaw.includes('yes')) attending = 'yes';
+        const guests = [];
+        [[headerIdx.g1n,headerIdx.g1c],[headerIdx.g2n,headerIdx.g2c],[headerIdx.g3n,headerIdx.g3c]].forEach(([ni,ci]) => {
+          const gn = g(ni); if (!gn) return;
+          guests.push({ name: gn, contact: g(ci) });
+        });
+        const diet = g(headerIdx.diet) ? g(headerIdx.diet).split(',').map(d=>d.trim()).filter(Boolean) : [];
+        newRSVP = {
+          id: Date.now() + Math.random(),
+          fname, lname, name, email,
+          role: g(headerIdx.role),
+          attending, guests, diet,
+          date: g(headerIdx.ts).split(' ')[0] || new Date().toLocaleDateString(),
+          fromSheet: true
+        };
+      }
 
-      const guests = [];
-      [[iG1name,iG1con],[iG2name,iG2con],[iG3name,iG3con]].forEach(([ni,ci]) => {
-        const gn = g(ni); if (!gn) return;
-        guests.push({ name: gn, contact: g(ci) });
-      });
-
-      const diet = g(iDiet) ? g(iDiet).split(',').map(d=>d.trim()).filter(Boolean) : [];
-
-      ev.rsvps.push({
-        id: Date.now() + Math.random(),
-        fname, lname, name, email,
-        role: g(iRole),
-        attending,
-        guests,
-        diet,
-        date: g(iTs).split(' ')[0] || new Date().toLocaleDateString(),
-        fromSheet: true
-      });
-      if (email) existingEmails.add(email);
+      if (!newRSVP) return;
+      if (existingNames.has(newRSVP.name.toLowerCase())) return;
+      ev.rsvps.push(newRSVP);
+      existingNames.add(newRSVP.name.toLowerCase());
       added++;
     });
 
     saveDB();
     try { refreshEventDetail(); } catch(e) { console.warn('refresh error:', e); }
-    alert(`✅ RSVP sheet synced — ${added} new responses loaded (${ev.rsvps.length} total)`);
+    alert(`✅ Sheet synced — ${added} new responses loaded (${ev.rsvps.length} total)`);
+  } catch(err) {
+    console.error('Sync error:', err);
     alert('Sync failed: ' + err.message);
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '🔄 Sync RSVP Sheet'; }
