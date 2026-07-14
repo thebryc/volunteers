@@ -1291,7 +1291,18 @@ select.g-empty{background:var(--card);color:var(--ink);}
     </div>
     <div class="fg"><label class="fl">Location</label><input type="text" id="ce-location" placeholder="Venue and address"></div>
     <div class="fg"><label class="fl">Description</label><textarea id="ce-desc" rows="2"></textarea></div>
-    <div class="fg"><label class="fl">Google Form RSVP URL</label><input type="text" id="ce-form-url" placeholder="https://docs.google.com/forms/d/…/viewform"></div>
+    <div class="frow">
+  <div class="fg"><label class="fl">RSVP Sheet ID</label><input type="text" id="ce-sheet-id" placeholder="1BxiMVs0XRA5…" style="font-family:monospace;font-size:12px"></div>
+  <div class="fg"><label class="fl">Tab Name</label><input type="text" id="ce-sheet-tab" placeholder="Form Responses 1" style="font-size:13px"></div>
+</div>
+<div class="fg">
+  <label class="fl">Form Template</label>
+  <select id="ce-form-template">
+    <option value="">— Select template —</option>
+    <option value="court-connections">Court Connections</option>
+    <option value="happy-hour-bingo">Happy Hour Bingo</option>
+  </select>
+</div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('create-event-modal')">Cancel</button>
    <button class="btn btn-gold" onclick="createNewEvent()">Create Event</button>
@@ -1311,7 +1322,18 @@ select.g-empty{background:var(--card);color:var(--ink);}
       <div class="fg"><label class="fl">Time</label><input type="text" id="ee-time" placeholder="e.g. 6:00 – 9:00 PM"></div>
     </div>
     <div class="fg"><label class="fl">Location</label><input type="text" id="ee-location"></div>
-    <div class="fg"><label class="fl">Description</label><textarea id="ee-desc" rows="2"></textarea></div>
+    <div class="frow">
+  <div class="fg"><label class="fl">RSVP Sheet ID</label><input type="text" id="ee-sheet-id" placeholder="1BxiMVs0XRA5…" style="font-family:monospace;font-size:12px"></div>
+  <div class="fg"><label class="fl">Tab Name</label><input type="text" id="ee-sheet-tab" placeholder="Form Responses 1" style="font-size:13px"></div>
+</div>
+<div class="fg">
+  <label class="fl">Form Template</label>
+  <select id="ee-form-template">
+    <option value="">— Select template —</option>
+    <option value="court-connections">Court Connections</option>
+    <option value="happy-hour-bingo">Happy Hour Bingo</option>
+  </select>
+</div>
     <div class="modal-footer" style="justify-content:space-between;">
       <span id="ee-delete-link" onclick="requestDeleteEvent()" style="font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline;align-self:center;">Delete this event</span>
       <div style="display:flex;gap:10px;">
