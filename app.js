@@ -767,6 +767,17 @@ function openEventDetail(eventId) {
 
 function refreshEventDetail() {
   const isCC = currentEventId === 'court-connections';
+	// Hide pickleball button in header for non-CC events
+const pickleBtn = document.querySelector('#page-event-detail .btn-row button[onclick*="Pickleball"]');
+if (pickleBtn) pickleBtn.style.display = isCC ? '' : 'none';
+
+// Hide pickleball court queue block for non-CC events
+const pickleBlocks = document.querySelectorAll('#page-event-detail .block');
+pickleBlocks.forEach(b => {
+  if (b.querySelector('.block-title')?.textContent.includes('Pickleball')) {
+    b.style.display = isCC ? '' : 'none';
+  }
+});
   const evPage = document.getElementById('page-event-detail');
 	const wasActive = evPage.classList.contains('active');
 	evPage.className = isCC ? 'page cc-theme' : 'page';
