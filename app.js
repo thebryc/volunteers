@@ -667,6 +667,7 @@ function openEditEvent(eventId) {
   document.getElementById('ee-sheet-id').value = ev.sheetId || '';
 document.getElementById('ee-sheet-tab').value = ev.sheetTab || '';
 document.getElementById('ee-form-template').value = ev.formTemplate || '';
+	document.getElementById('ee-active').checked = !!ev.active;
   document.getElementById('ee-delete-link').style.display = (ev.id === 'court-connections') ? 'none' : '';
 	openModal('edit-event-modal');
 }
@@ -684,6 +685,7 @@ function updateEvent() {
   ev.sheetId = document.getElementById('ee-sheet-id').value.trim();
 ev.sheetTab = document.getElementById('ee-sheet-tab').value.trim();
 ev.formTemplate = document.getElementById('ee-form-template').value;
+	ev.active = document.getElementById('ee-active').checked;
   saveDB();
   closeModal('edit-event-modal');
   renderEventCards();
