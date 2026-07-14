@@ -667,6 +667,9 @@ function openEditEvent(eventId) {
   document.getElementById('ee-sheet-id').value = ev.sheetId || '';
 document.getElementById('ee-sheet-tab').value = ev.sheetTab || '';
 document.getElementById('ee-form-template').value = ev.formTemplate || '';
+	document.getElementById('ee-banner-url').value = ev.bannerUrl || '';
+document.getElementById('ee-kiosk-bg').value = ev.kioskBg || '';
+document.getElementById('ee-kiosk-bg-swatch').style.background = ev.kioskBg || '';
 	document.getElementById('ee-active').checked = !!ev.active;
   document.getElementById('ee-delete-link').style.display = (ev.id === 'court-connections') ? 'none' : '';
 	openModal('edit-event-modal');
@@ -685,6 +688,8 @@ function updateEvent() {
   ev.sheetId = document.getElementById('ee-sheet-id').value.trim();
 ev.sheetTab = document.getElementById('ee-sheet-tab').value.trim();
 ev.formTemplate = document.getElementById('ee-form-template').value;
+	ev.bannerUrl = document.getElementById('ee-banner-url').value.trim();
+ev.kioskBg = document.getElementById('ee-kiosk-bg').value.trim();
 	ev.active = document.getElementById('ee-active').checked;
   saveDB();
   closeModal('edit-event-modal');
@@ -942,9 +947,63 @@ function emailEventAll(filter) {
 
 // ══ KIOSK ════════════════════════════════════════
 function openKiosk() {
-  document.getElementById('kiosk-overlay').classList.add('open');
-  setTimeout(()=>document.getElementById('kiosk-search').focus(),100);
+  const ev = DB.events.find(e => e.id === currentEventId);
+  const isCC = currentEventId === 'court-connections';
+  const overlay = document.getElementById('kiosk-overlay');
+
+  // Set background color
+const bg = ev?.kioskBg || '#00775f';
+overlay.style.background = bg;
+overlay.querySelectorAll('div').forEach(d => {
+  const inline = d.getAttribute('style') || '';
+  if (inline.includes('#00775f') || inline.includes('rgb(0, 119, 95)')) {
+    d.style.background = bg;
+  }
+});
+
+  // Set banner
+  const bannerImg = overlay.querySelector('img[src*="banner"]');
+  if (bannerImg) {
+    bannerImg.src = ev?.bannerUrl || 'https://thebryc.github.io/volunteers/cc_banner.png';
+  }
+
+  // Hide CC-only elements for other events
+  const showCCFeatures = isCC;
+	// Rebuild walk-in form content based on event type
+const walkinPanel = document.getElementById('kiosk-walkin-panel');
+if (walkinPanel && !isCC) {
+  walkinPanel.innerHTML = `
+    <button onclick="hideKioskWalkin()" style="background:none;border:none;color:rgba(255,255,255,0.6);font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;margin-bottom:18px">← Back</button>
+    <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:28px;color:#f0c917;letter-spacing:2px;margin-bottom:18px">Welcome! Let's check you in.</div>
+    <div class="frow" style="margin-bottom:12px">
+      <div class="fg"><label class="fl" style="color:white">First Name *</label><input type="text" id="kw-fname" style="font-size:16px;padding:13px"></div>
+      <div class="fg"><label class="fl" style="color:white">Last Name *</label><input type="text" id="kw-lname" style="font-size:16px;padding:13px"></div>
+    </div>
+    <div class="fg" style="margin-bottom:12px">
+      <label class="fl" style="color:white">I am a…</label>
+      <select id="kw-role" style="font-size:15px">
+        <option value="">Select…</option>
+        <option>Interested in Mentoring</option>
+        <option>New Mentor</option>
+        <option>Returning Mentor</option>
+      </select>
+    </div>
+    <div class="frow" style="margin-bottom:12px">
+      <div class="fg"><label class="fl" style="color:white">Phone</label><input type="tel" id="kw-phone" style="font-size:15px"></div>
+      <div class="fg"><label class="fl" style="color:white">Email</label><input type="email" id="kw-email" style="font-size:15px"></div>
+    </div>
+    <button onclick="kioskWalkinSubmitSimple()" style="width:100%;background:#f0c917;color:#0a3d1f;border:none;border-radius:12px;padding:15px;font-family:'barlow-semi-condensed',sans-serif;font-size:22px;letter-spacing:2px;cursor:pointer;margin-top:8px">✅ CHECK ME IN</button>
+  `;
 }
+  const iPadBadge = document.getElementById('kiosk-raffle-badge');
+  const pickleBlock = document.getElementById('kiosk-pickle-prompt');
+  if (iPadBadge) iPadBadge.dataset.ccOnly = showCCFeatures ? '' : 'true';
+  if (pickleBlock) pickleBlock.style.display = showCCFeatures ? '' : 'none';
+
+  overlay.classList.add('open');
+  setTimeout(() => document.getElementById('kiosk-search').focus(), 100);
+}
+
 function closeKiosk() { document.getElementById('kiosk-overlay').classList.remove('open'); resetKiosk(); }
 
 function kioskSearch(q) {
@@ -1047,8 +1106,13 @@ function kioskConfirm(idx) {
   try { refreshEventDetail(); } catch(e) {}
 }
 
-function showKioskWalkin() { document.getElementById('kiosk-walkin-panel').style.display='block'; }
-function hideKioskWalkin() { document.getElementById('kiosk-walkin-panel').style.display='none'; }
+function showKioskWalkin() {
+  const ev = DB.events.find(e => e.id === currentEventId);
+  const bg = ev?.kioskBg || '#00775f';
+  const panel = document.getElementById('kiosk-walkin-panel');
+  panel.style.background = bg;
+  panel.style.display = 'block';
+}function hideKioskWalkin() { document.getElementById('kiosk-walkin-panel').style.display='none'; }
 function toggleKioskGuest(show) { document.getElementById('kw-guest-block').style.display=show?'':'none'; }
 function updateKioskRaffle() {
   const s=document.getElementById('kw-commit-self')?.checked;
@@ -1076,8 +1140,41 @@ function kioskWalkinSubmit() {
   try { refreshEventDetail(); } catch(e) {}
 }
 
+function kioskWalkinSubmitSimple() {
+  const fname = document.getElementById('kw-fname').value.trim();
+  const lname = document.getElementById('kw-lname').value.trim();
+  if (!fname) { alert('Please enter a first name.'); return; }
+  const name = `${fname} ${lname}`.trim();
+  const ev = DB.events.find(e => e.id === currentEventId);
+  if (!ev.checkins) ev.checkins = [];
+  const ciRecord = {
+    name,
+    role: document.getElementById('kw-role').value,
+    phone: document.getElementById('kw-phone').value.trim(),
+    email: document.getElementById('kw-email').value.trim(),
+    walkIn: true,
+    time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+  };
+  ev.checkins.push(ciRecord);
+  saveDB();
+  hideKioskWalkin();
+  showKioskConfirm(fname, false, '', ciRecord);
+  try { refreshEventDetail(); } catch(e) {}
+}
+
 function showKioskConfirm(fname, raffleEntry, guestName, checkinRecord) {
-  window._lastCheckinRecord = checkinRecord;
+  const ev = DB.events.find(e => e.id === currentEventId);
+  const bg = ev?.kioskBg || '#00775f';
+  const panel = document.getElementById('kiosk-confirm-panel');
+  if (panel) panel.style.background = bg;
+	const isCC = currentEventId === 'court-connections';
+const raffleBadge = document.getElementById('kiosk-raffle-badge');
+const pickleBlock = document.getElementById('kiosk-pickle-prompt');
+if (!isCC) {
+  if (raffleBadge) raffleBadge.style.display = 'none';
+  if (pickleBlock) pickleBlock.style.display = 'none';
+}
+	window._lastCheckinRecord = checkinRecord;
   document.getElementById('kiosk-confirm-name').textContent = `You're in, ${fname}!`;
   document.getElementById('kiosk-confirm-msg').textContent = guestName
     ? `You and ${guestName} are checked in.`
