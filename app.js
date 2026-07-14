@@ -662,7 +662,8 @@ function openEditEvent(eventId) {
   document.getElementById('ee-time').value = ev.time || '';
   document.getElementById('ee-location').value = ev.location || '';
   document.getElementById('ee-desc').value = ev.desc || '';
-  openModal('edit-event-modal');
+  document.getElementById('ee-delete-link').style.display = (ev.id === 'court-connections') ? 'none' : '';
+	openModal('edit-event-modal');
 }
 
 function updateEvent() {
@@ -680,6 +681,41 @@ function updateEvent() {
   closeModal('edit-event-modal');
   renderEventCards();
   if (currentEventId === id) refreshEventDetail();
+}
+
+function requestDeleteEvent() {
+  const id = document.getElementById('ee-id').value;
+  const ev = DB.events.find(e => e.id === id);
+  if (!ev) return;
+  if (ev.id === 'court-connections') {
+    alert('Court Connections cannot be deleted.');
+    return;
+  }
+  const rsvpCount = (ev.rsvps || []).length;
+  const ciCount = (ev.checkins || []).length;
+  const warning = (rsvpCount || ciCount)
+    ? `\n\nThis will permanently delete ${rsvpCount} RSVPs and ${ciCount} check-ins.`
+    : '';
+  const typed = prompt(`To delete "${ev.name}", type the event name exactly:${warning}`);
+  if (typed === null) return;
+  if (typed.trim() !== ev.name) {
+    alert('Name did not match. Event was not deleted.');
+    return;
+  }
+  confirmDeleteEvent(id);
+}
+
+function confirmDeleteEvent(id) {
+  const idx = DB.events.findIndex(e => e.id === id);
+  if (idx === -1) return;
+  DB.events.splice(idx, 1);
+  saveDB();
+  closeModal('edit-event-modal');
+  if (currentEventId === id) {
+    currentEventId = DB.events[0]?.id || null;
+    goPage('events', null);
+  }
+  renderEventCards();
 }
 
 function preloadEventDefaults() {
