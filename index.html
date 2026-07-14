@@ -1298,6 +1298,26 @@ select.g-empty{background:var(--card);color:var(--ink);}
   </div>
 </div>
 
+<!-- Edit Event -->
+<div class="overlay" id="edit-event-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('edit-event-modal')">✕</button>
+    <div class="modal-title">Edit Event</div>
+    <input type="hidden" id="ee-id">
+    <div class="fg"><label class="fl">Event Name *</label><input type="text" id="ee-name"></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Date</label><input type="text" id="ee-date" placeholder="e.g. Oct 15, 2026"></div>
+      <div class="fg"><label class="fl">Time</label><input type="text" id="ee-time" placeholder="e.g. 6:00 – 9:00 PM"></div>
+    </div>
+    <div class="fg"><label class="fl">Location</label><input type="text" id="ee-location"></div>
+    <div class="fg"><label class="fl">Description</label><textarea id="ee-desc" rows="2"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('edit-event-modal')">Cancel</button>
+      <button class="btn btn-gold" onclick="updateEvent()">Save Changes</button>
+    </div>
+  </div>
+</div>
+	
 <!-- Edit Returner -->
 <div class="overlay" id="edit-returner-modal">
   <div class="modal">
