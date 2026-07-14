@@ -625,7 +625,8 @@ function renderEventCards() {
         </div>
         <div class="btn-row">
           <button class="btn btn-green btn-sm" onclick="openEventDetail('${ev.id}')">View Dashboard</button>
-          ${ev.formUrl ? `<a href="${ev.formUrl}" target="_blank" class="btn btn-ghost btn-sm" style="text-decoration:none">↗ RSVP Form</a>` : ''}
+          <button class="btn btn-ghost btn-sm" onclick="openEditEvent('${ev.id}')">✏ Edit</button>
+		  ${ev.formUrl ? `<a href="${ev.formUrl}" target="_blank" class="btn btn-ghost btn-sm" style="text-decoration:none">↗ RSVP Form</a>` : ''}
         </div>
       </div>
     </div>`;
@@ -650,6 +651,35 @@ function createNewEvent() {
   });
   saveDB(); closeModal('create-event-modal'); renderEventCards();
   ['ce-name','ce-date','ce-time','ce-location','ce-desc','ce-form-url'].forEach(id => document.getElementById(id).value = '');
+}
+
+function openEditEvent(eventId) {
+  const ev = DB.events.find(e => e.id === eventId);
+  if (!ev) return;
+  document.getElementById('ee-id').value = ev.id;
+  document.getElementById('ee-name').value = ev.name || '';
+  document.getElementById('ee-date').value = ev.date || '';
+  document.getElementById('ee-time').value = ev.time || '';
+  document.getElementById('ee-location').value = ev.location || '';
+  document.getElementById('ee-desc').value = ev.desc || '';
+  openModal('edit-event-modal');
+}
+
+function updateEvent() {
+  const id = document.getElementById('ee-id').value;
+  const ev = DB.events.find(e => e.id === id);
+  if (!ev) { alert('Event not found.'); return; }
+  const name = document.getElementById('ee-name').value.trim();
+  if (!name) { alert('Please enter an event name.'); return; }
+  ev.name = name;
+  ev.date = document.getElementById('ee-date').value.trim();
+  ev.time = document.getElementById('ee-time').value.trim();
+  ev.location = document.getElementById('ee-location').value.trim();
+  ev.desc = document.getElementById('ee-desc').value.trim();
+  saveDB();
+  closeModal('edit-event-modal');
+  renderEventCards();
+  if (currentEventId === id) refreshEventDetail();
 }
 
 function preloadEventDefaults() {
