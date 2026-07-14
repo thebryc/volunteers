@@ -646,11 +646,14 @@ function createNewEvent() {
     time: document.getElementById('ce-time').value.trim(),
     location: document.getElementById('ce-location').value.trim(),
     desc: document.getElementById('ce-desc').value.trim(),
-    formUrl: document.getElementById('ce-form-url').value.trim(),
+    sheetId: document.getElementById('ce-sheet-id').value.trim(),
+    sheetTab: document.getElementById('ce-sheet-tab').value.trim(),
+    formTemplate: document.getElementById('ce-form-template').value,
     rsvps: [], checkins: [], active: true
   });
   saveDB(); closeModal('create-event-modal'); renderEventCards();
-  ['ce-name','ce-date','ce-time','ce-location','ce-desc','ce-form-url'].forEach(id => document.getElementById(id).value = '');
+  ['ce-name','ce-date','ce-time','ce-location','ce-desc','ce-sheet-id','ce-sheet-tab'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('ce-form-template').value = '';
 }
 
 function openEditEvent(eventId) {
@@ -661,7 +664,9 @@ function openEditEvent(eventId) {
   document.getElementById('ee-date').value = ev.date || '';
   document.getElementById('ee-time').value = ev.time || '';
   document.getElementById('ee-location').value = ev.location || '';
-  document.getElementById('ee-desc').value = ev.desc || '';
+  document.getElementById('ee-sheet-id').value = ev.sheetId || '';
+document.getElementById('ee-sheet-tab').value = ev.sheetTab || '';
+document.getElementById('ee-form-template').value = ev.formTemplate || '';
   document.getElementById('ee-delete-link').style.display = (ev.id === 'court-connections') ? 'none' : '';
 	openModal('edit-event-modal');
 }
@@ -676,7 +681,9 @@ function updateEvent() {
   ev.date = document.getElementById('ee-date').value.trim();
   ev.time = document.getElementById('ee-time').value.trim();
   ev.location = document.getElementById('ee-location').value.trim();
-  ev.desc = document.getElementById('ee-desc').value.trim();
+  ev.sheetId = document.getElementById('ee-sheet-id').value.trim();
+ev.sheetTab = document.getElementById('ee-sheet-tab').value.trim();
+ev.formTemplate = document.getElementById('ee-form-template').value;
   saveDB();
   closeModal('edit-event-modal');
   renderEventCards();
@@ -719,10 +726,17 @@ function confirmDeleteEvent(id) {
 }
 
 function preloadEventDefaults() {
-  if (DB.events[0] && !DB.events[0].formUrl) {
-    DB.events[0].formUrl = 'https://docs.google.com/forms/d/1clhRvQnSjrWp4bnRgf1FNfY12HKZp83QRlarY1-U6d4/viewform';
-    saveDB();
+  const cc = DB.events.find(e => e.id === 'court-connections');
+  if (!cc) return;
+  if (!cc.sheetId || !cc.sheetTab) {
+    try {
+      const rsvpCfg = JSON.parse(localStorage.getItem('bryc-rsvp-sheet') || '{}');
+      if (rsvpCfg.sheetId) cc.sheetId = rsvpCfg.sheetId;
+      if (rsvpCfg.tabName) cc.sheetTab = rsvpCfg.tabName;
+    } catch(e) {}
   }
+  if (!cc.formTemplate) cc.formTemplate = 'court-connections';
+  saveDB();
 }
 
 function openEventFormUrlEditor() {
