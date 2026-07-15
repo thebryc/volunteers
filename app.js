@@ -1017,15 +1017,17 @@ if (walkinPanel && !isCC) {
     <button onclick="kioskWalkinSubmitSimple()" style="width:100%;background:#f0c917;color:#0a3d1f;border:none;border-radius:12px;padding:15px;font-family:'barlow-semi-condensed',sans-serif;font-size:22px;letter-spacing:2px;cursor:pointer;margin-top:8px">✅ CHECK ME IN</button>
   `;
 }
-  const iPadBadge = document.getElementById('kiosk-raffle-badge');
+	
+const iPadBadge = document.getElementById('kiosk-raffle-badge');
 const pickleBlock = document.getElementById('kiosk-pickle-prompt');
-if (iPadBadge) {
-  if (isCC) iPadBadge.style.setProperty('display', '', 'important');
-  else iPadBadge.style.setProperty('display', 'none', 'important');
-}
-if (pickleBlock) {
-  if (isCC) pickleBlock.style.setProperty('display', '', 'important');
-  else pickleBlock.style.setProperty('display', 'none', 'important');
+
+if (!isCC) {
+  // Nuke the pickleball prompt entirely — no other function can un-hide what doesn't exist
+  if (pickleBlock) pickleBlock.remove();
+  if (iPadBadge) iPadBadge.remove();
+} else {
+  if (iPadBadge) iPadBadge.style.setProperty('display', '', 'important');
+  if (pickleBlock) pickleBlock.style.setProperty('display', '', 'important');
 }
 
   overlay.classList.add('open');
