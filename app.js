@@ -836,7 +836,11 @@ roleGrid.innerHTML = roleEntries.length ? `<div style="display:grid;grid-templat
     <td>${r.email?`<a href="mailto:${r.email}?subject=${encodeURIComponent(ev.name)}" class="btn btn-ghost btn-xs" style="text-decoration:none">✉</a>`:'—'}</td>
   </tr>`).join('') : `<tr><td colspan="8"><div class="empty"><div class="ei">📭</div><p>No RSVPs imported yet.</p></div></td></tr>`;
 
-  const allGuests = rsvps.flatMap(r => (r.guests||[]).map(g => ({...g, by:r.name})));
+  const rsvpGuests = rsvps.flatMap(r => (r.guests||[]).map(g => ({...g, by:r.name})));
+const walkInCompanions = (ev.checkins||[])
+  .filter(c => c.companion && c.companion.trim())
+  .map(c => ({ name: c.companion, contact: '', by: c.name }));
+const allGuests = [...rsvpGuests, ...walkInCompanions];
   const gtb = document.getElementById('ev-guests-tbody');
   gtb.innerHTML = allGuests.length ? allGuests.map(g => `<tr><td><strong>${g.name}</strong></td><td>${g.contact||'—'}</td><td>${g.by}</td></tr>`).join('')
     : `<tr><td colspan="3"><div class="empty"><div class="ei">👥</div><p>No guests recorded.</p></div></td></tr>`;
@@ -1216,7 +1220,8 @@ function resetKiosk() {
   document.getElementById('kiosk-pickle-step1').style.display = '';
 document.getElementById('kiosk-pickle-step2').style.display = 'none';
 document.getElementById('kiosk-pickle-joined').style.display = 'none';
-document.getElementById('kiosk-pickle-prompt').style.display = '';
+const isCC_reset = currentEventId === 'court-connections';
+document.getElementById('kiosk-pickle-prompt').style.display = isCC_reset ? '' : 'none';
 const phoneEl = document.getElementById('pickle-phone');
 if (phoneEl) phoneEl.value = '';
 document.querySelectorAll('.pickle-num-btn').forEach(b => {
