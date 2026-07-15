@@ -1201,16 +1201,18 @@ function showKioskConfirm(fname, raffleEntry, guestName, checkinRecord) {
 	const isCC = currentEventId === 'court-connections';
 const raffleBadge = document.getElementById('kiosk-raffle-badge');
 const pickleBlock = document.getElementById('kiosk-pickle-prompt');
+// (These may have been .remove()-d for non-CC events, so both checks safely no-op)
 if (!isCC) {
-  if (raffleBadge) raffleBadge.style.display = 'none';
-  if (pickleBlock) pickleBlock.style.display = 'none';
+  if (raffleBadge) raffleBadge.remove();
+  if (pickleBlock) pickleBlock.remove();
 }
 	window._lastCheckinRecord = checkinRecord;
   document.getElementById('kiosk-confirm-name').textContent = `You're in, ${fname}!`;
   document.getElementById('kiosk-confirm-msg').textContent = guestName
     ? `You and ${guestName} are checked in.`
     : 'You are checked in. Enjoy the event!';
-  document.getElementById('kiosk-raffle-badge').style.display = raffleEntry ? 'block' : 'none';
+  const rb = document.getElementById('kiosk-raffle-badge');
+if (rb) rb.style.display = raffleEntry ? 'block' : 'none';
   const hasParty = guestName && guestName.trim();
   const partyBtn = document.getElementById('kiosk-pickle-party-btn');
   if (partyBtn) partyBtn.style.display = hasParty ? '' : 'none';
