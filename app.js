@@ -1216,35 +1216,57 @@ if (rb) rb.style.display = raffleEntry ? 'block' : 'none';
   const hasParty = guestName && guestName.trim();
   const partyBtn = document.getElementById('kiosk-pickle-party-btn');
   if (partyBtn) partyBtn.style.display = hasParty ? '' : 'none';
-  document.getElementById('kiosk-pickle-joined').style.display = 'none';
-  document.getElementById('kiosk-pickle-prompt').style.display = '';
+  const pickleJoined = document.getElementById('kiosk-pickle-joined');
+if (pickleJoined) pickleJoined.style.display = 'none';
+const pickleProm = document.getElementById('kiosk-pickle-prompt');
+if (pickleProm) pickleProm.style.display = '';
   document.getElementById('kiosk-confirm-panel').style.display = 'flex';
 }
 
 function resetKiosk() {
-  document.getElementById('kiosk-search').value='';
-  document.getElementById('kiosk-results').innerHTML='';
-  document.getElementById('kiosk-confirm-panel').style.display='none';
+  document.getElementById('kiosk-search').value = '';
+  document.getElementById('kiosk-results').innerHTML = '';
+  document.getElementById('kiosk-confirm-panel').style.display = 'none';
   hideKioskWalkin();
-  ['kw-name','kw-contact','kw-guest-name','kw-guest-contact'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  ['kw-commit-self','kw-commit-guest'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
-  document.querySelectorAll('input[name="kw-guest"]').forEach(r=>r.checked=r.value==='no');
-  document.getElementById('kw-guest-block').style.display='none';
-  document.getElementById('kiosk-pickle-step1').style.display = '';
-document.getElementById('kiosk-pickle-step2').style.display = 'none';
-document.getElementById('kiosk-pickle-joined').style.display = 'none';
-const isCC_reset = currentEventId === 'court-connections';
-document.getElementById('kiosk-pickle-prompt').style.display = isCC_reset ? '' : 'none';
-const phoneEl = document.getElementById('pickle-phone');
-if (phoneEl) phoneEl.value = '';
-document.querySelectorAll('.pickle-num-btn').forEach(b => {
-  b.style.background = 'rgba(255,255,255,0.15)';
-  b.style.borderColor = 'rgba(255,255,255,0.3)';
-  b.style.color = 'white';
-  b.disabled = false;
-});
-document.getElementById('kw-role').value = '';
-window._picklePlayerCount = null;
+
+  ['kw-name','kw-contact','kw-guest-name','kw-guest-contact'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  ['kw-commit-self','kw-commit-guest'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.checked = false;
+  });
+  document.querySelectorAll('input[name="kw-guest"]').forEach(r => r.checked = r.value === 'no');
+
+  const guestBlock = document.getElementById('kw-guest-block');
+  if (guestBlock) guestBlock.style.display = 'none';
+
+  const step1 = document.getElementById('kiosk-pickle-step1');
+  if (step1) step1.style.display = '';
+  const step2 = document.getElementById('kiosk-pickle-step2');
+  if (step2) step2.style.display = 'none';
+  const joined = document.getElementById('kiosk-pickle-joined');
+  if (joined) joined.style.display = 'none';
+
+  const isCC_reset = currentEventId === 'court-connections';
+  const pickleProm = document.getElementById('kiosk-pickle-prompt');
+  if (pickleProm) pickleProm.style.setProperty('display', isCC_reset ? '' : 'none', 'important');
+
+  const phoneEl = document.getElementById('pickle-phone');
+  if (phoneEl) phoneEl.value = '';
+
+  document.querySelectorAll('.pickle-num-btn').forEach(b => {
+    b.style.background = 'rgba(255,255,255,0.15)';
+    b.style.borderColor = 'rgba(255,255,255,0.3)';
+    b.style.color = 'white';
+    b.disabled = false;
+  });
+
+  const roleEl = document.getElementById('kw-role');
+  if (roleEl) roleEl.value = '';
+
+  window._picklePlayerCount = null;
 }
 
 function joinPickleQueue(mode) {
