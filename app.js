@@ -1200,8 +1200,8 @@ function showKioskConfirm(fname, raffleEntry, guestName, checkinRecord) {
 const raffleBadge = document.getElementById('kiosk-raffle-badge');
 const pickleBlock = document.getElementById('kiosk-pickle-prompt');
 if (!isCC) {
-  if (raffleBadge) raffleBadge.style.display = 'none';
-  if (pickleBlock) pickleBlock.style.display = 'none';
+  if (raffleBadge) raffleBadge.style.setProperty('display', 'none', 'important');
+  if (pickleBlock) pickleBlock.style.setProperty('display', 'none', 'important');
 }
 	window._lastCheckinRecord = checkinRecord;
   document.getElementById('kiosk-confirm-name').textContent = `You're in, ${fname}!`;
@@ -1230,7 +1230,7 @@ function resetKiosk() {
 document.getElementById('kiosk-pickle-step2').style.display = 'none';
 document.getElementById('kiosk-pickle-joined').style.display = 'none';
 const isCC_reset = currentEventId === 'court-connections';
-document.getElementById('kiosk-pickle-prompt').style.display = isCC_reset ? '' : 'none';
+document.getElementById('kiosk-pickle-prompt').style.setProperty('display', isCC_reset ? '' : 'none', 'important');
 const phoneEl = document.getElementById('pickle-phone');
 if (phoneEl) phoneEl.value = '';
 document.querySelectorAll('.pickle-num-btn').forEach(b => {
