@@ -860,6 +860,16 @@ const allGuests = [...rsvpGuests, ...walkInCompanions];
     : `<div class="empty"><div class="ei">🥗</div><p>No dietary data yet.</p></div>`;
 
   const citb = document.getElementById('ev-ci-tbody');
+const ciThead = document.querySelector('#page-event-detail .block .tbl-wrap table thead');
+// Find the Check-In List thead specifically
+const ciTable = citb.closest('table');
+const ciTheadEl = ciTable?.querySelector('thead');
+
+if (isCC) {
+  // Court Connections columns
+  if (ciTheadEl) {
+    ciTheadEl.innerHTML = `<tr><th style="width:40px;">#</th><th>Name</th><th>Type</th><th>Role</th><th>Contact</th><th>Guest</th><th>Both Commit</th><th>Raffle</th><th>Time</th></tr>`;
+  }
   citb.innerHTML = checkins.length ? checkins.map((c, i) => `<tr>
     <td style="width:40px;"><strong style="color:var(--gold);font-family:'barlow-semi-condensed',sans-serif;font-size:18px;">#${i+1}</strong></td>
     <td><strong>${c.name}</strong></td>
@@ -870,7 +880,21 @@ const allGuests = [...rsvpGuests, ...walkInCompanions];
     <td style="text-align:center">${(c.commitSelf&&c.commitGuest)?'✅':'—'}</td>
     <td style="text-align:center">${c.raffleEntry?'<span class="badge b-gold">🏆 Entered</span>':'—'}</td>
     <td style="font-size:11px;color:var(--muted)">${c.time||'—'}</td>
-  </tr>`).join('') : `<tr><td colspan="8"><div class="empty"><div class="ei"></div><p>No check-ins yet.</p></div></td></tr>`;
+  </tr>`).join('') : `<tr><td colspan="9"><div class="empty"><div class="ei"></div><p>No check-ins yet.</p></div></td></tr>`;
+} else {
+  // Non-CC events: simplified columns
+  if (ciTheadEl) {
+    ciTheadEl.innerHTML = `<tr><th style="width:40px;">#</th><th>Name</th><th>Role</th><th>Phone</th><th>Email</th><th>Companion</th><th>Time</th></tr>`;
+  }
+  citb.innerHTML = checkins.length ? checkins.map((c, i) => `<tr>
+    <td style="width:40px;"><strong style="color:var(--gold);font-family:'barlow-semi-condensed',sans-serif;font-size:18px;">#${i+1}</strong></td>
+    <td><strong>${c.name}</strong></td>
+    <td>${c.role?`<span class="badge b-teal">${c.role}</span>`:'—'}</td>
+    <td style="font-size:12px;">${c.phone||'—'}</td>
+    <td style="font-size:12px;">${c.email||'—'}</td>
+    <td>${c.companion||'—'}</td>
+    <td style="font-size:11px;color:var(--muted)">${c.time||'—'}</td>
+  </tr>`).join('') : `<tr><td colspan="7"><div class="empty"><div class="ei"></div><p>No check-ins yet.</p></div></td></tr>`;
 }
 
 // ══ IMPORT RSVPs ══════════════════════════════════
