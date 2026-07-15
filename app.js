@@ -768,8 +768,11 @@ function openEventDetail(eventId) {
 function refreshEventDetail() {
   const isCC = currentEventId === 'court-connections';
 	// Hide pickleball button in header for non-CC events
-const pickleBtn = document.querySelector('#page-event-detail .btn-row button[onclick*="Pickleball"]');
-if (pickleBtn) pickleBtn.style.display = isCC ? '' : 'none';
+document.querySelectorAll('#page-event-detail .btn-row button').forEach(btn => {
+  if (btn.textContent.includes('Pickleball')) {
+    btn.style.setProperty('display', isCC ? '' : 'none', 'important');
+  }
+});
 
 // Hide pickleball court queue block for non-CC events
 const pickleBlocks = document.querySelectorAll('#page-event-detail .block');
@@ -1015,9 +1018,15 @@ if (walkinPanel && !isCC) {
   `;
 }
   const iPadBadge = document.getElementById('kiosk-raffle-badge');
-  const pickleBlock = document.getElementById('kiosk-pickle-prompt');
-  if (iPadBadge) iPadBadge.dataset.ccOnly = showCCFeatures ? '' : 'true';
-  if (pickleBlock) pickleBlock.style.display = showCCFeatures ? '' : 'none';
+const pickleBlock = document.getElementById('kiosk-pickle-prompt');
+if (iPadBadge) {
+  if (isCC) iPadBadge.style.setProperty('display', '', 'important');
+  else iPadBadge.style.setProperty('display', 'none', 'important');
+}
+if (pickleBlock) {
+  if (isCC) pickleBlock.style.setProperty('display', '', 'important');
+  else pickleBlock.style.setProperty('display', 'none', 'important');
+}
 
   overlay.classList.add('open');
   setTimeout(() => document.getElementById('kiosk-search').focus(), 100);
