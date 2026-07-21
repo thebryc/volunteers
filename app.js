@@ -625,8 +625,7 @@ function renderEventCards() {
         </div>
         <div class="btn-row">
           <button class="btn btn-green btn-sm" onclick="openEventDetail('${ev.id}')">View Dashboard</button>
-          <button class="btn btn-ghost btn-sm" onclick="openEditEvent('${ev.id}')">✏ Edit</button>
-		  ${ev.formUrl ? `<a href="${ev.formUrl}" target="_blank" class="btn btn-ghost btn-sm" style="text-decoration:none">↗ RSVP Form</a>` : ''}
+          ${ev.formUrl ? `<a href="${ev.formUrl}" target="_blank" class="btn btn-ghost btn-sm" style="text-decoration:none">↗ RSVP Form</a>` : ''}
         </div>
       </div>
     </div>`;
@@ -646,104 +645,18 @@ function createNewEvent() {
     time: document.getElementById('ce-time').value.trim(),
     location: document.getElementById('ce-location').value.trim(),
     desc: document.getElementById('ce-desc').value.trim(),
-    sheetId: document.getElementById('ce-sheet-id').value.trim(),
-    sheetTab: document.getElementById('ce-sheet-tab').value.trim(),
-    formTemplate: document.getElementById('ce-form-template').value,
+    formUrl: document.getElementById('ce-form-url').value.trim(),
     rsvps: [], checkins: [], active: true
   });
   saveDB(); closeModal('create-event-modal'); renderEventCards();
-  ['ce-name','ce-date','ce-time','ce-location','ce-desc','ce-sheet-id','ce-sheet-tab'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('ce-form-template').value = '';
-}
-
-function openEditEvent(eventId) {
-  const ev = DB.events.find(e => e.id === eventId);
-  if (!ev) return;
-  document.getElementById('ee-id').value = ev.id;
-  document.getElementById('ee-name').value = ev.name || '';
-  document.getElementById('ee-date').value = ev.date || '';
-  document.getElementById('ee-time').value = ev.time || '';
-  document.getElementById('ee-location').value = ev.location || '';
-  document.getElementById('ee-sheet-id').value = ev.sheetId || '';
-document.getElementById('ee-sheet-tab').value = ev.sheetTab || '';
-document.getElementById('ee-form-template').value = ev.formTemplate || '';
-	document.getElementById('ee-banner-url').value = ev.bannerUrl || '';
-document.getElementById('ee-kiosk-bg').value = ev.kioskBg || '';
-document.getElementById('ee-kiosk-bg-swatch').style.background = ev.kioskBg || '';
-	document.getElementById('ee-active').checked = !!ev.active;
-  document.getElementById('ee-delete-link').style.display = (ev.id === 'court-connections') ? 'none' : '';
-	openModal('edit-event-modal');
-}
-
-function updateEvent() {
-  const id = document.getElementById('ee-id').value;
-  const ev = DB.events.find(e => e.id === id);
-  if (!ev) { alert('Event not found.'); return; }
-  const name = document.getElementById('ee-name').value.trim();
-  if (!name) { alert('Please enter an event name.'); return; }
-  ev.name = name;
-  ev.date = document.getElementById('ee-date').value.trim();
-  ev.time = document.getElementById('ee-time').value.trim();
-  ev.location = document.getElementById('ee-location').value.trim();
-  ev.sheetId = document.getElementById('ee-sheet-id').value.trim();
-ev.sheetTab = document.getElementById('ee-sheet-tab').value.trim();
-ev.formTemplate = document.getElementById('ee-form-template').value;
-	ev.bannerUrl = document.getElementById('ee-banner-url').value.trim();
-ev.kioskBg = document.getElementById('ee-kiosk-bg').value.trim();
-	ev.active = document.getElementById('ee-active').checked;
-  saveDB();
-  closeModal('edit-event-modal');
-  renderEventCards();
-  if (currentEventId === id) refreshEventDetail();
-}
-
-function requestDeleteEvent() {
-  const id = document.getElementById('ee-id').value;
-  const ev = DB.events.find(e => e.id === id);
-  if (!ev) return;
-  if (ev.id === 'court-connections') {
-    alert('Court Connections cannot be deleted.');
-    return;
-  }
-  const rsvpCount = (ev.rsvps || []).length;
-  const ciCount = (ev.checkins || []).length;
-  const warning = (rsvpCount || ciCount)
-    ? `\n\nThis will permanently delete ${rsvpCount} RSVPs and ${ciCount} check-ins.`
-    : '';
-  const typed = prompt(`To delete "${ev.name}", type the event name exactly:${warning}`);
-  if (typed === null) return;
-  if (typed.trim() !== ev.name) {
-    alert('Name did not match. Event was not deleted.');
-    return;
-  }
-  confirmDeleteEvent(id);
-}
-
-function confirmDeleteEvent(id) {
-  const idx = DB.events.findIndex(e => e.id === id);
-  if (idx === -1) return;
-  DB.events.splice(idx, 1);
-  saveDB();
-  closeModal('edit-event-modal');
-  if (currentEventId === id) {
-    currentEventId = DB.events[0]?.id || null;
-    goPage('events', null);
-  }
-  renderEventCards();
+  ['ce-name','ce-date','ce-time','ce-location','ce-desc','ce-form-url'].forEach(id => document.getElementById(id).value = '');
 }
 
 function preloadEventDefaults() {
-  const cc = DB.events.find(e => e.id === 'court-connections');
-  if (!cc) return;
-  if (!cc.sheetId || !cc.sheetTab) {
-    try {
-      const rsvpCfg = JSON.parse(localStorage.getItem('bryc-rsvp-sheet') || '{}');
-      if (rsvpCfg.sheetId) cc.sheetId = rsvpCfg.sheetId;
-      if (rsvpCfg.tabName) cc.sheetTab = rsvpCfg.tabName;
-    } catch(e) {}
+  if (DB.events[0] && !DB.events[0].formUrl) {
+    DB.events[0].formUrl = 'https://docs.google.com/forms/d/1clhRvQnSjrWp4bnRgf1FNfY12HKZp83QRlarY1-U6d4/viewform';
+    saveDB();
   }
-  if (!cc.formTemplate) cc.formTemplate = 'court-connections';
-  saveDB();
 }
 
 function openEventFormUrlEditor() {
@@ -767,24 +680,7 @@ function openEventDetail(eventId) {
 
 function refreshEventDetail() {
   const isCC = currentEventId === 'court-connections';
-	// Hide pickleball button in header for non-CC events
-document.querySelectorAll('#page-event-detail .btn-row button').forEach(btn => {
-  if (btn.textContent.includes('Pickleball')) {
-    btn.style.setProperty('display', isCC ? '' : 'none', 'important');
-  }
-});
-
-// Hide pickleball court queue block for non-CC events
-const pickleBlocks = document.querySelectorAll('#page-event-detail .block');
-pickleBlocks.forEach(b => {
-  if (b.querySelector('.block-title')?.textContent.includes('Pickleball')) {
-    b.style.display = isCC ? '' : 'none';
-  }
-});
-  const evPage = document.getElementById('page-event-detail');
-	const wasActive = evPage.classList.contains('active');
-	evPage.className = isCC ? 'page cc-theme' : 'page';
-	if (wasActive) evPage.classList.add('active');
+  document.getElementById('page-event-detail').className = isCC ? 'page active cc-theme' : 'page active';
   const ev = DB.events.find(e => e.id === currentEventId);
   if (!ev) return;
   const rsvps = ev.rsvps || [];
@@ -839,11 +735,7 @@ roleGrid.innerHTML = roleEntries.length ? `<div style="display:grid;grid-templat
     <td>${r.email?`<a href="mailto:${r.email}?subject=${encodeURIComponent(ev.name)}" class="btn btn-ghost btn-xs" style="text-decoration:none">✉</a>`:'—'}</td>
   </tr>`).join('') : `<tr><td colspan="8"><div class="empty"><div class="ei">📭</div><p>No RSVPs imported yet.</p></div></td></tr>`;
 
-  const rsvpGuests = rsvps.flatMap(r => (r.guests||[]).map(g => ({...g, by:r.name})));
-const walkInCompanions = (ev.checkins||[])
-  .filter(c => c.companion && c.companion.trim())
-  .map(c => ({ name: c.companion, contact: '', by: c.name }));
-const allGuests = [...rsvpGuests, ...walkInCompanions];
+  const allGuests = rsvps.flatMap(r => (r.guests||[]).map(g => ({...g, by:r.name})));
   const gtb = document.getElementById('ev-guests-tbody');
   gtb.innerHTML = allGuests.length ? allGuests.map(g => `<tr><td><strong>${g.name}</strong></td><td>${g.contact||'—'}</td><td>${g.by}</td></tr>`).join('')
     : `<tr><td colspan="3"><div class="empty"><div class="ei">👥</div><p>No guests recorded.</p></div></td></tr>`;
@@ -859,12 +751,7 @@ const allGuests = [...rsvpGuests, ...walkInCompanions];
     <div class="summary-bar"><div class="summary-bar-fill" style="width:${Math.round(n/maxD*100)}%"></div></div></div>`).join('')}</div>`
     : `<div class="empty"><div class="ei">🥗</div><p>No dietary data yet.</p></div>`;
 
-const citb = document.getElementById('ev-ci-tbody');
-const ciTable2 = citb ? citb.closest('table') : null;
-const ciThead2 = ciTable2 ? ciTable2.querySelector('thead') : null;
-
-if (isCC) {
-  if (ciThead2) ciThead2.innerHTML = '<tr><th style="width:40px;">#</th><th>Name</th><th>Type</th><th>Role</th><th>Contact</th><th>Guest</th><th>Both Commit</th><th>Raffle</th><th>Time</th></tr>';
+  const citb = document.getElementById('ev-ci-tbody');
   citb.innerHTML = checkins.length ? checkins.map((c, i) => `<tr>
     <td style="width:40px;"><strong style="color:var(--gold);font-family:'barlow-semi-condensed',sans-serif;font-size:18px;">#${i+1}</strong></td>
     <td><strong>${c.name}</strong></td>
@@ -875,19 +762,7 @@ if (isCC) {
     <td style="text-align:center">${(c.commitSelf&&c.commitGuest)?'✅':'—'}</td>
     <td style="text-align:center">${c.raffleEntry?'<span class="badge b-gold">🏆 Entered</span>':'—'}</td>
     <td style="font-size:11px;color:var(--muted)">${c.time||'—'}</td>
-  </tr>`).join('') : `<tr><td colspan="9"><div class="empty"><div class="ei"></div><p>No check-ins yet.</p></div></td></tr>`;
-} else {
-  if (ciThead2) ciThead2.innerHTML = '<tr><th style="width:40px;">#</th><th>Name</th><th>Role</th><th>Phone</th><th>Email</th><th>Companion</th><th>Time</th></tr>';
-  citb.innerHTML = checkins.length ? checkins.map((c, i) => `<tr>
-    <td style="width:40px;"><strong style="color:var(--gold);font-family:'barlow-semi-condensed',sans-serif;font-size:18px;">#${i+1}</strong></td>
-    <td><strong>${c.name}</strong></td>
-    <td>${c.role?`<span class="badge b-teal">${c.role}</span>`:'—'}</td>
-    <td style="font-size:12px;">${c.phone||'—'}</td>
-    <td style="font-size:12px;">${c.email||'—'}</td>
-    <td>${c.companion||'—'}</td>
-    <td style="font-size:11px;color:var(--muted)">${c.time||'—'}</td>
-  </tr>`).join('') : `<tr><td colspan="7"><div class="empty"><div class="ei"></div><p>No check-ins yet.</p></div></td></tr>`;
-}
+  </tr>`).join('') : `<tr><td colspan="8"><div class="empty"><div class="ei"></div><p>No check-ins yet.</p></div></td></tr>`;
 }
 
 // ══ IMPORT RSVPs ══════════════════════════════════
@@ -982,75 +857,9 @@ function emailEventAll(filter) {
 
 // ══ KIOSK ════════════════════════════════════════
 function openKiosk() {
-  const ev = DB.events.find(e => e.id === currentEventId);
-  const isCC = currentEventId === 'court-connections';
-  const overlay = document.getElementById('kiosk-overlay');
-
-  // Set background color
-const bg = ev?.kioskBg || '#00775f';
-overlay.style.background = bg;
-overlay.querySelectorAll('div').forEach(d => {
-  const inline = d.getAttribute('style') || '';
-  if (inline.includes('#00775f') || inline.includes('rgb(0, 119, 95)')) {
-    d.style.background = bg;
-  }
-});
-
-  // Set banner
-  const bannerImg = overlay.querySelector('img[src*="banner"]');
-  if (bannerImg) {
-    bannerImg.src = ev?.bannerUrl || 'https://thebryc.github.io/volunteers/cc_banner.png';
-  }
-
-  // Hide CC-only elements for other events
-  const showCCFeatures = isCC;
-	// Rebuild walk-in form content based on event type
-const walkinPanel = document.getElementById('kiosk-walkin-panel');
-if (walkinPanel && !isCC) {
-  walkinPanel.innerHTML = `
-    <button onclick="hideKioskWalkin()" style="background:none;border:none;color:rgba(0,0,0,0.5);font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;margin-bottom:18px">← Back</button>
-    <div style="font-family:'barlow-semi-condensed',sans-serif;font-size:28px;color:#00775f;letter-spacing:2px;margin-bottom:18px">Welcome! Let's check you in.</div>
-    <div class="frow" style="margin-bottom:12px">
-      <div class="fg"><label class="fl" style="color:#1a1a1a">First Name *</label><input type="text" id="kw-fname" style="font-size:16px;padding:13px"></div>
-      <div class="fg"><label class="fl" style="color:#1a1a1a">Last Name *</label><input type="text" id="kw-lname" style="font-size:16px;padding:13px"></div>
-    </div>
-    <div class="fg" style="margin-bottom:12px">
-      <label class="fl" style="color:#1a1a1a">I am a…</label>
-      <select id="kw-role" style="font-size:15px">
-        <option value="">Select…</option>
-        <option>Interested in Mentoring</option>
-        <option>New Mentor</option>
-        <option>Returning Mentor</option>
-      </select>
-    </div>
-    <div class="frow" style="margin-bottom:12px">
-      <div class="fg"><label class="fl" style="color:#1a1a1a">Phone</label><input type="tel" id="kw-phone" style="font-size:15px"></div>
-      <div class="fg"><label class="fl" style="color:#1a1a1a">Email</label><input type="email" id="kw-email" style="font-size:15px"></div>
-    </div>
-    <div class="fg" style="margin-bottom:12px">
-      <label class="fl" style="color:#1a1a1a">Did you come with someone? Add their first and last name</label>
-      <input type="text" id="kw-companion" placeholder="Optional" style="font-size:15px">
-    </div>
-    <button onclick="kioskWalkinSubmitSimple()" style="width:100%;background:#f0c917;color:#0a3d1f;border:none;border-radius:12px;padding:15px;font-family:'barlow-semi-condensed',sans-serif;font-size:22px;letter-spacing:2px;cursor:pointer;margin-top:8px">✅ CHECK ME IN</button>
-  `;
+  document.getElementById('kiosk-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('kiosk-search').focus(),100);
 }
-	
-const iPadBadge = document.getElementById('kiosk-raffle-badge');
-const pickleBlock = document.getElementById('kiosk-pickle-prompt');
-
-if (!isCC) {
-  // Nuke the pickleball prompt entirely — no other function can un-hide what doesn't exist
-  if (pickleBlock) pickleBlock.remove();
-  if (iPadBadge) iPadBadge.remove();
-} else {
-  if (iPadBadge) iPadBadge.style.setProperty('display', '', 'important');
-  if (pickleBlock) pickleBlock.style.setProperty('display', '', 'important');
-}
-
-  overlay.classList.add('open');
-  setTimeout(() => document.getElementById('kiosk-search').focus(), 100);
-}
-
 function closeKiosk() { document.getElementById('kiosk-overlay').classList.remove('open'); resetKiosk(); }
 
 function kioskSearch(q) {
@@ -1153,13 +962,8 @@ function kioskConfirm(idx) {
   try { refreshEventDetail(); } catch(e) {}
 }
 
-function showKioskWalkin() {
-  const ev = DB.events.find(e => e.id === currentEventId);
-  const bg = ev?.kioskBg || '#00775f';
-  const panel = document.getElementById('kiosk-walkin-panel');
-  panel.style.background = bg;
-  panel.style.display = 'block';
-}function hideKioskWalkin() { document.getElementById('kiosk-walkin-panel').style.display='none'; }
+function showKioskWalkin() { document.getElementById('kiosk-walkin-panel').style.display='block'; }
+function hideKioskWalkin() { document.getElementById('kiosk-walkin-panel').style.display='none'; }
 function toggleKioskGuest(show) { document.getElementById('kw-guest-block').style.display=show?'':'none'; }
 function updateKioskRaffle() {
   const s=document.getElementById('kw-commit-self')?.checked;
@@ -1187,103 +991,44 @@ function kioskWalkinSubmit() {
   try { refreshEventDetail(); } catch(e) {}
 }
 
-function kioskWalkinSubmitSimple() {
-  const fname = document.getElementById('kw-fname').value.trim();
-  const lname = document.getElementById('kw-lname').value.trim();
-  if (!fname) { alert('Please enter a first name.'); return; }
-  const name = `${fname} ${lname}`.trim();
-  const ev = DB.events.find(e => e.id === currentEventId);
-  if (!ev.checkins) ev.checkins = [];
-  const ciRecord = {
-    name,
-    role: document.getElementById('kw-role').value,
-    phone: document.getElementById('kw-phone').value.trim(),
-    email: document.getElementById('kw-email').value.trim(),
-    companion: document.getElementById('kw-companion').value.trim(),
-    walkIn: true,
-    time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
-  };
-  ev.checkins.push(ciRecord);
-  saveDB();
-  hideKioskWalkin();
-  showKioskConfirm(fname, false, '', ciRecord);
-  try { refreshEventDetail(); } catch(e) {}
-}
-
 function showKioskConfirm(fname, raffleEntry, guestName, checkinRecord) {
-  const ev = DB.events.find(e => e.id === currentEventId);
-  const bg = ev?.kioskBg || '#00775f';
-  const panel = document.getElementById('kiosk-confirm-panel');
-  if (panel) panel.style.background = bg;
-	const isCC = currentEventId === 'court-connections';
-const raffleBadge = document.getElementById('kiosk-raffle-badge');
-const pickleBlock = document.getElementById('kiosk-pickle-prompt');
-// (These may have been .remove()-d for non-CC events, so both checks safely no-op)
-if (!isCC) {
-  if (raffleBadge) raffleBadge.remove();
-  if (pickleBlock) pickleBlock.remove();
-}
-	window._lastCheckinRecord = checkinRecord;
+  window._lastCheckinRecord = checkinRecord;
   document.getElementById('kiosk-confirm-name').textContent = `You're in, ${fname}!`;
   document.getElementById('kiosk-confirm-msg').textContent = guestName
     ? `You and ${guestName} are checked in.`
     : 'You are checked in. Enjoy the event!';
-  const rb = document.getElementById('kiosk-raffle-badge');
-if (rb) rb.style.display = raffleEntry ? 'block' : 'none';
+  document.getElementById('kiosk-raffle-badge').style.display = raffleEntry ? 'block' : 'none';
   const hasParty = guestName && guestName.trim();
   const partyBtn = document.getElementById('kiosk-pickle-party-btn');
   if (partyBtn) partyBtn.style.display = hasParty ? '' : 'none';
-  const pickleJoined = document.getElementById('kiosk-pickle-joined');
-if (pickleJoined) pickleJoined.style.display = 'none';
-const pickleProm = document.getElementById('kiosk-pickle-prompt');
-if (pickleProm) pickleProm.style.display = '';
+  document.getElementById('kiosk-pickle-joined').style.display = 'none';
+  document.getElementById('kiosk-pickle-prompt').style.display = '';
   document.getElementById('kiosk-confirm-panel').style.display = 'flex';
 }
 
 function resetKiosk() {
-  document.getElementById('kiosk-search').value = '';
-  document.getElementById('kiosk-results').innerHTML = '';
-  document.getElementById('kiosk-confirm-panel').style.display = 'none';
+  document.getElementById('kiosk-search').value='';
+  document.getElementById('kiosk-results').innerHTML='';
+  document.getElementById('kiosk-confirm-panel').style.display='none';
   hideKioskWalkin();
-
-  ['kw-name','kw-contact','kw-guest-name','kw-guest-contact'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  ['kw-commit-self','kw-commit-guest'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.checked = false;
-  });
-  document.querySelectorAll('input[name="kw-guest"]').forEach(r => r.checked = r.value === 'no');
-
-  const guestBlock = document.getElementById('kw-guest-block');
-  if (guestBlock) guestBlock.style.display = 'none';
-
-  const step1 = document.getElementById('kiosk-pickle-step1');
-  if (step1) step1.style.display = '';
-  const step2 = document.getElementById('kiosk-pickle-step2');
-  if (step2) step2.style.display = 'none';
-  const joined = document.getElementById('kiosk-pickle-joined');
-  if (joined) joined.style.display = 'none';
-
-  const isCC_reset = currentEventId === 'court-connections';
-  const pickleProm = document.getElementById('kiosk-pickle-prompt');
-  if (pickleProm) pickleProm.style.setProperty('display', isCC_reset ? '' : 'none', 'important');
-
-  const phoneEl = document.getElementById('pickle-phone');
-  if (phoneEl) phoneEl.value = '';
-
-  document.querySelectorAll('.pickle-num-btn').forEach(b => {
-    b.style.background = 'rgba(255,255,255,0.15)';
-    b.style.borderColor = 'rgba(255,255,255,0.3)';
-    b.style.color = 'white';
-    b.disabled = false;
-  });
-
-  const roleEl = document.getElementById('kw-role');
-  if (roleEl) roleEl.value = '';
-
-  window._picklePlayerCount = null;
+  ['kw-name','kw-contact','kw-guest-name','kw-guest-contact'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['kw-commit-self','kw-commit-guest'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
+  document.querySelectorAll('input[name="kw-guest"]').forEach(r=>r.checked=r.value==='no');
+  document.getElementById('kw-guest-block').style.display='none';
+  document.getElementById('kiosk-pickle-step1').style.display = '';
+document.getElementById('kiosk-pickle-step2').style.display = 'none';
+document.getElementById('kiosk-pickle-joined').style.display = 'none';
+document.getElementById('kiosk-pickle-prompt').style.display = '';
+const phoneEl = document.getElementById('pickle-phone');
+if (phoneEl) phoneEl.value = '';
+document.querySelectorAll('.pickle-num-btn').forEach(b => {
+  b.style.background = 'rgba(255,255,255,0.15)';
+  b.style.borderColor = 'rgba(255,255,255,0.3)';
+  b.style.color = 'white';
+  b.disabled = false;
+});
+document.getElementById('kw-role').value = '';
+window._picklePlayerCount = null;
 }
 
 function joinPickleQueue(mode) {
@@ -1761,80 +1506,14 @@ function populateRsvpSheetSettings() {
   if (st && cfg.tabName)  st.value = cfg.tabName;
 }
 
-function mapRSVPRow_HappyHourBingo(row, headerIdx) {
-  const g = i => i >= 0 ? (row[i]||'').trim() : '';
-  const fname = g(headerIdx.fname);
-  const lname = g(headerIdx.lname);
-  const name  = [fname, lname].filter(Boolean).join(' ');
-  if (!name) return null;
-
-  const attendRaw = g(headerIdx.attend).toLowerCase();
-  let attending = 'no';
-  if (attendRaw.includes('yes')) attending = 'yes';
-  else if (attendRaw.includes('maybe')) attending = 'maybe';
-
-  const dietRaw = g(headerIdx.diet);
-  const diet = dietRaw && dietRaw.toLowerCase() !== 'none'
-    ? dietRaw.split(',').map(d => d.trim()).filter(Boolean)
-    : [];
-
-  return {
-    id: Date.now() + Math.random(),
-    fname, lname, name,
-    email: g(headerIdx.email).toLowerCase(),
-    role: g(headerIdx.role),
-    attending,
-    guests: [],
-    diet,
-    date: new Date().toLocaleDateString(),
-    fromSheet: true
-  };
-}
-
-function findColumnIndexes(headers, template) {
-  const h = headers.map(x => x.toLowerCase().trim());
-  const find = keyword => h.findIndex(x => x.includes(keyword.toLowerCase()));
-  if (template === 'happy-hour-bingo') {
-    return {
-      email: find('email'),
-      fname: find('first name'),
-      lname: find('last name'),
-      role: find('please choose an option'),
-      attend: find('will you be attending'),
-      diet: find('dietary'),
-    };
-  }
-  // court-connections default
-  return {
-    ts: find('timestamp'),
-    email: find('email'),
-    fname: find('first name'),
-    lname: find('last name'),
-    fullName: find('full name'),
-    role: find('community role'),
-    status: find('rsvp status'),
-    g1n: find('guest 1 name'),
-    g1c: find('guest 1 contact'),
-    g2n: find('guest 2 name'),
-    g2c: find('guest 2 contact'),
-    g3n: find('guest 3 name'),
-    g3c: find('guest 3 contact'),
-    diet: find('dietary restrictions'),
-  };
-}
-
 async function syncRSVPSheet() {
-  const ev = DB.events.find(e => e.id === currentEventId);
-  if (!ev) { alert('No event selected.'); return; }
-  const gsCfg = getSheetConfig();
+  const rsvpCfg = getRsvpSheetConfig();
+  const gsCfg   = getSheetConfig();
   const btn = document.getElementById('rsvp-sheet-sync-btn');
 
-  if (!ev.sheetId) {
-    alert('This event does not have an RSVP Sheet ID set.\n\nClick ✏ Edit on this event and add the Sheet ID and Tab Name.');
-    return;
-  }
-  if (!ev.formTemplate) {
-    alert('This event does not have a Form Template selected.\n\nClick ✏ Edit and choose a template (Court Connections or Happy Hour Bingo).');
+  if (!rsvpCfg.sheetId) {
+    alert('Please set your RSVP Sheet ID in Settings first.');
+    goPage('settings', document.getElementById('settings-btn'));
     return;
   }
   if (!gsCfg.clientId) {
@@ -1849,8 +1528,7 @@ async function syncRSVPSheet() {
     if (!token) token = await gsRequestToken(gsCfg.clientId);
     gsSetToken(token);
 
-    const tab = ev.sheetTab || 'Form Responses 1';
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${ev.sheetId}/values/${encodeURIComponent(tab)}`;
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${rsvpCfg.sheetId}/values/${encodeURIComponent(rsvpCfg.tabName || 'Form Responses 1')}`;
     const res = await fetch(url, { headers: { Authorization: 'Bearer ' + token } });
     if (res.status === 401) { gsClearToken(); throw new Error('Auth expired — please sync again.'); }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -1858,57 +1536,69 @@ async function syncRSVPSheet() {
     const rows = json.values || [];
     if (rows.length < 2) { alert('Sheet has no data rows.'); return; }
 
-    const headers = rows[0];
-    const headerIdx = findColumnIndexes(headers, ev.formTemplate);
-    const existingNames = new Set((ev.rsvps || []).map(r => (r.name || '').toLowerCase()).filter(Boolean));
+    const ev = DB.events.find(e => e.id === currentEventId) || DB.events[0];
+    if (!ev) return;
+
+    const h = rows[0].map(x => x.toLowerCase().trim());
+    const col = k => h.findIndex(x => x === k.toLowerCase());
+    const iTs       = col('timestamp');
+    const iEmail    = col('email');
+    const iFname    = col('first name');
+    const iLname    = col('last name');
+    const iFullName = col('full name');
+    const iRole     = col('community role');
+    const iStatus   = col('rsvp status');
+    const iG1name   = col('guest 1 name');
+    const iG1con    = col('guest 1 contact');
+    const iG2name   = col('guest 2 name');
+    const iG2con    = col('guest 2 contact');
+    const iG3name   = col('guest 3 name');
+    const iG3con    = col('guest 3 contact');
+    const iDiet     = col('dietary restrictions');
+
+    const existingEmails = new Set((ev.rsvps||[]).map(r => r.email?.toLowerCase()).filter(Boolean));
     let added = 0;
 
     rows.slice(1).forEach(cols => {
-      let newRSVP = null;
+      const g = i => i >= 0 ? (cols[i]||'').trim() : '';
+      const fname = g(iFname);
+      const lname  = g(iLname);
+      const name   = g(iFullName) || [fname,lname].filter(Boolean).join(' ');
+      const email  = g(iEmail).toLowerCase();
+      if (!name) return;
+      if (email && existingEmails.has(email)) return;
 
-      if (ev.formTemplate === 'happy-hour-bingo') {
-        newRSVP = mapRSVPRow_HappyHourBingo(cols, headerIdx);
-      } else {
-        // Court Connections mapping
-        const g = i => i >= 0 ? (cols[i]||'').trim() : '';
-        const fname = g(headerIdx.fname);
-        const lname  = g(headerIdx.lname);
-        const name   = g(headerIdx.fullName) || [fname,lname].filter(Boolean).join(' ');
-        const email  = g(headerIdx.email).toLowerCase();
-        if (!name) return;
-        const statusRaw = g(headerIdx.status).toLowerCase().trim();
-        let attending = 'no';
-        if (statusRaw.includes('not attending') || statusRaw.includes("can't make") || statusRaw.includes('cannot')) attending = 'no';
-        else if (statusRaw.includes('maybe')) attending = 'maybe';
-        else if (statusRaw === 'attending' || statusRaw.includes('yes')) attending = 'yes';
-        const guests = [];
-        [[headerIdx.g1n,headerIdx.g1c],[headerIdx.g2n,headerIdx.g2c],[headerIdx.g3n,headerIdx.g3c]].forEach(([ni,ci]) => {
-          const gn = g(ni); if (!gn) return;
-          guests.push({ name: gn, contact: g(ci) });
-        });
-        const diet = g(headerIdx.diet) ? g(headerIdx.diet).split(',').map(d=>d.trim()).filter(Boolean) : [];
-        newRSVP = {
-          id: Date.now() + Math.random(),
-          fname, lname, name, email,
-          role: g(headerIdx.role),
-          attending, guests, diet,
-          date: g(headerIdx.ts).split(' ')[0] || new Date().toLocaleDateString(),
-          fromSheet: true
-        };
-      }
+    const statusRaw = g(iStatus).toLowerCase().trim();
+      let attending = 'No';
+      if (statusRaw.includes('not attending') || statusRaw.includes("can't make") || statusRaw.includes('cannot')) attending = 'no';
+      else if (statusRaw.includes('maybe')) attending = 'maybe';
+      else if (statusRaw === 'attending' || statusRaw.includes('yes')) attending = 'yes';
 
-      if (!newRSVP) return;
-      if (existingNames.has(newRSVP.name.toLowerCase())) return;
-      ev.rsvps.push(newRSVP);
-      existingNames.add(newRSVP.name.toLowerCase());
+      const guests = [];
+      [[iG1name,iG1con],[iG2name,iG2con],[iG3name,iG3con]].forEach(([ni,ci]) => {
+        const gn = g(ni); if (!gn) return;
+        guests.push({ name: gn, contact: g(ci) });
+      });
+
+      const diet = g(iDiet) ? g(iDiet).split(',').map(d=>d.trim()).filter(Boolean) : [];
+
+      ev.rsvps.push({
+        id: Date.now() + Math.random(),
+        fname, lname, name, email,
+        role: g(iRole),
+        attending,
+        guests,
+        diet,
+        date: g(iTs).split(' ')[0] || new Date().toLocaleDateString(),
+        fromSheet: true
+      });
+      if (email) existingEmails.add(email);
       added++;
     });
 
     saveDB();
     try { refreshEventDetail(); } catch(e) { console.warn('refresh error:', e); }
-    alert(`✅ Sheet synced — ${added} new responses loaded (${ev.rsvps.length} total)`);
-  } catch(err) {
-    console.error('Sync error:', err);
+    alert(`✅ RSVP sheet synced — ${added} new responses loaded (${ev.rsvps.length} total)`);
     alert('Sync failed: ' + err.message);
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '🔄 Sync RSVP Sheet'; }
